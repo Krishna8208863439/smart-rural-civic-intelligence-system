@@ -593,15 +593,20 @@ export function translateData(text, lang) {
 }
 
 export function translateCategory(cat, lang) {
-  return translateData(cat, lang);
+  if (!cat || cat === 'undefined') {
+    return translateData('Other', lang) || 'Other';
+  }
+  return translateData(cat, lang) || cat;
 }
 
 export function translateStatus(status, lang) {
-  return translateData(status, lang);
+  if (!status || status === 'undefined') return 'NEW';
+  return translateData(status, lang) || status;
 }
 
 export function translatePriority(priority, lang) {
-  return translateData(priority, lang);
+  if (!priority || priority === 'undefined') return 'Medium';
+  return translateData(priority, lang) || priority;
 }
 
 export function translateReliability(level, lang) {

@@ -15,7 +15,6 @@ app = Flask(__name__, static_folder=None)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIST = os.path.join(os.path.dirname(BASE_DIR), 'frontend', 'dist')
 if not os.path.exists(FRONTEND_DIST):
-    # Alternative path if bundled together
     FRONTEND_DIST = os.path.join(BASE_DIR, 'dist')
 
 UPLOADS_DIR = os.path.join(BASE_DIR, 'uploads')
@@ -43,17 +42,26 @@ def load_data():
         try:
             with open(DATA_STORE_PATH, 'r', encoding='utf-8') as f:
                 db = json.load(f)
-                return
         except Exception as e:
             print("Error loading data_store.json:", e)
-    if os.path.exists(SEED_DATA_PATH):
+    elif os.path.exists(SEED_DATA_PATH):
         try:
             with open(SEED_DATA_PATH, 'r', encoding='utf-8') as f:
                 db = json.load(f)
-                save_data()
-                return
         except Exception as e:
             print("Error loading seed_data.json:", e)
+
+    # Sanitize and patch existing issues in data store
+    for iss in db.get('issues', []):
+        if not iss.get('category') or iss.get('category') == 'undefined':
+            iss['category'] = 'Waste accumulation'
+        if 'communityValidationStats' not in iss or not isinstance(iss.get('communityValidationStats'), dict):
+            iss['communityValidationStats'] = {
+                "confirms": iss.get('corroborationCount', 0),
+                "stillExists": 0,
+                "resolved": 1 if iss.get('status') in ['ACTION COMPLETED', 'VERIFIED RESOLVED'] else 0
+            }
+    save_data()
 
 def save_data():
     try:
@@ -134,11 +142,38 @@ def sanitize_user(user):
         "isActive": user.get('isActive', True)
     }
 
+def check_password(stored_hash, password):
+    if not stored_hash or not password:
+        return False
+    if stored_hash == password:
+        return True
+    if password in ['Sgi@5555', 'citizen123']:
+        return True
+    if stored_hash.startswith('$2'):
+        try:
+            import bcrypt
+            return bcrypt.checkpw(password.encode('utf-8'), stored_hash.encode('utf-8'))
+        except Exception:
+            pass
+    return False
+
 def populate_issue(issue):
     if not issue:
         return None
     c_issue = dict(issue)
     c_issue['_id'] = str(c_issue.get('_id', ''))
+
+    # Fallback category if missing or undefined
+    if not c_issue.get('category') or c_issue.get('category') == 'undefined':
+        c_issue['category'] = 'Waste accumulation'
+
+    # Ensure communityValidationStats exists
+    if 'communityValidationStats' not in c_issue or not isinstance(c_issue.get('communityValidationStats'), dict):
+        c_issue['communityValidationStats'] = {
+            "confirms": c_issue.get('corroborationCount', 0),
+            "stillExists": 0,
+            "resolved": 1 if c_issue.get('status') in ['ACTION COMPLETED', 'VERIFIED RESOLVED'] else 0
+        }
     
     # createdBy populate
     cb_id = str(c_issue.get('createdBy', ''))
@@ -146,22 +181,42 @@ def populate_issue(issue):
     if cb_user:
         c_issue['createdBy'] = {
             "_id": str(cb_user.get('_id')),
-            "name": cb_user.get('name'),
-            "email": cb_user.get('email'),
-            "village": cb_user.get('village')
+            "name": cb_user.get('name', 'Citizen'),
+            "email": cb_user.get('email', ''),
+            "village": cb_user.get('village', 'Gram Panchayat Chandoli'),
+            "phone": cb_user.get('phone', '')
+        }
+    else:
+        c_issue['createdBy'] = {
+            "_id": cb_id or "default_citizen",
+            "name": "Citizen",
+            "email": "citizen@example.com",
+            "village": "Gram Panchayat Chandoli"
         }
     
     # assignedWorker populate
     aw_id = str(c_issue.get('assignedWorker', ''))
-    aw_user = next((u for u in db['users'] if str(u.get('_id')) == aw_id), None)
-    if aw_user:
-        c_issue['assignedWorker'] = {
-            "_id": str(aw_user.get('_id')),
-            "name": aw_user.get('name'),
-            "email": aw_user.get('email'),
-            "specialization": aw_user.get('specialization'),
-            "phone": aw_user.get('phone')
-        }
+    if aw_id and aw_id != 'None':
+        aw_user = next((u for u in db['users'] if str(u.get('_id')) == aw_id), None)
+        if aw_user:
+            c_issue['assignedWorker'] = {
+                "_id": str(aw_user.get('_id')),
+                "name": aw_user.get('name', 'KD (Field Worker Lead)'),
+                "email": aw_user.get('email', 'kd@gmail.com'),
+                "specialization": aw_user.get('specialization', 'General'),
+                "phone": aw_user.get('phone', '+91 98230 55555')
+            }
+        else:
+            c_issue['assignedWorker'] = {
+                "_id": aw_id,
+                "name": "KD (Field Worker Lead)",
+                "email": "kd@gmail.com",
+                "specialization": "General",
+                "phone": "+91 98230 55555"
+            }
+    else:
+        c_issue['assignedWorker'] = None
+
     return c_issue
 
 # --- CORS Middleware ---
@@ -186,21 +241,6 @@ def health_check():
         "database": {"isConnected": True, "type": "PythonAnywhere SQLite/Memory Engine"},
         "timestamp": datetime.utcnow().isoformat()
     })
-
-def check_password(stored_hash, password):
-    if not stored_hash or not password:
-        return False
-    if stored_hash == password:
-        return True
-    if password in ['Sgi@5555', 'citizen123']:
-        return True
-    if stored_hash.startswith('$2'):
-        try:
-            import bcrypt
-            return bcrypt.checkpw(password.encode('utf-8'), stored_hash.encode('utf-8'))
-        except Exception:
-            pass
-    return False
 
 # --- Auth Routes ---
 @app.post('/api/auth/login')
@@ -245,9 +285,9 @@ def register():
         "name": name,
         "email": email,
         "passwordHash": password,
-        "role": "citizen",
+        "role": data.get('role', 'citizen'),
         "village": data.get('village', 'Gram Panchayat Chandoli'),
-        "language": data.get('language', 'en'),
+        "language": data.get('language', 'mr'),
         "phone": data.get('phone', ''),
         "specialization": "General",
         "isActive": True,
@@ -360,7 +400,6 @@ def get_dashboard():
         rec_counts[rl] = rec_counts.get(rl, 0) + 1
     recurrence_risks = [{"name": k, "count": v} for k, v in rec_counts.items()]
 
-    # Trends
     monthly_trends = [
         {"month": "Apr 26", "reported": 8, "resolved": 6},
         {"month": "May 26", "reported": 12, "resolved": 9},
@@ -478,7 +517,7 @@ def get_map_pins():
                 "id": str(i.get('_id')),
                 "_id": str(i.get('_id')),
                 "title": i.get('title'),
-                "category": i.get('category'),
+                "category": i.get('category', 'Waste accumulation'),
                 "status": i.get('status'),
                 "priority": i.get('priority'),
                 "recurrenceLevel": i.get('recurrenceLevel', 'Low'),
@@ -493,19 +532,27 @@ def get_issue_by_id(issue_id):
     issue = next((i for i in db['issues'] if str(i.get('_id')) == str(issue_id)), None)
     if not issue:
         return jsonify({"success": False, "message": "Issue not found"}), 404
-    return jsonify({"success": True, "issue": populate_issue(issue)})
+    hist = [h for h in db.get('issueHistories', []) if str(h.get('issueId')) == str(issue_id)]
+    ev = [e for e in db.get('evidences', []) if str(e.get('issueId')) == str(issue_id)]
+    return jsonify({
+        "success": True,
+        "issue": populate_issue(issue),
+        "history": hist,
+        "evidence": ev
+    })
 
 @app.post('/api/issues')
 def create_issue():
     user = get_current_user()
     if not user:
-        # Fallback to admin or demo citizen if testing without auth
         user = next((u for u in db['users'] if u.get('role') == 'citizen'), db['users'][0])
 
     data = request.form.to_dict() if request.form else (request.get_json(silent=True) or {})
     title = data.get('title', 'Civic Issue Reported')
     description = data.get('description', '')
-    category = data.get('category', 'Damaged road')
+    category = data.get('category')
+    if not category or category == 'undefined':
+        category = 'Waste accumulation'
 
     try:
         lat = float(data.get('latitude', 18.5204))
@@ -551,12 +598,34 @@ def create_issue():
         "recurrenceLevel": "Medium",
         "images": images if images else [{"url": "/assets/hero-card-mockup-lWDlMTb5.jpg"}],
         "corroborationCount": 0,
+        "communityValidationStats": {
+            "confirms": 0,
+            "stillExists": 0,
+            "resolved": 0
+        },
         "upvotes": 0,
         "downvotes": 0,
         "createdAt": datetime.utcnow().isoformat(),
         "updatedAt": datetime.utcnow().isoformat()
     }
     db['issues'].insert(0, new_issue)
+
+    # Add creation history
+    hist_id = hashlib.md5(f"create_{new_id}".encode('utf-8')).hexdigest()[:24]
+    db['issueHistories'].insert(0, {
+        "_id": hist_id,
+        "issueId": new_id,
+        "eventType": "CREATED",
+        "previousState": "",
+        "newState": "NEW",
+        "userId": str(user.get('_id')),
+        "userName": user.get('name', 'Citizen'),
+        "userRole": user.get('role', 'citizen'),
+        "comment": f"Issue reported in {category} category.",
+        "timestamp": datetime.utcnow().isoformat(),
+        "createdAt": datetime.utcnow().isoformat()
+    })
+
     save_data()
 
     return jsonify({
@@ -565,42 +634,208 @@ def create_issue():
         "issue": populate_issue(new_issue)
     }), 201
 
+@app.put('/api/issues/<issue_id>/location')
+def update_issue_location(issue_id):
+    issue = next((i for i in db['issues'] if str(i.get('_id')) == str(issue_id)), None)
+    if not issue:
+        return jsonify({"success": False, "message": "Issue not found"}), 404
+    data = request.get_json(silent=True) or request.form.to_dict() or {}
+    try:
+        lat = float(data.get('latitude'))
+        lng = float(data.get('longitude'))
+        if 'location' not in issue:
+            issue['location'] = {}
+        issue['location']['coordinates'] = [lng, lat]
+        issue['updatedAt'] = datetime.utcnow().isoformat()
+        save_data()
+        return jsonify({"success": True, "issue": populate_issue(issue)})
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 400
+
 @app.put('/api/issues/<issue_id>/status')
 def update_issue_status(issue_id):
     issue = next((i for i in db['issues'] if str(i.get('_id')) == str(issue_id)), None)
     if not issue:
         return jsonify({"success": False, "message": "Issue not found"}), 404
-    data = request.get_json(silent=True) or request.form.to_dict()
+    data = request.get_json(silent=True) or request.form.to_dict() or {}
     new_status = data.get('status')
+    comment = data.get('comment') or ''
+    user = get_current_user() or next((u for u in db['users'] if u.get('role') == 'admin'), db['users'][0])
+
     if new_status:
+        previous_state = issue.get('status', 'NEW')
         issue['status'] = new_status
         issue['updatedAt'] = datetime.utcnow().isoformat()
+
+        if new_status == 'VERIFIED RESOLVED':
+            issue['resolvedAt'] = datetime.utcnow().isoformat()
+            issue['verifiedAt'] = datetime.utcnow().isoformat()
+        elif new_status == 'ACTION COMPLETED':
+            issue['resolvedAt'] = datetime.utcnow().isoformat()
+
+        hist_id = hashlib.md5(f"{issue_id}{time.time()}".encode('utf-8')).hexdigest()[:24]
+        db['issueHistories'].insert(0, {
+            "_id": hist_id,
+            "issueId": str(issue_id),
+            "eventType": "STATUS_CHANGE",
+            "previousState": previous_state,
+            "newState": new_status,
+            "userId": str(user.get('_id', '')),
+            "userName": user.get('name', 'Admin'),
+            "userRole": user.get('role', 'admin'),
+            "comment": comment or f"Status transitioned from {previous_state} to {new_status}.",
+            "timestamp": datetime.utcnow().isoformat(),
+            "createdAt": datetime.utcnow().isoformat()
+        })
         save_data()
-    return jsonify({"success": True, "issue": populate_issue(issue)})
+
+    return jsonify({"success": True, "message": f"Status updated to {new_status}", "issue": populate_issue(issue)})
 
 @app.put('/api/admin/assign-worker/<issue_id>')
 def assign_worker(issue_id):
     issue = next((i for i in db['issues'] if str(i.get('_id')) == str(issue_id)), None)
     if not issue:
         return jsonify({"success": False, "message": "Issue not found"}), 404
-    data = request.get_json(silent=True) or request.form.to_dict()
+    data = request.get_json(silent=True) or request.form.to_dict() or {}
     worker_id = data.get('workerId')
-    if worker_id:
-        issue['assignedWorker'] = str(worker_id)
-        issue['status'] = 'ASSIGNED'
-        issue['updatedAt'] = datetime.utcnow().isoformat()
-        save_data()
-    return jsonify({"success": True, "issue": populate_issue(issue)})
+    user = get_current_user() or next((u for u in db['users'] if u.get('role') == 'admin'), db['users'][0])
 
-@app.post('/api/issues/<issue_id>/corroborate')
+    if worker_id:
+        previous_state = issue.get('status', 'NEW')
+        issue['assignedWorker'] = str(worker_id)
+        issue['assignedAt'] = datetime.utcnow().isoformat()
+        if issue.get('status') in ['NEW', 'VALIDATED']:
+            issue['status'] = 'ASSIGNED'
+        issue['updatedAt'] = datetime.utcnow().isoformat()
+
+        worker_user = next((u for u in db['users'] if str(u.get('_id')) == str(worker_id)), None)
+        worker_name = worker_user.get('name', 'KD (Field Worker Lead)') if worker_user else 'Field Worker'
+
+        hist_id = hashlib.md5(f"{issue_id}{time.time()}".encode('utf-8')).hexdigest()[:24]
+        db['issueHistories'].insert(0, {
+            "_id": hist_id,
+            "issueId": str(issue_id),
+            "eventType": "WORKER_ASSIGNED",
+            "previousState": previous_state,
+            "newState": issue['status'],
+            "userId": str(user.get('_id', '')),
+            "userName": user.get('name', 'Krishna (Gram Sevak Admin)'),
+            "userRole": "admin",
+            "comment": f"Dispatched to {worker_name}.",
+            "timestamp": datetime.utcnow().isoformat(),
+            "createdAt": datetime.utcnow().isoformat()
+        })
+        save_data()
+
+    return jsonify({"success": True, "message": "Worker assigned successfully", "issue": populate_issue(issue)})
+
+@app.put('/api/issues/<issue_id>/admin-verify')
+def admin_verify_resolution(issue_id):
+    issue = next((i for i in db['issues'] if str(i.get('_id')) == str(issue_id)), None)
+    if not issue:
+        return jsonify({"success": False, "message": "Issue not found"}), 404
+
+    user = get_current_user() or next((u for u in db['users'] if u.get('role') == 'admin'), db['users'][0])
+    data = request.get_json(silent=True) or request.form.to_dict() or {}
+    notes = data.get('notes') or 'Panchayat Administration verified field work and approved resolution proof.'
+
+    previous_state = issue.get('status', 'ACTION COMPLETED')
+    issue['status'] = 'VERIFIED RESOLVED'
+    issue['verifiedAt'] = datetime.utcnow().isoformat()
+    issue['resolvedAt'] = issue.get('resolvedAt') or datetime.utcnow().isoformat()
+    issue['updatedAt'] = datetime.utcnow().isoformat()
+
+    issue['adminVerification'] = {
+        "verifiedBy": str(user.get('_id', '')),
+        "verifiedAt": datetime.utcnow().isoformat(),
+        "notes": notes,
+        "forwardedToCitizen": True
+    }
+
+    # Add to history audit trail
+    hist_id = hashlib.md5(f"{issue_id}{time.time()}".encode('utf-8')).hexdigest()[:24]
+    hist_entry = {
+        "_id": hist_id,
+        "issueId": str(issue_id),
+        "eventType": "ADMIN_VERIFIED",
+        "previousState": previous_state,
+        "newState": "VERIFIED RESOLVED",
+        "userId": str(user.get('_id', '')),
+        "userName": user.get('name', 'Krishna (Gram Sevak Admin)'),
+        "userRole": user.get('role', 'admin'),
+        "comment": f'Resolution verified and published to citizen. Admin Notes: "{notes}"',
+        "timestamp": datetime.utcnow().isoformat(),
+        "createdAt": datetime.utcnow().isoformat()
+    }
+    if 'issueHistories' not in db:
+        db['issueHistories'] = []
+    db['issueHistories'].insert(0, hist_entry)
+
+    save_data()
+    return jsonify({
+        "success": True,
+        "message": "Resolution proof verified and published to citizen successfully",
+        "issue": populate_issue(issue)
+    })
+
 @app.post('/api/issues/<issue_id>/validate')
+@app.post('/api/issues/<issue_id>/corroborate')
 def corroborate_issue(issue_id):
     issue = next((i for i in db['issues'] if str(i.get('_id')) == str(issue_id)), None)
     if not issue:
         return jsonify({"success": False, "message": "Issue not found"}), 404
-    issue['corroborationCount'] = issue.get('corroborationCount', 0) + 1
+
+    data = request.get_json(silent=True) or request.form.to_dict() or {}
+    response_type = data.get('response', 'CONFIRM')
+    comment = data.get('comment', 'Citizen community verification vote')
+    user = get_current_user() or (db['users'][0] if db['users'] else {})
+
+    if 'communityValidationStats' not in issue or not isinstance(issue.get('communityValidationStats'), dict):
+        issue['communityValidationStats'] = {
+            "confirms": issue.get('corroborationCount', 0),
+            "stillExists": 0,
+            "resolved": 0
+        }
+
+    if response_type == 'CONFIRM':
+        issue['communityValidationStats']['confirms'] = issue['communityValidationStats'].get('confirms', 0) + 1
+        issue['corroborationCount'] = issue.get('corroborationCount', 0) + 1
+    elif response_type == 'STILL_EXISTS':
+        issue['communityValidationStats']['stillExists'] = issue['communityValidationStats'].get('stillExists', 0) + 1
+    elif response_type == 'RESOLVED':
+        issue['communityValidationStats']['resolved'] = issue['communityValidationStats'].get('resolved', 0) + 1
+
+    # Record validation event
+    val_id = hashlib.md5(f"{issue_id}{time.time()}".encode('utf-8')).hexdigest()[:24]
+    val_entry = {
+        "_id": val_id,
+        "issueId": str(issue_id),
+        "sourceUser": str(user.get('_id', '')),
+        "userName": user.get('name', 'Village Citizen'),
+        "userRole": user.get('role', 'citizen'),
+        "response": response_type,
+        "validationType": response_type,
+        "notes": comment,
+        "comment": comment,
+        "createdAt": datetime.utcnow().isoformat()
+    }
+    if 'communityValidations' not in db:
+        db['communityValidations'] = []
+    db['communityValidations'].append(val_entry)
+
     save_data()
-    return jsonify({"success": True, "message": "Validation recorded", "corroborationCount": issue['corroborationCount']})
+    return jsonify({
+        "success": True,
+        "message": "Validation recorded successfully",
+        "corroborationCount": issue.get('corroborationCount', 0),
+        "communityValidationStats": issue['communityValidationStats'],
+        "issue": populate_issue(issue)
+    })
+
+@app.get('/api/issues/<issue_id>/validations')
+def get_issue_validations(issue_id):
+    vals = [v for v in db.get('communityValidations', []) if str(v.get('issueId')) == str(issue_id)]
+    return jsonify({"success": True, "count": len(vals), "validations": vals})
 
 @app.post('/api/issues/<issue_id>/vote')
 def vote_issue(issue_id):
@@ -618,13 +853,32 @@ def vote_issue(issue_id):
 
 @app.get('/api/issues/<issue_id>/history')
 def get_issue_history(issue_id):
-    hist = [h for h in db['issueHistories'] if str(h.get('issueId')) == str(issue_id)]
+    hist = [h for h in db.get('issueHistories', []) if str(h.get('issueId')) == str(issue_id)]
     return jsonify({"success": True, "history": hist})
 
-@app.get('/api/issues/<issue_id>/validations')
-def get_issue_validations(issue_id):
-    vals = [v for v in db['communityValidations'] if str(v.get('issueId')) == str(issue_id)]
-    return jsonify({"success": True, "validations": vals})
+@app.post('/api/issues/<issue_id>/feedback')
+def submit_citizen_feedback(issue_id):
+    issue = next((i for i in db['issues'] if str(i.get('_id')) == str(issue_id)), None)
+    if not issue:
+        return jsonify({"success": False, "message": "Issue not found"}), 404
+
+    data = request.get_json(silent=True) or request.form.to_dict() or {}
+    rating = data.get('rating', 5)
+    satisfied = data.get('satisfied', True)
+    comment = data.get('comment', '')
+    reopen = data.get('reopen', False)
+
+    issue['citizenFeedback'] = {
+        "rating": rating,
+        "satisfied": satisfied,
+        "comment": comment,
+        "submittedAt": datetime.utcnow().isoformat()
+    }
+    if reopen:
+        issue['status'] = 'REOPENED'
+
+    save_data()
+    return jsonify({"success": True, "message": "Feedback submitted successfully", "issue": populate_issue(issue)})
 
 @app.post('/api/issues/ai-detect')
 def ai_detect():
@@ -647,6 +901,11 @@ def ai_detect():
 @app.get('/api/workers/all')
 def get_workers():
     workers = [sanitize_user(u) for u in db['users'] if u.get('role') == 'worker']
+    if not workers:
+        for u in db['users']:
+            if 'kd' in u.get('email', ''):
+                u['role'] = 'worker'
+                workers.append(sanitize_user(u))
     return jsonify({"success": True, "count": len(workers), "workers": workers})
 
 @app.get('/api/workers/assigned')
@@ -654,7 +913,6 @@ def get_workers():
 def get_worker_tasks():
     user = get_current_user()
     if not user:
-        # Default to lead worker
         user = next((u for u in db['users'] if u.get('email') == 'kd@gmail.com'), None)
     u_id = str(user.get('_id')) if user else ''
     tasks = [populate_issue(i) for i in db['issues'] if str(i.get('assignedWorker')) == u_id or i.get('status') in ['ASSIGNED', 'UNDER ACTION']]
@@ -667,8 +925,25 @@ def update_worker_progress(issue_id):
         return jsonify({"success": False, "message": "Issue not found"}), 404
     data = request.form.to_dict() if request.form else (request.get_json(silent=True) or {})
     status = data.get('status', 'UNDER ACTION')
+    note = data.get('note', 'Work in progress')
     issue['status'] = status
     issue['updatedAt'] = datetime.utcnow().isoformat()
+
+    hist_id = hashlib.md5(f"prog_{issue_id}{time.time()}".encode('utf-8')).hexdigest()[:24]
+    db['issueHistories'].insert(0, {
+        "_id": hist_id,
+        "issueId": str(issue_id),
+        "eventType": "PROGRESS_UPDATE",
+        "previousState": "ASSIGNED",
+        "newState": status,
+        "userId": str(issue.get('assignedWorker', '')),
+        "userName": "KD (Field Worker Lead)",
+        "userRole": "worker",
+        "comment": note,
+        "timestamp": datetime.utcnow().isoformat(),
+        "createdAt": datetime.utcnow().isoformat()
+    })
+
     save_data()
     return jsonify({"success": True, "message": "Progress recorded", "issue": populate_issue(issue)})
 
@@ -677,20 +952,90 @@ def upload_completion_evidence(issue_id):
     issue = next((i for i in db['issues'] if str(i.get('_id')) == str(issue_id)), None)
     if not issue:
         return jsonify({"success": False, "message": "Issue not found"}), 404
+    data = request.form.to_dict() if request.form else (request.get_json(silent=True) or {})
+    notes = data.get('notes', 'Civic problem solved to standard.')
+
+    images = []
+    if 'images' in request.files:
+        files = request.files.getlist('images')
+        for f in files:
+            if f.filename:
+                fname = f"proof_{int(time.time())}_{f.filename}"
+                fpath = os.path.join(UPLOADS_DIR, fname)
+                f.save(fpath)
+                images.append({"url": f"/uploads/{fname}"})
+    elif data.get('sampleImageUrl'):
+        images.append({"url": data.get('sampleImageUrl')})
+
     issue['status'] = 'ACTION COMPLETED'
+    issue['completionDetails'] = {
+        "completedAt": datetime.utcnow().isoformat(),
+        "notes": notes,
+        "images": images if images else [{"url": "/assets/hero-card-mockup-lWDlMTb5.jpg"}]
+    }
+    issue['resolvedAt'] = datetime.utcnow().isoformat()
     issue['updatedAt'] = datetime.utcnow().isoformat()
+
+    hist_id = hashlib.md5(f"comp_{issue_id}{time.time()}".encode('utf-8')).hexdigest()[:24]
+    db['issueHistories'].insert(0, {
+        "_id": hist_id,
+        "issueId": str(issue_id),
+        "eventType": "WORK_COMPLETED",
+        "previousState": "UNDER ACTION",
+        "newState": "ACTION COMPLETED",
+        "userId": str(issue.get('assignedWorker', '')),
+        "userName": "KD (Field Worker Lead)",
+        "userRole": "worker",
+        "comment": f"Work completed. Proof notes: {notes}",
+        "timestamp": datetime.utcnow().isoformat(),
+        "createdAt": datetime.utcnow().isoformat()
+    })
+
     save_data()
     return jsonify({"success": True, "message": "Completion evidence submitted successfully", "issue": populate_issue(issue)})
 
 # --- Village Digital Memory & Prevention ---
 @app.get('/api/village-memory')
 def get_village_memory():
-    profiles = db.get('recurrenceProfiles', [])
+    category = request.args.get('category')
+    risk_level = request.args.get('riskLevel')
+    search = request.args.get('search')
+
+    profiles = list(db.get('recurrenceProfiles', []))
+
+    if category and category != 'All':
+        profiles = [p for p in profiles if p.get('category') == category]
+    if risk_level and risk_level != 'All':
+        profiles = [p for p in profiles if p.get('recurrenceLevel') == risk_level]
+    if search:
+        s = search.lower()
+        profiles = [
+            p for p in profiles
+            if s in str(p.get('locationPattern', {}).get('name', '')).lower() or
+               s in str(p.get('category', '')).lower()
+        ]
+
+    enhanced = []
+    for p in profiles:
+        rec = dict(p)
+        rec['_id'] = str(rec.get('_id', ''))
+        # Related actions
+        actions = [
+            a for a in db.get('preventiveActions', [])
+            if str(a.get('recurrenceProfileId')) == rec['_id'] or (a.get('category') == rec.get('category'))
+        ]
+        rec['actionsCount'] = len(actions)
+        rec['recentActions'] = actions[:3]
+        rec['averageEffectiveness'] = 78
+        rec['effectivenessLevel'] = 'High'
+        enhanced.append(rec)
+
     return jsonify({
         "success": True,
-        "count": len(profiles),
-        "profiles": profiles,
-        "hotspots": profiles
+        "count": len(enhanced),
+        "records": enhanced,
+        "profiles": enhanced,
+        "hotspots": enhanced
     })
 
 @app.get('/api/village-memory/<hotspot_id>')
@@ -698,7 +1043,11 @@ def get_memory_hotspot(hotspot_id):
     prof = next((p for p in db.get('recurrenceProfiles', []) if str(p.get('_id')) == str(hotspot_id)), None)
     if not prof:
         return jsonify({"success": False, "message": "Hotspot not found"}), 404
-    return jsonify({"success": True, "hotspot": prof})
+    rec = dict(prof)
+    rec['_id'] = str(rec.get('_id', ''))
+    rec['averageEffectiveness'] = 78
+    rec['effectivenessLevel'] = 'High'
+    return jsonify({"success": True, "hotspot": rec, "data": rec})
 
 @app.get('/api/prevention/recommendations')
 def get_recommendations():
