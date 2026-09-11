@@ -187,6 +187,21 @@ def health_check():
         "timestamp": datetime.utcnow().isoformat()
     })
 
+def check_password(stored_hash, password):
+    if not stored_hash or not password:
+        return False
+    if stored_hash == password:
+        return True
+    if password in ['Sgi@5555', 'citizen123']:
+        return True
+    if stored_hash.startswith('$2'):
+        try:
+            import bcrypt
+            return bcrypt.checkpw(password.encode('utf-8'), stored_hash.encode('utf-8'))
+        except Exception:
+            pass
+    return False
+
 # --- Auth Routes ---
 @app.post('/api/auth/login')
 def login():
@@ -201,11 +216,7 @@ def login():
     if not user:
         return jsonify({"success": False, "message": "Invalid credentials. User not found."}), 401
 
-    # Check password
-    stored_hash = user.get('passwordHash', '')
-    # Match direct password or demo check
-    if stored_hash != password and password != 'Sgi@5555' and password != 'citizen123':
-        # Accept Sgi@5555 for Admin / Worker or citizen123 for Citizens
+    if not check_password(user.get('passwordHash', ''), password):
         return jsonify({"success": False, "message": "Invalid credentials. Password incorrect."}), 401
 
     token = generate_token(user['_id'])
