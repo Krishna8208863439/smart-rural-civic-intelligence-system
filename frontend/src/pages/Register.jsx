@@ -44,7 +44,7 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-[80vh] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-[80vh] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <div className="w-14 h-14 rounded-3xl bg-emerald-700 flex items-center justify-center mx-auto text-white shadow-md shadow-emerald-700/20 mb-4">
           <Compass className="w-8 h-8" />

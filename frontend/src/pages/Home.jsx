@@ -58,9 +58,9 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="w-full h-[calc(100vh-72px)] max-h-[calc(100vh-72px)] overflow-hidden flex items-center justify-center bg-gradient-to-br from-[#f8fafc] via-[#f0fdfa]/40 to-[#e0f2fe]/30">
-      {/* HERO SECTION — 16:9 Desktop 50/50 Two-Column Layout */}
-      <section className="max-w-[1560px] w-full h-full mx-auto px-6 sm:px-8 lg:px-12 flex items-center">
+    <div className="w-full min-h-[calc(100vh-72px)] lg:h-[calc(100vh-72px)] overflow-y-auto lg:overflow-hidden flex items-center justify-center bg-gradient-to-br from-[#f8fafc] via-[#f0fdfa]/40 to-[#e0f2fe]/30 py-6 sm:py-8 lg:py-0">
+      {/* HERO SECTION — 16:9 Desktop 50/50 Two-Column Layout, fluid on mobile */}
+      <section className="max-w-[1560px] w-full min-h-full mx-auto px-4 sm:px-8 lg:px-12 flex items-center">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-center w-full">
           {/* Left Column: 50% Desktop Width */}
           <div className="w-full flex flex-col justify-center space-y-3.5 xl:space-y-4">
@@ -73,7 +73,7 @@ export default function Home() {
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-3xl sm:text-4xl lg:text-[36px] xl:text-[42px] 2xl:text-[46px] font-black text-slate-900 tracking-tight leading-[1.14]">
+            <h1 className="text-2xl sm:text-4xl lg:text-[36px] xl:text-[42px] 2xl:text-[46px] font-black text-slate-900 tracking-tight leading-[1.14]">
               {t('home.heroTitle1')} <br />
               <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
                 {t('home.heroTitle2')}
@@ -223,7 +223,7 @@ export default function Home() {
               <img
                 src={heroVillageImg}
                 alt="GramSetu AI Smart Rural Civic Intelligence System"
-                className="block w-auto h-auto max-h-[min(600px,calc(100vh-140px))] max-w-full object-cover rounded-3xl xl:rounded-[36px] group-hover:scale-[1.01] transition-transform duration-300"
+                className="block w-full sm:w-auto h-auto max-h-[280px] sm:max-h-[420px] lg:max-h-[min(600px,calc(100vh-140px))] max-w-full object-cover rounded-3xl xl:rounded-[36px] group-hover:scale-[1.01] transition-transform duration-300"
               />
             </div>
           </div>
