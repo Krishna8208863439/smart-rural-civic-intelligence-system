@@ -1,0 +1,21 @@
+{
+  "name": "smart-rural-civic-intelligence-system",
+  "version": "1.0.0",
+  "description": "Smart Rural Civic Intelligence System (SRCI)",
+  "scripts": {
+    "backend": "cd backend && npm run dev",
+    "frontend": "cd frontend && npm run dev",
+    "seed": "cd backend && npm run seed",
+    "test": "cd backend && npm test",
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install"
+  },
+  "keywords": [
+    "rural-governance",
+    "civic-tech",
+    "smart-village",
+    "ai",
+    "intelligence"
+  ],
+  "author": "SRCI Team",
+  "license": "ISC"
+}
