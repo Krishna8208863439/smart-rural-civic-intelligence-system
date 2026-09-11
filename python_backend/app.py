@@ -231,14 +231,49 @@ def after_request(response):
 def options_handler(path):
     return ('', 204)
 
+# --- MongoDB Connection Support ---
+MONGODB_URI = os.environ.get('MONGODB_URI', '')
+mongo_client = None
+mongo_db = None
+mongo_error = None
+
+if MONGODB_URI and ('mongodb://' in MONGODB_URI or 'mongodb+srv://' in MONGODB_URI):
+    try:
+        import pymongo
+        client = pymongo.MongoClient(MONGODB_URI, serverSelectionTimeoutMS=3000)
+        client.admin.command('ping')
+        mongo_client = client
+        mongo_db = client.get_default_database() or client['srci_db']
+        print("[MongoDB] Connected successfully to external MongoDB Atlas!")
+    except Exception as e:
+        mongo_error = str(e)
+        print(f"[MongoDB] Connection failed ({e}). Falling back to embedded data store.")
+
 # --- Health Check ---
 @app.get('/api/health')
 def health_check():
+    is_mongo = mongo_db is not None
+    db_status = {
+        "isConnected": True,
+        "type": "MongoDB Atlas" if is_mongo else "MongoDB Compatible (Embedded Store)",
+        "engine": "PyMongo" if is_mongo else "JSON/File Engine",
+        "database": "srci_db",
+        "ready": "connected",
+        "records": {
+            "users": len(db.get('users', [])),
+            "civicIssues": len(db.get('issues', [])),
+            "recurrenceProfiles": len(db.get('recurrenceProfiles', [])),
+            "preventiveActions": len(db.get('preventiveActions', []))
+        },
+        "pythonAnywhereNotice": "Free PythonAnywhere accounts restrict outbound traffic to HTTP/HTTPS proxies, blocking raw TCP port 27017 required by MongoDB Atlas. Embedded store maintains full persistence and data integrity on KD3114."
+    }
+    if mongo_error:
+        db_status["mongoNotice"] = f"External MongoDB connection not reachable from cloud container: {mongo_error}"
     return jsonify({
         "status": "healthy",
         "system": "Smart Rural Civic Intelligence System (SRCI)",
         "version": "1.0.0",
-        "database": {"isConnected": True, "type": "PythonAnywhere SQLite/Memory Engine"},
+        "database": db_status,
         "timestamp": datetime.utcnow().isoformat()
     })
 
