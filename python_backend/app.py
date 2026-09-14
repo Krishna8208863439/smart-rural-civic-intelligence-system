@@ -6,8 +6,12 @@ import hmac
 import hashlib
 import base64
 import re
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from flask import Flask, request, jsonify, send_from_directory, send_file
+
+def utc_now_iso():
+    return datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+
 
 # Initialize Flask
 app = Flask(__name__, static_folder=None)
@@ -640,8 +644,8 @@ def create_issue():
         },
         "upvotes": 0,
         "downvotes": 0,
-        "createdAt": datetime.utcnow().isoformat(),
-        "updatedAt": datetime.utcnow().isoformat()
+        "createdAt": utc_now_iso(),
+        "updatedAt": utc_now_iso()
     }
     db['issues'].insert(0, new_issue)
 
@@ -657,8 +661,8 @@ def create_issue():
         "userName": user.get('name', 'Citizen'),
         "userRole": user.get('role', 'citizen'),
         "comment": f"Issue reported in {category} category.",
-        "timestamp": datetime.utcnow().isoformat(),
-        "createdAt": datetime.utcnow().isoformat()
+        "timestamp": utc_now_iso(),
+        "createdAt": utc_now_iso()
     })
 
     save_data()
@@ -681,7 +685,30 @@ def update_issue_location(issue_id):
         if 'location' not in issue:
             issue['location'] = {}
         issue['location']['coordinates'] = [lng, lat]
-        issue['updatedAt'] = datetime.utcnow().isoformat()
+        if data.get('address'):
+            issue['location']['address'] = data.get('address')
+        if data.get('landmark'):
+            issue['location']['landmark'] = data.get('landmark')
+        
+        now_ts = utc_now_iso()
+        issue['updatedAt'] = now_ts
+
+        user = get_current_user() or next((u for u in db['users'] if u.get('role') == 'admin'), db['users'][0])
+        hist_id = hashlib.md5(f"loc_{issue_id}_{time.time()}".encode('utf-8')).hexdigest()[:24]
+        db['issueHistories'].insert(0, {
+            "_id": hist_id,
+            "issueId": str(issue_id),
+            "eventType": "LOCATION_UPDATED",
+            "previousState": issue.get('status', 'NEW'),
+            "newState": issue.get('status', 'NEW'),
+            "userId": str(user.get('_id')),
+            "userName": user.get('name', 'Citizen'),
+            "userRole": user.get('role', 'citizen'),
+            "comment": f"Accurate live location updated to {lat:.5f}°N, {lng:.5f}°E ({issue['location'].get('address', 'Pinned Spot')}).",
+            "timestamp": now_ts,
+            "createdAt": now_ts
+        })
+
         save_data()
         return jsonify({"success": True, "issue": populate_issue(issue)})
     except Exception as e:

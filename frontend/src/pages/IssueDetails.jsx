@@ -8,6 +8,8 @@ import PriorityBadge from '../components/PriorityBadge';
 import ReliabilityBadge from '../components/ReliabilityBadge';
 import { getAiWorkerRecommendation } from '../utils/aiWorkerMatcher';
 import { translateData, translateCategory, translateReliability, translatePriority, translateAuditType } from '../utils/translateData';
+import { formatDate } from '../utils/formatDate';
+import { getAccurateLivePosition, reverseGeocodeCoords } from '../utils/geolocation';
 import {
 
   MapPin,
@@ -157,6 +159,10 @@ export default function IssueDetails() {
 
   const [liveUserCoords, setLiveUserCoords] = useState(null); // [lat, lng]
   const [liveAccuracy, setLiveAccuracy] = useState(null); // meters
+  const [liveTiming, setLiveTiming] = useState('');
+  const [liveAddress, setLiveAddress] = useState('');
+  const [liveSource, setLiveSource] = useState('');
+  const [detectionStatus, setDetectionStatus] = useState('');
   const [detectingLive, setDetectingLive] = useState(false);
   const [isLiveTracking, setIsLiveTracking] = useState(false);
   const [liveError, setLiveError] = useState('');
@@ -182,53 +188,51 @@ export default function IssueDetails() {
     return Math.round(R * c);
   };
 
-  const handleStartLiveTracking = () => {
+  const handleStartLiveTracking = async () => {
     setLiveError('');
-    if (!navigator.geolocation) {
-      setLiveError('Geolocation is not supported by your browser.');
-      return;
-    }
     setDetectingLive(true);
     setIsLiveTracking(true);
+    setDetectionStatus('Acquiring high-precision live satellite fix...');
 
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        const acc = Math.round(pos.coords.accuracy);
-        setLiveUserCoords([lat, lng]);
-        setLiveAccuracy(acc);
-        setMapCenter([lat, lng]);
-        setDetectingLive(false);
-      },
-      (err) => {
-        console.warn('Geolocation error:', err);
-        const base = (issue?.location?.coordinates && Array.isArray(issue.location.coordinates))
+    try {
+      const result = await getAccurateLivePosition({
+        onStatusChange: (statusMsg) => setDetectionStatus(statusMsg),
+        defaultCoords: (issue?.location?.coordinates && Array.isArray(issue.location.coordinates))
           ? [issue.location.coordinates[1], issue.location.coordinates[0]]
-          : [18.5204, 73.8567];
-        const simLat = base[0] + (Math.random() - 0.5) * 0.0006;
-        const simLng = base[1] + (Math.random() - 0.5) * 0.0006;
-        setLiveUserCoords([simLat, simLng]);
-        setLiveAccuracy(5);
-        setMapCenter([simLat, simLng]);
-        setDetectingLive(false);
-        setLiveError('Browser GPS restricted: using high-precision live satellite fix.');
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-    );
+          : [16.74064, 74.38409]
+      });
 
-    if (watchIdRef.current) navigator.geolocation.clearWatch(watchIdRef.current);
-    watchIdRef.current = navigator.geolocation.watchPosition(
-      (pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        const acc = Math.round(pos.coords.accuracy);
-        setLiveUserCoords([lat, lng]);
-        setLiveAccuracy(acc);
-      },
-      (err) => console.warn('Geolocation watch error:', err),
-      { enableHighAccuracy: true, maximumAge: 2000, timeout: 15000 }
-    );
+      setLiveUserCoords([result.lat, result.lng]);
+      setLiveAccuracy(result.accuracy);
+      setLiveTiming(result.timing.time);
+      setLiveSource(result.source);
+      if (result.addressData?.address) {
+        setLiveAddress(result.addressData.address);
+      }
+      setMapCenter([result.lat, result.lng]);
+    } catch (err) {
+      console.warn('Live location error:', err);
+      setLiveError('Live GPS search timed out. You can click "🎯 Adjust Pin on Map" to pinpoint your exact spot on the satellite map.');
+    } finally {
+      setDetectingLive(false);
+      setDetectionStatus('');
+    }
+
+    if (navigator.geolocation) {
+      if (watchIdRef.current) navigator.geolocation.clearWatch(watchIdRef.current);
+      watchIdRef.current = navigator.geolocation.watchPosition(
+        (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          const acc = Math.round(pos.coords.accuracy);
+          setLiveUserCoords([lat, lng]);
+          setLiveAccuracy(acc);
+          setLiveTiming(new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }));
+        },
+        (err) => console.warn('Geolocation watch error:', err),
+        { enableHighAccuracy: true, maximumAge: 3000, timeout: 15000 }
+      );
+    }
   };
 
   const handleStopLiveTracking = () => {
@@ -251,6 +255,20 @@ export default function IssueDetails() {
     handleStartLiveTracking();
   };
 
+  const handlePinAdjust = async (newCoords) => {
+    setCustomPinCoords(newCoords);
+    setMapCenter(newCoords);
+    setLiveTiming(new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }));
+    try {
+      const rev = await reverseGeocodeCoords(newCoords[0], newCoords[1]);
+      if (rev?.address) {
+        setLiveAddress(rev.address);
+      }
+    } catch (e) {
+      console.warn('Reverse geocode error on adjust:', e);
+    }
+  };
+
   useEffect(() => {
     return () => {
       if (watchIdRef.current) navigator.geolocation.clearWatch(watchIdRef.current);
@@ -269,12 +287,14 @@ export default function IssueDetails() {
       const res = await api.put(`/issues/${id}/location`, {
         latitude: lat,
         longitude: lng,
+        address: liveAddress || undefined,
+        landmark: liveAddress ? liveAddress.split(',')[0] : undefined,
       });
       setIssue(res.data.issue);
       setCustomPinCoords(null);
       setIsPinAdjustMode(false);
-      setSaveLocationSuccess('✓ Accurate live pin saved successfully to Gram Panchayat records!');
-      setTimeout(() => setSaveLocationSuccess(''), 4000);
+      setSaveLocationSuccess('✓ Accurate live pin & timing saved successfully to Gram Panchayat records!');
+      setTimeout(() => setSaveLocationSuccess(''), 5000);
       await fetchIssueData();
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to update live pin location');
@@ -513,10 +533,13 @@ export default function IssueDetails() {
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
               {translateData(issue.title, i18n.language)}
             </h1>
-            <div className="flex items-center space-x-3 text-xs text-slate-500 mt-2">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 mt-2">
               <span>{t('common.reportedBy', { name: issue.createdBy?.name || t('common.citizen') })}</span>
               <span>•</span>
-              <span>{new Date(issue.createdAt).toLocaleDateString()}</span>
+              <span className="flex items-center space-x-1.5 font-medium text-slate-700">
+                <Clock className="w-3.5 h-3.5 text-emerald-600 inline" />
+                <span>Reported: {formatDate(issue.createdAt)}</span>
+              </span>
               <span>•</span>
               <span className="font-mono text-slate-400">{t('common.id')}: #{issue._id.slice(-6)}</span>
             </div>
@@ -683,6 +706,12 @@ export default function IssueDetails() {
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                     <span>Accurate Live Pin: {mapPos[0].toFixed(5)}°N, {mapPos[1].toFixed(5)}°E</span>
                   </div>
+                  {issue.updatedAt && (
+                    <div className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-[11px] font-medium">
+                      <Clock className="w-3 h-3 text-slate-400" />
+                      <span>Pin Updated: {formatDate(issue.updatedAt)}</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -696,7 +725,7 @@ export default function IssueDetails() {
                   className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white shadow-xs transition cursor-pointer disabled:opacity-60"
                 >
                   <Navigation className={`w-3.5 h-3.5 ${detectingLive ? 'animate-spin' : ''}`} />
-                  <span>{detectingLive ? 'Detecting Live Pin...' : '📍 Detect / Add Live Pin'}</span>
+                  <span>{detectingLive ? (detectionStatus || 'Detecting Live Pin...') : '📍 Detect / Add Live Pin'}</span>
                 </button>
 
                 {/* 2. Toggle Fine-Tune / Adjust Pin Mode */}
@@ -747,24 +776,45 @@ export default function IssueDetails() {
                 </div>
               )}
 
-              {/* Live User Distance & Save Prompt */}
+              {/* Live User Distance, Accurate Timing & Save Prompt */}
               {liveUserCoords && (
-                <div className="p-3 rounded-2xl bg-blue-50/80 border border-blue-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                  <div className="space-y-0.5">
-                    <div className="font-bold text-blue-900 flex items-center space-x-1.5">
-                      <span className="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
+                <div className="p-3.5 rounded-2xl bg-gradient-to-r from-blue-50/90 to-sky-50/90 border border-blue-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs">
+                  <div className="space-y-1">
+                    <div className="font-bold text-blue-900 flex flex-wrap items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-ping"></span>
                       <span>Accurate Live GPS Pin Detected ({liveUserCoords[0].toFixed(5)}°N, {liveUserCoords[1].toFixed(5)}°E)</span>
+                      {liveSource && (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+                          {liveSource}
+                        </span>
+                      )}
                     </div>
-                    <div className="text-[11px] text-blue-700">
-                      GPS Precision: ±{liveAccuracy || 4}m • Ground Distance: {getGroundDistance(liveUserCoords[0], liveUserCoords[1], mapPos[0], mapPos[1])} meters from incident spot
+                    <div className="text-[11px] text-blue-700 flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <span>GPS Precision: ±{liveAccuracy || 4}m</span>
+                      <span>•</span>
+                      <span>Ground Distance: {getGroundDistance(liveUserCoords[0], liveUserCoords[1], mapPos[0], mapPos[1])}m from incident spot</span>
+                      {liveTiming && (
+                        <>
+                          <span>•</span>
+                          <span className="font-semibold text-blue-900 flex items-center space-x-1">
+                            <Clock className="w-3 h-3 inline text-blue-600" />
+                            <span>Live Lock Timing: {liveTiming}</span>
+                          </span>
+                        </>
+                      )}
                     </div>
+                    {liveAddress && (
+                      <div className="text-[11px] text-slate-600 font-medium">
+                        📍 {liveAddress}
+                      </div>
+                    )}
                   </div>
 
                   <button
                     type="button"
                     onClick={() => handleSaveLivePin(liveUserCoords)}
                     disabled={savingLocation}
-                    className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-700 hover:bg-emerald-800 text-white shadow-xs transition self-start sm:self-auto cursor-pointer"
+                    className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-emerald-700 hover:bg-emerald-800 text-white shadow-md transition self-start sm:self-auto cursor-pointer"
                   >
                     <Save className="w-3.5 h-3.5" />
                     <span>{savingLocation ? 'Saving...' : '💾 Set as Accurate Issue Pin'}</span>
@@ -774,22 +824,36 @@ export default function IssueDetails() {
 
               {/* Adjusted Pin Banner */}
               {customPinCoords && (
-                <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
-                  <div>
+                <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs">
+                  <div className="space-y-1">
                     <div className="font-bold text-amber-900 flex items-center space-x-1.5">
                       <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
                       <span>New Custom Accurate Pin: {customPinCoords[0].toFixed(5)}°N, {customPinCoords[1].toFixed(5)}°E</span>
                     </div>
-                    <div className="text-[11px] text-amber-700">
-                      Shifted by {getGroundDistance(customPinCoords[0], customPinCoords[1], mapPos[0], mapPos[1])}m from original reported spot
+                    <div className="text-[11px] text-amber-700 flex flex-wrap items-center gap-x-2">
+                      <span>Shifted by {getGroundDistance(customPinCoords[0], customPinCoords[1], mapPos[0], mapPos[1])}m from original spot</span>
+                      {liveTiming && (
+                        <>
+                          <span>•</span>
+                          <span className="font-semibold text-amber-900 flex items-center space-x-1">
+                            <Clock className="w-3 h-3 inline text-amber-700" />
+                            <span>Adjust Timing: {liveTiming}</span>
+                          </span>
+                        </>
+                      )}
                     </div>
+                    {liveAddress && (
+                      <div className="text-[11px] text-amber-800 font-medium">
+                        📍 {liveAddress}
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex items-center space-x-2">
                     <button
                       type="button"
                       onClick={() => setCustomPinCoords(null)}
-                      className="px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition cursor-pointer"
+                      className="px-3 py-1.5 rounded-xl text-xs font-semibold bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 transition cursor-pointer"
                     >
                       Cancel
                     </button>
@@ -873,10 +937,7 @@ export default function IssueDetails() {
                   <MapPanController center={mapCenter} />
                   <MapPinClickHandler
                     isAdjustMode={isPinAdjustMode}
-                    onPinAdjust={(newCoords) => {
-                      setCustomPinCoords(newCoords);
-                      setMapCenter(newCoords);
-                    }}
+                    onPinAdjust={handlePinAdjust}
                   />
 
                   {/* 1. Problem Incident Pin */}

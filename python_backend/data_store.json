@@ -216,15 +216,15 @@
       "location": {
         "type": "Point",
         "coordinates": [
-          73.8523,
-          18.5189
+          74.38409,
+          16.74064
         ],
-        "address": "Water Tank Hill Road, Ward 3",
-        "landmark": "Near Gram Panchayat Water Reservoir",
+        "address": "Bhosale Galli, Chandoli",
+        "landmark": "Bhosale Galli",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 1"
       },
-      "status": "UNDER ACTION",
+      "status": "VERIFIED RESOLVED",
       "priority": {
         "score": 58,
         "level": "Medium",
@@ -239,7 +239,7 @@
       },
       "createdBy": "6aa3c5dd76dd8149601cc83c",
       "assignedWorker": "6aa3cd29807f4547b549bf96",
-      "assignedAt": "2026-09-10T09:11:58.470Z",
+      "assignedAt": "2026-09-14T15:19:20.624965",
       "reliabilityScore": 78,
       "reliabilityLevel": "High",
       "reliabilityFactors": {
@@ -316,9 +316,9 @@
         }
       ],
       "communityValidationStats": {
-        "confirms": 4,
-        "stillExists": 0,
-        "resolved": 0
+        "confirms": 7,
+        "stillExists": 3,
+        "resolved": 3
       },
       "voiceTranscript": "",
       "completionDetails": {
@@ -327,10 +327,10 @@
         "completedAt": null
       },
       "adminVerification": {
-        "verifiedBy": null,
-        "verifiedAt": null,
-        "notes": "",
-        "forwardedToCitizen": false
+        "verifiedBy": "6aa3c76afb133c6389a695e0",
+        "verifiedAt": "2026-09-14T15:19:20.655650",
+        "notes": "Inspected and approved by Admin",
+        "forwardedToCitizen": true
       },
       "citizenFeedback": {
         "rating": null,
@@ -338,8 +338,8 @@
         "comment": "",
         "submittedAt": null
       },
-      "resolvedAt": null,
-      "verifiedAt": null,
+      "resolvedAt": "2026-09-14T15:19:20.636613",
+      "verifiedAt": "2026-09-14T15:19:20.655629",
       "aiDetection": {
         "detectedCategory": "",
         "confidence": 0,
@@ -350,9 +350,10 @@
       },
       "isPublic": true,
       "createdAt": "2026-09-10T09:11:58.470Z",
-      "updatedAt": "2026-09-11T09:43:05.123Z",
+      "updatedAt": "2026-09-14T15:23:07.126Z",
       "progressNotes": [],
-      "__v": 0
+      "__v": 0,
+      "corroborationCount": 3
     },
     {
       "_id": "6aa3c5de76dd8149601cc874",
@@ -5397,6 +5398,136 @@
   ],
   "issueHistories": [
     {
+      "_id": "5bf17a1815422924fc24d0b3",
+      "issueId": "6aa3c5de76dd8149601cc865",
+      "eventType": "LOCATION_UPDATED",
+      "previousState": "VERIFIED RESOLVED",
+      "newState": "VERIFIED RESOLVED",
+      "userId": "6aa3c76afb133c6389a695e0",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "comment": "Accurate live location updated to 16.74064\u00b0N, 74.38409\u00b0E (Bhosale Galli, Chandoli).",
+      "timestamp": "2026-09-14T15:23:07.126Z",
+      "createdAt": "2026-09-14T15:23:07.126Z"
+    },
+    {
+      "_id": "70b51a20d331326c8f3603cc",
+      "issueId": "6aa3c5de76dd8149601cc865",
+      "eventType": "ADMIN_VERIFIED",
+      "previousState": "ACTION COMPLETED",
+      "newState": "VERIFIED RESOLVED",
+      "userId": "6aa3c76afb133c6389a695e0",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "comment": "Resolution verified and published to citizen. Admin Notes: \"Inspected and approved by Admin\"",
+      "timestamp": "2026-09-14T15:19:20.655679",
+      "createdAt": "2026-09-14T15:19:20.655684"
+    },
+    {
+      "_id": "63b05c01e9fe8effc5f76e13",
+      "issueId": "6aa3c5de76dd8149601cc865",
+      "eventType": "STATUS_CHANGE",
+      "previousState": "VERIFIED RESOLVED",
+      "newState": "ACTION COMPLETED",
+      "userId": "6aa3c76afb133c6389a695e0",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "comment": "Work finished",
+      "timestamp": "2026-09-14T15:19:20.636630",
+      "createdAt": "2026-09-14T15:19:20.636634"
+    },
+    {
+      "_id": "8550b88cd9370dc5bfd9d108",
+      "issueId": "6aa3c5de76dd8149601cc865",
+      "eventType": "WORKER_ASSIGNED",
+      "previousState": "VERIFIED RESOLVED",
+      "newState": "VERIFIED RESOLVED",
+      "userId": "6aa3c76afb133c6389a695e0",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "comment": "Dispatched to KD (Field Worker Lead).",
+      "timestamp": "2026-09-14T15:19:20.624992",
+      "createdAt": "2026-09-14T15:19:20.624995"
+    },
+    {
+      "_id": "eae3ee92ff1faea521fa0b9b",
+      "issueId": "6aa3c5de76dd8149601cc865",
+      "eventType": "ADMIN_VERIFIED",
+      "previousState": "ACTION COMPLETED",
+      "newState": "VERIFIED RESOLVED",
+      "userId": "6aa3c76afb133c6389a695e0",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "comment": "Resolution verified and published to citizen. Admin Notes: \"Inspected and approved by Admin\"",
+      "timestamp": "2026-09-11T15:29:55.126723",
+      "createdAt": "2026-09-11T15:29:55.126730"
+    },
+    {
+      "_id": "cf8a2b69e575dd35b3a474e3",
+      "issueId": "6aa3c5de76dd8149601cc865",
+      "eventType": "STATUS_CHANGE",
+      "previousState": "VERIFIED RESOLVED",
+      "newState": "ACTION COMPLETED",
+      "userId": "6aa3c76afb133c6389a695e0",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "comment": "Work finished",
+      "timestamp": "2026-09-11T15:29:55.090340",
+      "createdAt": "2026-09-11T15:29:55.090347"
+    },
+    {
+      "_id": "5e904eab912809ae89e7aaf9",
+      "issueId": "6aa3c5de76dd8149601cc865",
+      "eventType": "WORKER_ASSIGNED",
+      "previousState": "VERIFIED RESOLVED",
+      "newState": "VERIFIED RESOLVED",
+      "userId": "6aa3c76afb133c6389a695e0",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "comment": "Dispatched to KD (Field Worker Lead).",
+      "timestamp": "2026-09-11T15:29:55.066166",
+      "createdAt": "2026-09-11T15:29:55.066173"
+    },
+    {
+      "_id": "075bd8240c4bee0ed24573d6",
+      "issueId": "6aa3c5de76dd8149601cc865",
+      "eventType": "ADMIN_VERIFIED",
+      "previousState": "ACTION COMPLETED",
+      "newState": "VERIFIED RESOLVED",
+      "userId": "6aa3c76afb133c6389a695e0",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "comment": "Resolution verified and published to citizen. Admin Notes: \"Inspected and approved by Admin\"",
+      "timestamp": "2026-09-11T15:16:24.581154",
+      "createdAt": "2026-09-11T15:16:24.581157"
+    },
+    {
+      "_id": "d6de03d57b534a71f932ff66",
+      "issueId": "6aa3c5de76dd8149601cc865",
+      "eventType": "STATUS_CHANGE",
+      "previousState": "UNDER ACTION",
+      "newState": "ACTION COMPLETED",
+      "userId": "6aa3c76afb133c6389a695e0",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "comment": "Work finished",
+      "timestamp": "2026-09-11T15:16:24.569531",
+      "createdAt": "2026-09-11T15:16:24.569534"
+    },
+    {
+      "_id": "bf91ac0cc924caa7943ec5c7",
+      "issueId": "6aa3c5de76dd8149601cc865",
+      "eventType": "WORKER_ASSIGNED",
+      "previousState": "UNDER ACTION",
+      "newState": "UNDER ACTION",
+      "userId": "6aa3c76afb133c6389a695e0",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "comment": "Dispatched to KD (Field Worker Lead).",
+      "timestamp": "2026-09-11T15:16:24.558063",
+      "createdAt": "2026-09-11T15:16:24.558066"
+    },
+    {
       "_id": "6aa3c5de76dd8149601cc86e",
       "issueId": "6aa3c5de76dd8149601cc865",
       "eventType": "CREATED",
@@ -7332,6 +7463,114 @@
       "createdAt": "2026-09-11T09:23:19.342Z",
       "updatedAt": "2026-09-11T09:25:08.612Z",
       "__v": 0
+    },
+    {
+      "_id": "45e7e4a32fedf05c38ce3d08",
+      "issueId": "6aa3c5de76dd8149601cc865",
+      "sourceUser": "6aa3c76afb133c6389a695e0",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "response": "CONFIRM",
+      "validationType": "CONFIRM",
+      "notes": "Citizen community verification vote",
+      "comment": "Citizen community verification vote",
+      "createdAt": "2026-09-11T15:16:24.523346"
+    },
+    {
+      "_id": "156d9b9787d486260104a256",
+      "issueId": "6aa3c5de76dd8149601cc865",
+      "sourceUser": "6aa3c76afb133c6389a695e0",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "response": "STILL_EXISTS",
+      "validationType": "STILL_EXISTS",
+      "notes": "Citizen community verification vote",
+      "comment": "Citizen community verification vote",
+      "createdAt": "2026-09-11T15:16:24.534472"
+    },
+    {
+      "_id": "ab7d8d0535cf6b2ea1b39fb3",
+      "issueId": "6aa3c5de76dd8149601cc865",
+      "sourceUser": "6aa3c76afb133c6389a695e0",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "response": "RESOLVED",
+      "validationType": "RESOLVED",
+      "notes": "Citizen community verification vote",
+      "comment": "Citizen community verification vote",
+      "createdAt": "2026-09-11T15:16:24.546226"
+    },
+    {
+      "_id": "61527ff4336abb134ff2072e",
+      "issueId": "6aa3c5de76dd8149601cc865",
+      "sourceUser": "6aa3c76afb133c6389a695e0",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "response": "CONFIRM",
+      "validationType": "CONFIRM",
+      "notes": "Citizen community verification vote",
+      "comment": "Citizen community verification vote",
+      "createdAt": "2026-09-11T15:29:55.003950"
+    },
+    {
+      "_id": "642519e2733c7080810255d3",
+      "issueId": "6aa3c5de76dd8149601cc865",
+      "sourceUser": "6aa3c76afb133c6389a695e0",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "response": "STILL_EXISTS",
+      "validationType": "STILL_EXISTS",
+      "notes": "Citizen community verification vote",
+      "comment": "Citizen community verification vote",
+      "createdAt": "2026-09-11T15:29:55.022485"
+    },
+    {
+      "_id": "11b7754841d7d8dfb4d01a41",
+      "issueId": "6aa3c5de76dd8149601cc865",
+      "sourceUser": "6aa3c76afb133c6389a695e0",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "response": "RESOLVED",
+      "validationType": "RESOLVED",
+      "notes": "Citizen community verification vote",
+      "comment": "Citizen community verification vote",
+      "createdAt": "2026-09-11T15:29:55.042608"
+    },
+    {
+      "_id": "f75f92f31fc94a6878978cce",
+      "issueId": "6aa3c5de76dd8149601cc865",
+      "sourceUser": "6aa3c76afb133c6389a695e0",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "response": "CONFIRM",
+      "validationType": "CONFIRM",
+      "notes": "Citizen community verification vote",
+      "comment": "Citizen community verification vote",
+      "createdAt": "2026-09-14T15:19:20.584070"
+    },
+    {
+      "_id": "157938c7217978b59ac8c77e",
+      "issueId": "6aa3c5de76dd8149601cc865",
+      "sourceUser": "6aa3c76afb133c6389a695e0",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "response": "STILL_EXISTS",
+      "validationType": "STILL_EXISTS",
+      "notes": "Citizen community verification vote",
+      "comment": "Citizen community verification vote",
+      "createdAt": "2026-09-14T15:19:20.598106"
+    },
+    {
+      "_id": "8f20564f10df0a265cc28c11",
+      "issueId": "6aa3c5de76dd8149601cc865",
+      "sourceUser": "6aa3c76afb133c6389a695e0",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "response": "RESOLVED",
+      "validationType": "RESOLVED",
+      "notes": "Citizen community verification vote",
+      "comment": "Citizen community verification vote",
+      "createdAt": "2026-09-14T15:19:20.611658"
     }
   ],
   "notifications": [

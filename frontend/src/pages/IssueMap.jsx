@@ -8,9 +8,10 @@ import { translateData, translateCategory } from '../utils/translateData';
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Filter, MapPin, Layers, Info, Navigation, Crosshair } from 'lucide-react';
+import { Filter, MapPin, Layers, Info, Navigation, Crosshair, Clock } from 'lucide-react';
 import { MAP_LAYERS, DEFAULT_MAP_LAYER } from '../maps/mapLayers';
 import MapLayerSelector from '../maps/MapLayerSelector';
+import { getAccurateLivePosition } from '../utils/geolocation';
 
 // Custom Colored DivIcons for Leaflet
 const createCustomIcon = (category, priorityLevel) => {
@@ -89,45 +90,34 @@ export default function IssueMap() {
   const [mapCenter, setMapCenter] = useState(null);
   const watchIdRef = useRef(null);
 
-  const handleStartLiveTracking = () => {
-    if (!navigator.geolocation) {
-      alert('Geolocation is not supported by your browser.');
-      return;
-    }
+  const handleStartLiveTracking = async () => {
     setIsLiveTracking(true);
 
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        const acc = Math.round(pos.coords.accuracy);
-        setLiveUserCoords([lat, lng]);
-        setLiveAccuracy(acc);
-        setMapCenter([lat, lng]);
-      },
-      (err) => {
-        console.warn('GPS error in map:', err);
-        const simLat = 18.5204 + (Math.random() - 0.5) * 0.0008;
-        const simLng = 73.8567 + (Math.random() - 0.5) * 0.0008;
-        setLiveUserCoords([simLat, simLng]);
-        setLiveAccuracy(5);
-        setMapCenter([simLat, simLng]);
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-    );
+    try {
+      const result = await getAccurateLivePosition({
+        defaultCoords: [16.74064, 74.38409],
+      });
+      setLiveUserCoords([result.lat, result.lng]);
+      setLiveAccuracy(result.accuracy);
+      setMapCenter([result.lat, result.lng]);
+    } catch (e) {
+      console.warn('Map live location error:', e);
+    }
 
-    if (watchIdRef.current) navigator.geolocation.clearWatch(watchIdRef.current);
-    watchIdRef.current = navigator.geolocation.watchPosition(
-      (pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        const acc = Math.round(pos.coords.accuracy);
-        setLiveUserCoords([lat, lng]);
-        setLiveAccuracy(acc);
-      },
-      (err) => console.warn('Watch error:', err),
-      { enableHighAccuracy: true, maximumAge: 2000, timeout: 15000 }
-    );
+    if (navigator.geolocation) {
+      if (watchIdRef.current) navigator.geolocation.clearWatch(watchIdRef.current);
+      watchIdRef.current = navigator.geolocation.watchPosition(
+        (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          const acc = Math.round(pos.coords.accuracy);
+          setLiveUserCoords([lat, lng]);
+          setLiveAccuracy(acc);
+        },
+        (err) => console.warn('Watch error:', err),
+        { enableHighAccuracy: true, maximumAge: 3000, timeout: 15000 }
+      );
+    }
   };
 
   const handleStopLiveTracking = () => {

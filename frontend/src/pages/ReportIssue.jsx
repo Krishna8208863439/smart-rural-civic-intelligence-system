@@ -21,7 +21,9 @@ import {
   Zap,
   Bot,
   RefreshCw,
+  Clock,
 } from 'lucide-react';
+import { getAccurateLivePosition } from '../utils/geolocation';
 
 
 
@@ -38,9 +40,13 @@ export default function ReportIssue() {
   const [landmark, setLandmark] = useState('');
   const [address, setAddress] = useState('');
   const [ward, setWard] = useState('Ward 1');
-  const [latitude, setLatitude] = useState('18.5204');
-  const [longitude, setLongitude] = useState('73.8567');
+  const [latitude, setLatitude] = useState('16.74064');
+  const [longitude, setLongitude] = useState('74.38409');
   const [gpsLoading, setGpsLoading] = useState(false);
+  const [gpsTiming, setGpsTiming] = useState('');
+  const [gpsAccuracy, setGpsAccuracy] = useState(null);
+  const [gpsSource, setGpsSource] = useState('');
+  const [gpsStatusMsg, setGpsStatusMsg] = useState('');
   const [files, setFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
 
@@ -389,38 +395,36 @@ export default function ReportIssue() {
     }, 1500);
   };
 
-  // Detect GPS
-  const handleDetectGPS = () => {
-    if (navigator.geolocation) {
-      setGpsLoading(true);
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const lat = pos.coords.latitude;
-          const lng = pos.coords.longitude;
-          setLatitude(lat.toFixed(5));
-          setLongitude(lng.toFixed(5));
-          setGpsLoading(false);
-          if (!address) {
-            setAddress(`Live GPS Pinned Location (${lat.toFixed(5)}°N, ${lng.toFixed(5)}°E)`);
-            setLandmark(`Live GPS Pin [${lat.toFixed(5)}, ${lng.toFixed(5)}]`);
-          }
-        },
-        (err) => {
-          console.warn('GPS error:', err);
-          // Fallback to village coordinates
-          setLatitude('18.5204');
-          setLongitude('73.8567');
-          setGpsLoading(false);
-          if (!address) {
-            setAddress('Village Center Area, Gram Panchayat Chandoli');
-            setLandmark('Central Village Square');
-          }
-        },
-        { enableHighAccuracy: true, timeout: 8000 }
-      );
-    } else {
-      setLatitude('18.5204');
-      setLongitude('73.8567');
+  // Detect GPS with Multi-tier Fallback & Precision Timing
+  const handleDetectGPS = async () => {
+    setGpsLoading(true);
+    setGpsStatusMsg('Locating live accurate GPS coordinates...');
+    try {
+      const result = await getAccurateLivePosition({
+        onStatusChange: (msg) => setGpsStatusMsg(msg),
+        defaultCoords: [16.74064, 74.38409],
+      });
+
+      const latStr = result.lat.toFixed(5);
+      const lngStr = result.lng.toFixed(5);
+      setLatitude(latStr);
+      setLongitude(lngStr);
+      setGpsAccuracy(result.accuracy);
+      setGpsTiming(result.timing.time);
+      setGpsSource(result.source);
+
+      if (result.addressData?.address) {
+        setAddress(result.addressData.address);
+        setLandmark(result.addressData.landmark || result.addressData.address);
+      } else if (!address) {
+        setAddress(`Live GPS Pinned Location (${latStr}°N, ${lngStr}°E)`);
+        setLandmark(`Live GPS Pin [${latStr}, ${lngStr}]`);
+      }
+    } catch (err) {
+      console.warn('GPS detection error:', err);
+    } finally {
+      setGpsLoading(false);
+      setGpsStatusMsg('');
     }
   };
 
@@ -830,10 +834,10 @@ export default function ReportIssue() {
                 type="button"
                 onClick={handleDetectGPS}
                 disabled={gpsLoading}
-                className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-blue-50 hover:bg-blue-100/90 active:bg-blue-200 text-blue-700 border border-blue-200 transition shadow-xs cursor-pointer"
+                className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-blue-50 hover:bg-blue-100/90 active:bg-blue-200 text-blue-700 border border-blue-200 transition shadow-xs cursor-pointer disabled:opacity-60"
               >
                 <Navigation className={`w-3.5 h-3.5 text-blue-600 ${gpsLoading ? 'animate-spin' : ''}`} />
-                <span>{gpsLoading ? 'Detecting GPS...' : 'Detect Live GPS Location'}</span>
+                <span>{gpsLoading ? (gpsStatusMsg || 'Detecting GPS...') : 'Detect Live GPS Location'}</span>
               </button>
             </div>
 
@@ -844,15 +848,33 @@ export default function ReportIssue() {
                 setAddress(e.target.value);
                 setLandmark(e.target.value);
               }}
-              placeholder="e.g. MG Road Metro Station Gate 3, Ward 12 (Example format)"
+              placeholder="e.g. MG Road, Near Gram Panchayat Office, Ward 1"
               required
               className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition font-medium"
             />
 
             {latitude && longitude && (
-              <div className="mt-2.5 flex items-center space-x-2 text-[11px] font-semibold text-emerald-700 bg-emerald-50/80 border border-emerald-200/90 px-3 py-1.5 rounded-xl">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>Accurate Live Pin Locked: {latitude}° N, {longitude}° E (High-Precision GPS Lock)</span>
+              <div className="mt-2.5 flex flex-wrap items-center gap-2 text-[11px] font-semibold text-emerald-800 bg-emerald-50/90 border border-emerald-200/90 px-3.5 py-2 rounded-xl">
+                <div className="flex items-center space-x-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span>Accurate Live Pin Locked: {latitude}° N, {longitude}° E</span>
+                </div>
+                {gpsAccuracy && (
+                  <span className="text-[10px] text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
+                    ±{gpsAccuracy}m precision
+                  </span>
+                )}
+                {gpsSource && (
+                  <span className="text-[10px] text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-full">
+                    {gpsSource}
+                  </span>
+                )}
+                {gpsTiming && (
+                  <span className="text-[10px] text-emerald-900 font-bold bg-white/80 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center space-x-1">
+                    <Clock className="w-3 h-3 inline text-emerald-600" />
+                    <span>Locked at {gpsTiming}</span>
+                  </span>
+                )}
               </div>
             )}
           </div>
