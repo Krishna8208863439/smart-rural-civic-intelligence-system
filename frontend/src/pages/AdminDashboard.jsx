@@ -50,6 +50,7 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
 
   const [data, setData] = useState(null);
+  const [workersList, setWorkersList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTableTab, setActiveTableTab] = useState('recent');
 
@@ -57,8 +58,12 @@ export default function AdminDashboard() {
     const fetchDashboard = async () => {
       try {
         setLoading(true);
-        const res = await api.get('/admin/dashboard');
+        const [res, workersRes] = await Promise.all([
+          api.get('/admin/dashboard'),
+          api.get('/workers').catch(() => ({ data: { workers: [] } })),
+        ]);
         setData(res.data);
+        setWorkersList(workersRes.data?.workers || []);
       } catch (err) {
         console.error('Admin dashboard error:', err);
       } finally {
@@ -139,8 +144,18 @@ export default function AdminDashboard() {
 
         <div className="flex flex-wrap items-center gap-2">
           <Link
+            to="/admin/workers"
+            className="px-4 py-2 rounded-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-sm transition flex items-center space-x-1.5"
+          >
+            <Users className="w-3.5 h-3.5 text-emerald-200" />
+            <span>Field Workers & Tasks</span>
+            <span className="px-1.5 py-0.5 rounded-full bg-white/20 text-[10px] font-black">
+              {workersList.length || 0}
+            </span>
+          </Link>
+          <Link
             to="/admin/issues"
-            className="px-4 py-2 rounded-full bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-xs shadow-sm transition"
+            className="px-4 py-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-semibold text-xs shadow-xs transition"
           >
             {t('adminDashboard.manageAllIssues')}
           </Link>
@@ -196,10 +211,17 @@ export default function AdminDashboard() {
           <div className="text-2xl font-black text-violet-600 mt-1">{kpis.highRecurrenceIssues}</div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-soft">
-          <div className="text-[10px] font-bold uppercase text-slate-500">{t('adminDashboard.activeWorkers')}</div>
-          <div className="text-2xl font-black text-teal-600 mt-1">{kpis.totalWorkers}</div>
-        </div>
+        <Link
+          to="/admin/workers"
+          className="p-4 rounded-2xl bg-white hover:bg-teal-50/50 border border-slate-200/80 hover:border-teal-300 shadow-soft transition group block cursor-pointer"
+        >
+          <div className="flex items-center justify-between text-[10px] font-bold uppercase text-slate-500 group-hover:text-teal-700">
+            <span>{t('adminDashboard.activeWorkers')}</span>
+            <ArrowRight className="w-3 h-3 text-teal-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+          <div className="text-2xl font-black text-teal-600 mt-1">{kpis.totalWorkers || workersList.length || 0}</div>
+          <div className="text-[9px] text-teal-700 font-bold mt-0.5">Manage Field Staff →</div>
+        </Link>
       </div>
 
       {/* Interactive Charts Grid */}
@@ -378,15 +400,34 @@ export default function AdminDashboard() {
                 {verificationIssues.length}
               </span>
             </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTableTab('workers')}
+              className={`px-4 py-2 rounded-2xl text-xs font-bold transition flex items-center space-x-2 ${
+                activeTableTab === 'workers'
+                  ? 'bg-emerald-700 text-white shadow-sm'
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+              }`}
+            >
+              <Users className="w-3.5 h-3.5" />
+              <span>Field Workers & Staff</span>
+              <span className="ml-1 px-2 py-0.5 rounded-full bg-black/20 text-[10px]">
+                {workersList.length}
+              </span>
+            </button>
           </div>
 
-          <Link
-            to="/admin/issues"
-            className="text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline flex items-center space-x-1"
-          >
-            <span>Manage All Issues & Dispatch Workers</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+          <div className="flex items-center space-x-3">
+            <Link
+              to="/admin/workers"
+              className="text-xs font-bold text-emerald-700 hover:text-emerald-800 hover:underline flex items-center space-x-1"
+            >
+              <Users className="w-3.5 h-3.5" />
+              <span>Manage Workers Portal</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
         </div>
 
         {/* Tab 1: Live Incoming Citizen Reports */}
@@ -587,6 +628,85 @@ export default function AdminDashboard() {
                         >
                           {issue.status === 'VERIFIED RESOLVED' ? 'View Verified' : '✓ Inspect & Verify'}
                         </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Tab 4: Field Workers & Operational Staff */}
+        {activeTableTab === 'workers' && (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-slate-100 text-slate-400 font-bold uppercase">
+                  <th className="pb-3">Worker ID</th>
+                  <th className="pb-3">Worker Name</th>
+                  <th className="pb-3">Role / Specialty</th>
+                  <th className="pb-3">Assigned Area</th>
+                  <th className="pb-3">Mobile</th>
+                  <th className="pb-3">Status</th>
+                  <th className="pb-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {workersList.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="py-8 text-center text-slate-400">
+                      No field workers registered yet.
+                      <div className="mt-3">
+                        <Link
+                          to="/admin/workers"
+                          className="inline-flex items-center px-4 py-2 rounded-xl bg-emerald-700 text-white font-bold text-xs hover:bg-emerald-800 shadow-sm transition"
+                        >
+                          + Register First Field Worker
+                        </Link>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  workersList.map((worker) => (
+                    <tr key={worker._id || worker.id} className="hover:bg-slate-50/80 transition">
+                      <td className="py-3.5 pr-3 font-mono font-bold text-emerald-700">
+                        {worker.workerId || 'GRAM-WKR-001'}
+                      </td>
+                      <td className="py-3.5 pr-3">
+                        <div className="font-bold text-slate-800">{worker.name}</div>
+                        <div className="text-[10px] text-slate-400">{worker.email}</div>
+                      </td>
+                      <td className="py-3.5 pr-3 text-slate-600">
+                        <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 font-medium text-[11px]">
+                          {worker.workerRole || 'General Maintenance'}
+                        </span>
+                      </td>
+                      <td className="py-3.5 pr-3 text-slate-600 font-medium">
+                        {worker.assignedArea || 'All Wards'}
+                      </td>
+                      <td className="py-3.5 pr-3 text-slate-600 font-mono text-[11px]">
+                        {worker.phone || '—'}
+                      </td>
+                      <td className="py-3.5 pr-3">
+                        <span
+                          className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                            worker.isActive !== false
+                              ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                              : 'bg-rose-100 text-rose-800 border border-rose-200'
+                          }`}
+                        >
+                          {worker.isActive !== false ? '● Active' : '○ Inactive'}
+                        </span>
+                      </td>
+                      <td className="py-3.5 text-right">
+                        <Link
+                          to="/admin/workers"
+                          className="px-3.5 py-1.5 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-bold text-xs border border-emerald-200 transition inline-flex items-center space-x-1"
+                        >
+                          <span>Manage Staff</span>
+                          <ArrowRight className="w-3 h-3" />
+                        </Link>
                       </td>
                     </tr>
                   ))
