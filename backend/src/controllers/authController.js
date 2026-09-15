@@ -78,26 +78,32 @@ exports.register = async (req, res) => {
   }
 };
 
-// @desc    Login user
+// @desc    Login user (Citizen, Admin, or Field Worker)
 // @route   POST /api/auth/login
 // @access  Public
 exports.login = async (req, res) => {
   try {
-    let { email, password } = req.body;
+    let { email, password, identifier, workerId } = req.body;
 
-    if (!email || !password) {
+    const loginId = (email || identifier || workerId || '').trim();
+
+    if (!loginId || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Please enter email and password',
+        message: 'Please enter your Email, Worker ID, or Mobile Number and Password',
       });
     }
 
-    const cleanEmail = email.trim().toLowerCase();
+    const cleanInput = loginId.toLowerCase();
 
-    // Check if user exists
-    let user = await User.findOne({ email: cleanEmail }).select('+passwordHash');
-    
-
+    // Check if user exists by email, workerId (case-insensitive), or phone number
+    let user = await User.findOne({
+      $or: [
+        { email: cleanInput },
+        { workerId: { $regex: new RegExp(`^${loginId}$`, 'i') } },
+        { phone: loginId },
+      ],
+    }).select('+passwordHash');
 
     if (!user) {
       return res.status(401).json({
@@ -121,7 +127,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Strict Admin verification: Only krishna@gmail.com is authorized to log in as Admin
+    // Strict Admin verification: Only authorized admin can log in as Admin
     const allowedAdminEmails = ['krishna@gmail.com'];
     if (user.role === 'admin' && !allowedAdminEmails.includes(user.email.toLowerCase())) {
       return res.status(403).json({
@@ -130,17 +136,13 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Strict Worker verification: Only kd@gmail.com is authorized to log in as Worker
-    const allowedWorkerEmails = ['kd@gmail.com'];
-    if (user.role === 'worker' && !allowedWorkerEmails.includes(user.email.toLowerCase())) {
-      return res.status(403).json({
-        success: false,
-        message: 'Access denied. Only authorized Field Worker (kd@gmail.com) can log in.',
-      });
+    // Record lastLogin timestamp for workers
+    if (user.role === 'worker') {
+      user.lastLogin = new Date();
+      await user.save({ validateBeforeSave: false });
     }
 
     const token = generateToken(user._id);
-
 
     res.status(200).json({
       success: true,
@@ -154,6 +156,11 @@ exports.login = async (req, res) => {
         language: user.language,
         phone: user.phone,
         specialization: user.specialization,
+        workerId: user.workerId || null,
+        assignedArea: user.assignedArea || 'Chandoli',
+        workerRole: user.workerRole || 'Field Worker',
+        mustChangePassword: user.mustChangePassword || false,
+        lastLogin: user.lastLogin || null,
       },
     });
   } catch (error) {
@@ -171,6 +178,9 @@ exports.login = async (req, res) => {
 exports.getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
     res.status(200).json({
       success: true,
       user: {
@@ -182,6 +192,11 @@ exports.getMe = async (req, res) => {
         language: user.language,
         phone: user.phone,
         specialization: user.specialization,
+        workerId: user.workerId || null,
+        assignedArea: user.assignedArea || 'Chandoli',
+        workerRole: user.workerRole || 'Field Worker',
+        mustChangePassword: user.mustChangePassword || false,
+        lastLogin: user.lastLogin || null,
       },
     });
   } catch (error) {
@@ -343,4 +358,45 @@ exports.resetPassword = async (req, res) => {
     });
   }
 };
+
+// @desc    Update / Change password (e.g. Worker first login or profile update)
+// @route   PUT /api/auth/update-password
+// @access  Private
+exports.updatePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password must be at least 6 characters long',
+      });
+    }
+
+    const user = await User.findById(req.user.id).select('+passwordHash');
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    if (currentPassword) {
+      const isMatch = await user.matchPassword(currentPassword);
+      if (!isMatch) {
+        return res.status(400).json({ success: false, message: 'Current password is incorrect' });
+      }
+    }
+
+    user.passwordHash = newPassword;
+    user.mustChangePassword = false;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Password updated successfully',
+    });
+  } catch (error) {
+    console.error('Update password error:', error);
+    res.status(500).json({ success: false, message: 'Server error updating password' });
+  }
+};
+
 

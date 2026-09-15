@@ -18,6 +18,8 @@ import CommunityValidationPage from './pages/CommunityValidationPage';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminIssues from './pages/AdminIssues';
 import WorkerDashboard from './pages/WorkerDashboard';
+import WorkerManagement from './pages/WorkerManagement';
+import WorkerLogin from './pages/WorkerLogin';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
@@ -55,6 +57,7 @@ function AppRoutes() {
             {/* Public Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/worker/login" element={<WorkerLogin />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
 
@@ -123,6 +126,14 @@ function AppRoutes() {
               element={
                 <ProtectedRoute allowedRoles={['admin']}>
                   <AdminIssues />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/workers"
+              element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <WorkerManagement />
                 </ProtectedRoute>
               }
             />

@@ -55,6 +55,37 @@ const UserSchema = new mongoose.Schema(
       enum: ['General', 'Sanitation & Waste', 'Roads & Works', 'Water Supply', 'Electrical & Lighting'],
       default: 'General',
     },
+    workerId: {
+      type: String,
+      unique: true,
+      sparse: true,
+      trim: true,
+    },
+    assignedArea: {
+      type: String,
+      default: 'Chandoli',
+      trim: true,
+    },
+    workerRole: {
+      type: String,
+      enum: [
+        'Field Worker',
+        'Sanitation Worker',
+        'Water Maintenance Worker',
+        'Road Maintenance Worker',
+        'Electrical/Streetlight Worker',
+        'General',
+      ],
+      default: 'Field Worker',
+    },
+    mustChangePassword: {
+      type: Boolean,
+      default: false,
+    },
+    lastLogin: {
+      type: Date,
+      default: null,
+    },
     resetPasswordOtp: {
       type: String,
       select: false,

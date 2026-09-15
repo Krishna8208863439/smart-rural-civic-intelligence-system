@@ -94,6 +94,18 @@ export default function Navbar() {
                   </Link>
 
                   <Link
+                    to="/admin/workers"
+                    className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 flex items-center space-x-1.5 ${
+                      isActive('/admin/workers')
+                        ? 'bg-white text-emerald-950 shadow-sm font-bold'
+                        : 'text-emerald-100 hover:text-white hover:bg-white/15'
+                    }`}
+                  >
+                    <Users className="w-3.5 h-3.5 shrink-0 text-cyan-300" />
+                    <span>{i18n.language === 'mr' ? 'क्षेत्रीय कर्मचारी' : i18n.language === 'hi' ? 'फील्ड कार्यकर्ता' : 'Field Workers'}</span>
+                  </Link>
+
+                  <Link
                     to="/memory"
                     className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 flex items-center space-x-1.5 ${
                       isActive('/memory')
@@ -427,6 +439,16 @@ export default function Navbar() {
                 >
                   <ListFilter className="w-4 h-4 text-teal-400" />
                   <span>{i18n.language === 'mr' ? 'कामांची यादी' : i18n.language === 'hi' ? 'कार्य सूची' : 'Dispatch Queue'}</span>
+                </Link>
+                <Link
+                  to="/admin/workers"
+                  onClick={handleNavClick}
+                  className={`flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition ${
+                    isActive('/admin/workers') ? 'bg-white text-emerald-950 shadow-sm' : 'text-emerald-100 hover:bg-white/10'
+                  }`}
+                >
+                  <Users className="w-4 h-4 text-cyan-400" />
+                  <span>{i18n.language === 'mr' ? 'क्षेत्रीय कर्मचारी' : i18n.language === 'hi' ? 'फील्ड कार्यकर्ता' : 'Field Workers'}</span>
                 </Link>
                 <Link
                   to="/memory"

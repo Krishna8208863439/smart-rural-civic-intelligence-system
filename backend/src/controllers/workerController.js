@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Issue = require('../models/Issue');
+const Task = require('../models/Task');
 const Evidence = require('../models/Evidence');
 const IssueHistory = require('../models/IssueHistory');
 const Notification = require('../models/Notification');
@@ -237,77 +238,282 @@ exports.uploadCompletionEvidence = async (req, res) => {
   }
 };
 
-// @desc    Get all workers with workload stats
+// Helper: Auto-generate sequential Worker ID (e.g. GRAM-WKR-001)
+async function generateUniqueWorkerId() {
+  const count = await User.countDocuments({ role: 'worker' });
+  let num = count + 1;
+  let candidate = `GRAM-WKR-${String(num).padStart(3, '0')}`;
+  while (await User.findOne({ workerId: candidate })) {
+    num += 1;
+    candidate = `GRAM-WKR-${String(num).padStart(3, '0')}`;
+  }
+  return candidate;
+}
+
+// Helper: Generate strong temporary password
+function generateStrongPassword() {
+  const prefixes = ['GramSetu', 'Chandoli', 'Karya', 'Seva'];
+  const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+  const randomDigits = Math.floor(1000 + Math.random() * 9000);
+  const specials = ['@', '#', '$'];
+  const special = specials[Math.floor(Math.random() * specials.length)];
+  return `${prefix}${special}${randomDigits}`;
+}
+
+// @desc    Get all workers with workload stats & filters
 // @route   GET /api/workers
 // @access  Private (Admin)
 exports.getAllWorkers = async (req, res) => {
   try {
-    const workers = await User.find({ role: 'worker' }).select('-passwordHash').lean();
+    const { status, role, assignedArea, search } = req.query;
 
-    // Attach current active workload count for each worker
+    let filter = { role: 'worker' };
+
+    if (status === 'Active') filter.isActive = true;
+    if (status === 'Inactive') filter.isActive = false;
+
+    if (role && role !== 'All') {
+      filter.$or = [{ workerRole: role }, { specialization: role }];
+    }
+
+    if (assignedArea && assignedArea !== 'All') {
+      filter.assignedArea = assignedArea;
+    }
+
+    if (search) {
+      const q = search.trim();
+      const regex = new RegExp(q, 'i');
+      filter.$and = filter.$and || [];
+      filter.$and.push({
+        $or: [{ name: regex }, { workerId: regex }, { email: regex }, { phone: regex }],
+      });
+    }
+
+    const workers = await User.find(filter).select('-passwordHash').sort({ createdAt: -1 }).lean();
+
+    const now = new Date();
+
+    // Attach workload stats from both Task model and Issue model
     const workersWithStats = await Promise.all(
       workers.map(async (w) => {
-        const activeTasks = await Issue.countDocuments({
+        // Active tasks count
+        const activeFromTasks = await Task.countDocuments({
+          workerId: w._id,
+          status: { $in: ['ASSIGNED', 'ACCEPTED', 'IN PROGRESS'] },
+        });
+        const activeFromIssues = await Issue.countDocuments({
           assignedWorker: w._id,
           status: { $in: ['ASSIGNED', 'UNDER ACTION'] },
         });
-        const completedTasks = await Issue.countDocuments({
+
+        // Completed tasks count
+        const completedFromTasks = await Task.countDocuments({
+          workerId: w._id,
+          status: { $in: ['COMPLETED', 'VERIFIED'] },
+        });
+        const completedFromIssues = await Issue.countDocuments({
           assignedWorker: w._id,
           status: { $in: ['ACTION COMPLETED', 'MONITORING', 'VERIFIED RESOLVED'] },
         });
+
+        // Overdue tasks count
+        const overdueTasks = await Task.countDocuments({
+          workerId: w._id,
+          status: { $in: ['ASSIGNED', 'ACCEPTED', 'IN PROGRESS'] },
+          deadline: { $lt: now, $ne: null },
+        });
+
+        const activeTasks = Math.max(activeFromTasks, activeFromIssues);
+        const completedTasks = Math.max(completedFromTasks, completedFromIssues);
+        const totalTasks = activeTasks + completedTasks;
+        const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 100;
+
         return {
           ...w,
+          workerId: w.workerId || `GRAM-WKR-${String(w._id).slice(-4).toUpperCase()}`,
+          assignedArea: w.assignedArea || 'Chandoli',
+          workerRole: w.workerRole || w.specialization || 'Field Worker',
           activeTasks,
           completedTasks,
+          overdueTasks,
+          completionRate,
+          lastLogin: w.lastLogin || null,
         };
       })
     );
 
+    // Summary counters for top cards
+    const totalWorkers = await User.countDocuments({ role: 'worker' });
+    const activeWorkers = await User.countDocuments({ role: 'worker', isActive: true });
+    const availableWorkers = workersWithStats.filter((w) => w.isActive && w.activeTasks === 0).length;
+    const workersOnTask = workersWithStats.filter((w) => w.isActive && w.activeTasks > 0).length;
+    const totalCompletedTasks = workersWithStats.reduce((sum, w) => sum + w.completedTasks, 0);
+
     res.status(200).json({
       success: true,
+      summary: {
+        totalWorkers,
+        activeWorkers,
+        availableWorkers,
+        workersOnTask,
+        completedTasks: totalCompletedTasks,
+      },
       workers: workersWithStats,
     });
   } catch (error) {
+    console.error('Get all workers error:', error);
     res.status(500).json({ success: false, message: 'Server error retrieving workers' });
   }
 };
 
-// @desc    Create / Add new field worker
+// @desc    Create / Add new field worker with auto Worker ID & Password Generation
 // @route   POST /api/workers
 // @access  Private (Admin)
 exports.addWorker = async (req, res) => {
   try {
-    const { name, email, password, phone, specialization, village } = req.body;
+    let { name, email, password, phone, assignedArea, workerRole, status, workerId } = req.body;
 
-    const exists = await User.findOne({ email: email.toLowerCase() });
-    if (exists) {
-      return res.status(400).json({ success: false, message: 'Email is already registered' });
+    // Validate name
+    if (!name || name.trim().length < 2) {
+      return res.status(400).json({ success: false, message: 'Please provide worker full name' });
     }
 
+    // Validate mobile number (10 digits)
+    const cleanPhone = (phone || '').trim().replace(/\D/g, '');
+    if (!cleanPhone || cleanPhone.length !== 10) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid 10-digit Indian mobile number',
+      });
+    }
+
+    // Validate email
+    const cleanEmail = (email || '').trim().toLowerCase();
+    const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+    if (!cleanEmail || !emailRegex.test(cleanEmail)) {
+      return res.status(400).json({ success: false, message: 'Please provide a valid email address' });
+    }
+
+    // Check duplicate email
+    const emailExists = await User.findOne({ email: cleanEmail });
+    if (emailExists) {
+      return res.status(400).json({ success: false, message: 'A user with this email already exists' });
+    }
+
+    // Check duplicate phone
+    const phoneExists = await User.findOne({ phone: cleanPhone });
+    if (phoneExists) {
+      return res.status(400).json({
+        success: false,
+        message: 'A user with this mobile number already exists',
+      });
+    }
+
+    // Generate or validate Worker ID
+    let finalWorkerId = (workerId || '').trim().toUpperCase();
+    if (!finalWorkerId) {
+      finalWorkerId = await generateUniqueWorkerId();
+    } else {
+      const idExists = await User.findOne({ workerId: finalWorkerId });
+      if (idExists) {
+        finalWorkerId = await generateUniqueWorkerId();
+      }
+    }
+
+    // Password generation: if blank or auto requested, generate strong temporary password
+    const temporaryPassword = password && password.trim().length >= 6 ? password.trim() : generateStrongPassword();
+
+    const allowedRoles = [
+      'Field Worker',
+      'Sanitation Worker',
+      'Water Maintenance Worker',
+      'Road Maintenance Worker',
+      'Electrical/Streetlight Worker',
+      'General',
+    ];
+    const selectedRole = allowedRoles.includes(workerRole) ? workerRole : 'Field Worker';
+
+    // Create worker record
     const worker = await User.create({
-      name,
-      email: email.toLowerCase(),
-      passwordHash: password || 'worker123',
+      name: name.trim(),
+      email: cleanEmail,
+      passwordHash: temporaryPassword,
       role: 'worker',
-      phone: phone || '',
-      specialization: specialization || 'General',
-      village: village || 'Gram Panchayat Chandoli',
+      phone: cleanPhone,
+      workerId: finalWorkerId,
+      assignedArea: assignedArea || 'Chandoli',
+      workerRole: selectedRole,
+      specialization: selectedRole,
+      isActive: status !== 'Inactive',
+      mustChangePassword: true,
     });
 
     res.status(201).json({
       success: true,
-      message: 'Worker registered successfully',
+      message: 'Worker account created successfully.',
       worker: {
         id: worker._id,
         name: worker.name,
+        workerId: worker.workerId,
+        mobile: worker.phone,
         email: worker.email,
-        phone: worker.phone,
-        specialization: worker.specialization,
-        role: worker.role,
+        temporaryPassword, // Returned for the one-time admin copy/send modal
+        assignedArea: worker.assignedArea,
+        workerRole: worker.workerRole,
+        status: worker.isActive ? 'Active' : 'Inactive',
       },
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error('Add worker error:', error);
+    res.status(500).json({ success: false, message: error.message || 'Server error creating worker' });
+  }
+};
+
+// @desc    Update worker profile
+// @route   PUT /api/workers/:id
+// @access  Private (Admin)
+exports.updateWorker = async (req, res) => {
+  try {
+    const { name, phone, email, assignedArea, workerRole, isActive } = req.body;
+    const worker = await User.findById(req.params.id);
+
+    if (!worker || worker.role !== 'worker') {
+      return res.status(404).json({ success: false, message: 'Worker not found' });
+    }
+
+    if (name) worker.name = name.trim();
+    if (phone) {
+      const cleanPhone = phone.trim().replace(/\D/g, '');
+      if (cleanPhone.length !== 10) {
+        return res.status(400).json({ success: false, message: 'Mobile number must be 10 digits' });
+      }
+      worker.phone = cleanPhone;
+    }
+    if (email) {
+      const cleanEmail = email.trim().toLowerCase();
+      const existing = await User.findOne({ email: cleanEmail, _id: { $ne: worker._id } });
+      if (existing) {
+        return res.status(400).json({ success: false, message: 'Email already in use' });
+      }
+      worker.email = cleanEmail;
+    }
+    if (assignedArea) worker.assignedArea = assignedArea;
+    if (workerRole) {
+      worker.workerRole = workerRole;
+      worker.specialization = workerRole;
+    }
+    if (typeof isActive === 'boolean') worker.isActive = isActive;
+
+    await worker.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Worker details updated successfully',
+      worker,
+    });
+  } catch (error) {
+    console.error('Update worker error:', error);
+    res.status(500).json({ success: false, message: 'Server error updating worker' });
   }
 };
 
@@ -331,5 +537,143 @@ exports.toggleWorkerStatus = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Server error toggling worker' });
+  }
+};
+
+// @desc    Admin reset worker password
+// @route   POST /api/workers/:id/reset-password
+// @access  Private (Admin)
+exports.resetWorkerPassword = async (req, res) => {
+  try {
+    const worker = await User.findById(req.params.id);
+    if (!worker || worker.role !== 'worker') {
+      return res.status(404).json({ success: false, message: 'Worker not found' });
+    }
+
+    const newTempPassword = req.body.password || generateStrongPassword();
+    worker.passwordHash = newTempPassword;
+    worker.mustChangePassword = true;
+    await worker.save();
+
+    res.status(200).json({
+      success: true,
+      message: `Temporary password generated for ${worker.name}`,
+      credentials: {
+        workerId: worker.workerId,
+        name: worker.name,
+        email: worker.email,
+        mobile: worker.phone,
+        temporaryPassword: newTempPassword,
+      },
+    });
+  } catch (error) {
+    console.error('Reset worker password error:', error);
+    res.status(500).json({ success: false, message: 'Server error resetting password' });
+  }
+};
+
+// @desc    Worker Activity & Monitoring metrics for Admin
+// @route   GET /api/workers/stats/activity
+// @access  Private (Admin)
+exports.getWorkerMonitoringActivity = async (req, res) => {
+  try {
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    const workers = await User.find({ role: 'worker' }).select('-passwordHash').lean();
+
+    const activeWorkers = workers.filter((w) => w.isActive).length;
+
+    // Tasks completed today
+    const completedTasksToday = await Task.countDocuments({
+      status: { $in: ['COMPLETED', 'VERIFIED'] },
+      completedAt: { $gte: startOfToday },
+    });
+
+    // Overdue tasks
+    const overdueTasks = await Task.countDocuments({
+      status: { $in: ['ASSIGNED', 'ACCEPTED', 'IN PROGRESS'] },
+      deadline: { $lt: now, $ne: null },
+    });
+
+    // Pending admin verification
+    const pendingVerification = await Task.countDocuments({
+      status: 'COMPLETED',
+    });
+
+    // Worker performance table & on-task computation
+    let workersCurrentlyOnTask = 0;
+    const workerPerformance = await Promise.all(
+      workers.map(async (w) => {
+        const assigned = await Task.countDocuments({ workerId: w._id });
+        const inProgress = await Task.countDocuments({
+          workerId: w._id,
+          status: { $in: ['ACCEPTED', 'IN PROGRESS'] },
+        });
+        const completed = await Task.countDocuments({
+          workerId: w._id,
+          status: { $in: ['COMPLETED', 'VERIFIED'] },
+        });
+        const overdue = await Task.countDocuments({
+          workerId: w._id,
+          status: { $in: ['ASSIGNED', 'ACCEPTED', 'IN PROGRESS'] },
+          deadline: { $lt: now, $ne: null },
+        });
+
+        if (inProgress > 0) workersCurrentlyOnTask++;
+
+        const completionRate = assigned > 0 ? Math.round((completed / assigned) * 100) : 100;
+
+        return {
+          workerId: w.workerId || `GRAM-WKR-${String(w._id).slice(-4).toUpperCase()}`,
+          name: w.name,
+          role: w.workerRole || w.specialization || 'Field Worker',
+          assignedArea: w.assignedArea || 'Chandoli',
+          assigned,
+          inProgress,
+          completed,
+          overdue,
+          completionRate,
+          isActive: w.isActive,
+        };
+      })
+    );
+
+    // Completion chart data (by civic role/category)
+    const roles = [
+      'Field Worker',
+      'Sanitation Worker',
+      'Water Maintenance Worker',
+      'Road Maintenance Worker',
+      'Electrical/Streetlight Worker',
+    ];
+    const taskCompletionChart = await Promise.all(
+      roles.map(async (r) => {
+        const count = await Task.countDocuments({
+          category: { $regex: new RegExp(r.split(' ')[0], 'i') },
+          status: { $in: ['COMPLETED', 'VERIFIED'] },
+        });
+        return {
+          name: r.replace(' Worker', '').replace(' Maintenance', ''),
+          completed: count,
+        };
+      })
+    );
+
+    res.status(200).json({
+      success: true,
+      activity: {
+        activeWorkers,
+        workersCurrentlyOnTask,
+        completedTasksToday,
+        overdueTasks,
+        pendingVerification,
+      },
+      workerPerformance,
+      taskCompletionChart,
+    });
+  } catch (error) {
+    console.error('Worker monitoring error:', error);
+    res.status(500).json({ success: false, message: 'Server error retrieving monitoring data' });
   }
 };
