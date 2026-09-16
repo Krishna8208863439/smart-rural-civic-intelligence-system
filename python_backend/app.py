@@ -1797,21 +1797,33 @@ def accept_field_task(task_id):
         return jsonify({"success": False, "message": "Task or issue not found"}), 404
 
     now_iso = utc_now_iso()
+    user = get_current_user()
+    user_id = str(user.get('_id')) if user else ''
+    worker_name = user.get('name', 'KD (Field Worker Lead)') if user else 'Field Worker'
+
     if item_type == 'task':
         item['status'] = 'ACCEPTED'
         item['acceptedAt'] = now_iso
+        if user_id and (not item.get('workerId') or item.get('workerId') == 'None'):
+            item['workerId'] = user_id
         if item.get('issueId'):
             iss = next((i for i in db['issues'] if str(i.get('_id')) == str(item['issueId'])), None)
             if iss:
-                add_history(iss['_id'], 'WORK_ACCEPTED', iss.get('status', 'ASSIGNED'), 'ACCEPTED', 'Worker accepted task.')
+                if user_id and (not iss.get('assignedWorker') or iss.get('assignedWorker') == 'None'):
+                    iss['assignedWorker'] = user_id
+                add_history(iss['_id'], 'WORK_ACCEPTED', iss.get('status', 'ASSIGNED'), 'ACCEPTED', f'Task accepted by {worker_name}.', user_name=worker_name, user_role="worker")
         res_task = item
     else:
         item['acceptedAt'] = now_iso
-        add_history(item['_id'], 'WORK_ACCEPTED', item.get('status', 'ASSIGNED'), 'ACCEPTED', 'Worker accepted task.')
+        if user_id and (not item.get('assignedWorker') or item.get('assignedWorker') == 'None'):
+            item['assignedWorker'] = user_id
+        add_history(item['_id'], 'WORK_ACCEPTED', item.get('status', 'ASSIGNED'), 'ACCEPTED', f'Task accepted by {worker_name}.', user_name=worker_name, user_role="worker")
         for t in db['tasks']:
             if str(t.get('issueId')) == str(item['_id']):
                 t['status'] = 'ACCEPTED'
                 t['acceptedAt'] = now_iso
+                if user_id and (not t.get('workerId') or t.get('workerId') == 'None'):
+                    t['workerId'] = user_id
         res_task = format_issue_as_task(item)
 
     save_data()
@@ -1824,27 +1836,39 @@ def start_field_task(task_id):
         return jsonify({"success": False, "message": "Task or issue not found"}), 404
 
     now_iso = utc_now_iso()
+    user = get_current_user()
+    user_id = str(user.get('_id')) if user else ''
+    worker_name = user.get('name', 'KD (Field Worker Lead)') if user else 'Field Worker'
+
     if item_type == 'task':
         item['status'] = 'IN PROGRESS'
         item['startedAt'] = now_iso
+        if user_id and (not item.get('workerId') or item.get('workerId') == 'None'):
+            item['workerId'] = user_id
         if item.get('issueId'):
             iss = next((i for i in db['issues'] if str(i.get('_id')) == str(item['issueId'])), None)
             if iss:
                 prev = iss.get('status', 'ASSIGNED')
                 iss['status'] = 'UNDER ACTION'
                 iss['updatedAt'] = now_iso
-                add_history(iss['_id'], 'WORK_STARTED', prev, 'UNDER ACTION', 'Worker initiated field repair work.')
+                if user_id and (not iss.get('assignedWorker') or iss.get('assignedWorker') == 'None'):
+                    iss['assignedWorker'] = user_id
+                add_history(iss['_id'], 'WORK_STARTED', prev, 'UNDER ACTION', f'Field repair initiated by {worker_name}.', user_name=worker_name, user_role="worker")
         res_task = item
     else:
         prev = item.get('status', 'ASSIGNED')
         item['status'] = 'UNDER ACTION'
         item['startedAt'] = now_iso
         item['updatedAt'] = now_iso
-        add_history(item['_id'], 'WORK_STARTED', prev, 'UNDER ACTION', 'Worker initiated field repair work.')
+        if user_id and (not item.get('assignedWorker') or item.get('assignedWorker') == 'None'):
+            item['assignedWorker'] = user_id
+        add_history(item['_id'], 'WORK_STARTED', prev, 'UNDER ACTION', f'Field repair initiated by {worker_name}.', user_name=worker_name, user_role="worker")
         for t in db['tasks']:
             if str(t.get('issueId')) == str(item['_id']):
                 t['status'] = 'IN PROGRESS'
                 t['startedAt'] = now_iso
+                if user_id and (not t.get('workerId') or t.get('workerId') == 'None'):
+                    t['workerId'] = user_id
         res_task = format_issue_as_task(item)
 
     save_data()

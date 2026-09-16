@@ -34,7 +34,10 @@ export default function WorkerDashboard() {
   const navigate = useNavigate();
 
   const [tasks, setTasks] = useState([]);
-  const [taskScope, setTaskScope] = useState('my'); // 'my' | 'all'
+  const [taskScope, setTaskScope] = useState('all'); // Default to all village work orders so no task is ever hidden
+  const [myCount, setMyCount] = useState(0);
+  const [allCount, setAllCount] = useState(0);
+  const [autoSwitched, setAutoSwitched] = useState(false);
   const [stats, setStats] = useState({ myTasks: 0, pending: 0, inProgress: 0, completed: 0, overdue: 0 });
   const [loading, setLoading] = useState(true);
 
@@ -60,65 +63,88 @@ export default function WorkerDashboard() {
   const fetchTasks = async (scope = taskScope) => {
     try {
       setLoading(true);
-      const queryParam = scope === 'all' ? '?scope=all' : '';
 
-      // Simultaneously query /tasks/my and /workers/assigned to ensure complete sync
-      const [myRes, assignedRes] = await Promise.all([
-        api.get(`/tasks/my${queryParam}`).catch(() => ({ data: { tasks: [], stats: {} } })),
-        api.get(`/workers/assigned${queryParam}`).catch(() => ({ data: { issues: [], tasks: [] } })),
+      const [myTasksRes, myAssignedRes, allTasksRes, allAssignedRes] = await Promise.all([
+        api.get('/tasks/my').catch(() => ({ data: { tasks: [] } })),
+        api.get('/workers/assigned').catch(() => ({ data: { issues: [] } })),
+        api.get('/tasks/my?scope=all').catch(() => ({ data: { tasks: [] } })),
+        api.get('/workers/assigned?scope=all').catch(() => ({ data: { issues: [] } })),
       ]);
 
-      const listA = myRes.data?.tasks || [];
-      const listB = (assignedRes.data?.issues || []).map((i) => ({
-        _id: i._id,
-        taskId: `TSK-${i._id.slice(-4).toUpperCase()}`,
-        issueId: i._id,
-        title: i.title,
-        category: i.category,
-        priority: i.priority?.level || 'Medium',
-        description: i.description,
-        location: i.location,
-        deadline: i.deadline || null,
-        status:
-          i.status === 'UNDER ACTION'
-            ? 'IN PROGRESS'
-            : i.status === 'ACTION COMPLETED'
-            ? 'COMPLETED'
-            : i.status === 'VERIFIED RESOLVED'
-            ? 'VERIFIED'
-            : i.status,
-        beforeImage: i.images?.[0]?.url || '',
-        afterImage: i.completionDetails?.images?.[0]?.url || '',
-        workerNotes: i.completionDetails?.notes || '',
-        assignedWorker: i.assignedWorker,
-      }));
+      const formatIssues = (issues) =>
+        (issues || []).map((i) => ({
+          _id: i._id,
+          taskId: `TSK-${i._id.slice(-4).toUpperCase()}`,
+          issueId: i._id,
+          title: i.title,
+          category: i.category,
+          priority: typeof i.priority === 'object' ? i.priority?.level : (i.priority || 'Medium'),
+          description: i.description,
+          location: i.location,
+          deadline: i.deadline || null,
+          status:
+            i.status === 'UNDER ACTION'
+              ? 'IN PROGRESS'
+              : i.status === 'ACTION COMPLETED'
+              ? 'COMPLETED'
+              : i.status === 'VERIFIED RESOLVED'
+              ? 'VERIFIED'
+              : i.status,
+          beforeImage: i.images?.[0]?.url || '',
+          afterImage: i.completionDetails?.images?.[0]?.url || '',
+          workerNotes: i.completionDetails?.notes || '',
+          assignedWorker: i.assignedWorker,
+        }));
 
-      // Combine and deduplicate by issueId or _id
-      const mergedMap = new Map();
-      listA.forEach((t) => {
+      // My direct tasks
+      const myMap = new Map();
+      (myTasksRes.data?.tasks || []).forEach((t) => myMap.set(String(t.issueId || t._id), t));
+      formatIssues(myAssignedRes.data?.issues).forEach((t) => {
         const key = String(t.issueId || t._id);
-        mergedMap.set(key, t);
+        if (!myMap.has(key)) myMap.set(key, t);
       });
-      listB.forEach((t) => {
+      const myTasks = Array.from(myMap.values());
+
+      // All village tasks
+      const allMap = new Map();
+      (allTasksRes.data?.tasks || []).forEach((t) => allMap.set(String(t.issueId || t._id), t));
+      formatIssues(allAssignedRes.data?.issues).forEach((t) => {
         const key = String(t.issueId || t._id);
-        if (!mergedMap.has(key)) {
-          mergedMap.set(key, t);
-        }
+        if (!allMap.has(key)) allMap.set(key, t);
       });
+      const allTasks = Array.from(allMap.values());
 
-      const mergedTasks = Array.from(mergedMap.values());
-      setTasks(mergedTasks);
+      setMyCount(myTasks.length);
+      setAllCount(allTasks.length);
 
-      const pending = mergedTasks.filter((t) => t.status === 'ASSIGNED').length;
-      const inProgress = mergedTasks.filter((t) => ['ACCEPTED', 'IN PROGRESS', 'UNDER ACTION'].includes(t.status)).length;
-      const completed = mergedTasks.filter((t) => ['COMPLETED', 'VERIFIED', 'ACTION COMPLETED', 'VERIFIED RESOLVED'].includes(t.status)).length;
+      let effectiveTasks = scope === 'my' ? myTasks : allTasks;
+
+      // Smart fallback: if worker selected 'my' but has 0 direct tasks while village has tasks, show all village tasks
+      if (scope === 'my' && myTasks.length === 0 && allTasks.length > 0) {
+        effectiveTasks = allTasks;
+        setTaskScope('all');
+        setAutoSwitched(true);
+      }
+
+      setTasks(effectiveTasks);
+
+      const pending = effectiveTasks.filter((t) => t.status === 'ASSIGNED').length;
+      const inProgress = effectiveTasks.filter((t) =>
+        ['ACCEPTED', 'IN PROGRESS', 'UNDER ACTION'].includes(t.status)
+      ).length;
+      const completed = effectiveTasks.filter((t) =>
+        ['COMPLETED', 'VERIFIED', 'ACTION COMPLETED', 'VERIFIED RESOLVED'].includes(t.status)
+      ).length;
       const now = new Date();
-      const overdue = mergedTasks.filter(
-        (t) => t.deadline && new Date(t.deadline) < now && !['COMPLETED', 'VERIFIED', 'ACTION COMPLETED', 'VERIFIED RESOLVED'].includes(t.status)
+      const overdue = effectiveTasks.filter(
+        (t) =>
+          t.deadline &&
+          new Date(t.deadline) < now &&
+          !['COMPLETED', 'VERIFIED', 'ACTION COMPLETED', 'VERIFIED RESOLVED'].includes(t.status)
       ).length;
 
       setStats({
-        myTasks: mergedTasks.length,
+        myTasks: effectiveTasks.length,
         pending,
         inProgress,
         completed,
@@ -376,24 +402,24 @@ export default function WorkerDashboard() {
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
-              onClick={() => setTaskScope('my')}
+              onClick={() => { setAutoSwitched(false); setTaskScope('my'); }}
               className={`px-4 py-2 rounded-2xl text-xs font-bold transition flex items-center space-x-2 ${
                 taskScope === 'my'
                   ? 'bg-emerald-800 text-white shadow-sm'
                   : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
               }`}
             >
-              <span>📋 My Work Orders</span>
-              {taskScope === 'my' && (
-                <span className="bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded-full font-mono font-bold">
-                  {tasks.length}
-                </span>
-              )}
+              <span>📋 My Direct Tasks</span>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold ${
+                taskScope === 'my' ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-700'
+              }`}>
+                {myCount}
+              </span>
             </button>
 
             <button
               type="button"
-              onClick={() => setTaskScope('all')}
+              onClick={() => { setAutoSwitched(false); setTaskScope('all'); }}
               className={`px-4 py-2 rounded-2xl text-xs font-bold transition flex items-center space-x-2 ${
                 taskScope === 'all'
                   ? 'bg-emerald-800 text-white shadow-sm'
@@ -401,11 +427,11 @@ export default function WorkerDashboard() {
               }`}
             >
               <span>🌐 All Village Work Orders</span>
-              {taskScope === 'all' && (
-                <span className="bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded-full font-mono font-bold">
-                  {tasks.length}
-                </span>
-              )}
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold ${
+                taskScope === 'all' ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-700'
+              }`}>
+                {allCount}
+              </span>
             </button>
           </div>
 
@@ -420,6 +446,24 @@ export default function WorkerDashboard() {
             </button>
           </div>
         </div>
+
+        {autoSwitched && taskScope === 'all' && (
+          <div className="p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-950 rounded-2xl text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-xs">
+            <div className="flex items-center space-x-2">
+              <Sparkles className="w-4 h-4 text-emerald-700 shrink-0" />
+              <span>
+                <strong>Showing All Village Work Orders ({allCount}):</strong> You have 0 direct tasks right now, so all active civic work orders across Chandoli are displayed below for you to accept or inspect.
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => { setAutoSwitched(false); setTaskScope('my'); }}
+              className="text-[11px] font-bold text-emerald-800 hover:text-emerald-950 underline shrink-0"
+            >
+              Show My Queue (0)
+            </button>
+          </div>
+        )}
 
         {loading ? (
           <div className="p-16 text-center text-slate-400 text-xs bg-white rounded-3xl border border-slate-200">

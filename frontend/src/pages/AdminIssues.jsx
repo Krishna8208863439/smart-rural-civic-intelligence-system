@@ -99,10 +99,21 @@ export default function AdminIssues() {
   };
 
   const handleAssignWorker = async () => {
-    if (!assignModalIssue || !selectedWorker) return;
+    const workerToAssign =
+      selectedWorker ||
+      (typeof assignModalIssue?.assignedWorker === 'object'
+        ? assignModalIssue?.assignedWorker?._id
+        : assignModalIssue?.assignedWorker) ||
+      aiWorkerMatch?.worker?._id ||
+      (workers.length > 0 ? workers[0]._id : null);
+
+    if (!assignModalIssue || !workerToAssign) {
+      alert('Please select a field worker from the list before confirming.');
+      return;
+    }
     try {
-      await api.put(`/admin/assign-worker/${assignModalIssue._id}`, { workerId: selectedWorker });
-      const wName = workers.find((w) => w._id === selectedWorker)?.name || 'Field Specialist';
+      await api.put(`/admin/assign-worker/${assignModalIssue._id}`, { workerId: workerToAssign });
+      const wName = workers.find((w) => w._id === workerToAssign)?.name || 'Field Specialist';
       alert(`✓ Task dispatched to ${wName}! The worker will see this in their field queue.`);
       setAssignModalIssue(null);
       setSelectedWorker('');

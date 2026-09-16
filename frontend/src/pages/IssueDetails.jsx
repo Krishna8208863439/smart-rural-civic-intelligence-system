@@ -522,8 +522,12 @@ export default function IssueDetails() {
         if (workersRes?.data?.workers) {
           const list = workersRes.data.workers;
           setWorkers(list);
-          if (!res.data.issue.assignedWorker) {
-            const match = getAiWorkerRecommendation(res.data.issue.category, list);
+          const currentAw = res.data.issue?.assignedWorker;
+          const currentAwId = typeof currentAw === 'object' ? currentAw?._id : currentAw;
+          if (currentAwId) {
+            setSelectedWorker(currentAwId);
+          } else {
+            const match = getAiWorkerRecommendation(res.data.issue?.category, list);
             if (match?.worker) {
               setSelectedWorker(match.worker._id);
             }
@@ -585,10 +589,19 @@ export default function IssueDetails() {
 
   // Admin Worker Assignment
   const handleAssignWorker = async () => {
-    if (!selectedWorker) return;
+    const workerToAssign =
+      selectedWorker ||
+      (typeof issue?.assignedWorker === 'object' ? issue?.assignedWorker?._id : issue?.assignedWorker) ||
+      aiWorkerMatch?.worker?._id;
+
+    if (!workerToAssign) {
+      alert('Please select a field worker from the dropdown list before assigning.');
+      return;
+    }
+
     try {
-      await api.put(`/admin/assign-worker/${id}`, { workerId: selectedWorker });
-      const wName = workers.find((w) => w._id === selectedWorker)?.name || 'Field Specialist';
+      await api.put(`/admin/assign-worker/${id}`, { workerId: workerToAssign });
+      const wName = workers.find((w) => w._id === workerToAssign)?.name || 'Field Specialist';
       alert(`✓ Task dispatched to ${wName}! The worker will see this in their field queue.`);
       await fetchIssueData();
     } catch (err) {
@@ -2144,7 +2157,12 @@ export default function IssueDetails() {
 
                 <div className="flex flex-col sm:flex-row gap-2">
                   <select
-                    value={selectedWorker || issue.assignedWorker?._id || ''}
+                    value={
+                      selectedWorker ||
+                      (typeof issue.assignedWorker === 'object' ? issue.assignedWorker?._id : issue.assignedWorker) ||
+                      aiWorkerMatch?.worker?._id ||
+                      ''
+                    }
                     onChange={(e) => setSelectedWorker(e.target.value)}
                     className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs bg-white font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                   >
@@ -2160,7 +2178,7 @@ export default function IssueDetails() {
                   </select>
                   <button
                     onClick={handleAssignWorker}
-                    disabled={!selectedWorker && !issue.assignedWorker?._id}
+                    disabled={!selectedWorker && !issue.assignedWorker && !aiWorkerMatch?.worker?._id}
                     className="px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-xs transition flex items-center justify-center space-x-1.5 shrink-0 disabled:opacity-50"
                   >
                     <Sparkles className="w-3.5 h-3.5 text-amber-300" />

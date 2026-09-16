@@ -177,12 +177,12 @@
       "isActive": true,
       "specialization": "General",
       "createdAt": "2026-09-11T09:43:05.039Z",
-      "updatedAt": "2026-09-16T14:49:43.113+05:30",
+      "updatedAt": "2026-09-16T15:18:29.680+05:30",
       "__v": 0,
       "workerId": "GRAM-WKR-001",
       "workerRole": "Sanitation & Field Lead",
       "assignedArea": "Chandoli",
-      "lastLogin": "2026-09-16T14:49:43.098+05:30",
+      "lastLogin": "2026-09-16T15:18:29.667+05:30",
       "mustChangePassword": false
     },
     {
@@ -216,7 +216,7 @@
       "assignedArea": "Chandoli East",
       "createdAt": "2026-09-11T09:43:05.039Z",
       "updatedAt": "2026-09-11T10:06:35.782Z",
-      "lastLogin": "2026-09-16T14:49:42.953+05:30"
+      "lastLogin": "2026-09-16T15:18:29.558+05:30"
     },
     {
       "_id": "6aa3cd29807f4547b549bf98",
@@ -234,7 +234,7 @@
       "assignedArea": "Chandoli West",
       "createdAt": "2026-09-11T09:43:05.039Z",
       "updatedAt": "2026-09-11T10:06:35.782Z",
-      "lastLogin": "2026-09-16T14:49:42.970+05:30"
+      "lastLogin": "2026-09-16T15:18:29.572+05:30"
     },
     {
       "_id": "6aa3cd29807f4547b549bf99",
@@ -252,10 +252,143 @@
       "assignedArea": "Chandoli",
       "mustChangePassword": false,
       "createdAt": "2026-09-11T09:43:05.039Z",
-      "updatedAt": "2026-09-11T10:06:35.782Z"
+      "updatedAt": "2026-09-11T10:06:35.782Z",
+      "lastLogin": "2026-09-16T15:19:53.705+05:30"
     }
   ],
   "issues": [
+    {
+      "_id": "386381f00f614150fd723211",
+      "title": "Urgent Water Pipe Crack near Ward 2 Community Hall",
+      "description": "Continuous high-pressure water loss on paved street.",
+      "category": "Water leakage",
+      "status": "VERIFIED RESOLVED",
+      "createdBy": "6aa3c5dd76dd8149601cc83c",
+      "assignedWorker": "6aa3cd29807f4547b549bf99",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          73.8567,
+          18.5204
+        ],
+        "landmark": "Main Village Square",
+        "address": "Chandoli Gram Panchayat",
+        "timing": "16 Sep 2026, 03:19 PM (IST)",
+        "accuracy": 4.0,
+        "detectedAt": "2026-09-16T15:19:53.718+05:30"
+      },
+      "priority": {
+        "level": "High",
+        "score": 78
+      },
+      "reliabilityScore": 88,
+      "reliabilityLevel": "High",
+      "recurrenceLevel": "Medium",
+      "images": [
+        {
+          "url": "/assets/hero-card-mockup-lWDlMTb5.jpg"
+        }
+      ],
+      "corroborationCount": 0,
+      "communityValidationStats": {
+        "confirms": 0,
+        "stillExists": 0,
+        "resolved": 0
+      },
+      "upvotes": 0,
+      "downvotes": 0,
+      "createdAt": "2026-09-16T15:19:53.718+05:30",
+      "updatedAt": "2026-09-16T15:19:53.801+05:30",
+      "assignedAt": "2026-09-16T15:19:53.732+05:30",
+      "progressNotes": [
+        {
+          "note": "Excavation completed, preparing high-pressure sleeve clamp.",
+          "images": [],
+          "createdAt": "2026-09-16T15:19:53.774+05:30"
+        }
+      ],
+      "completionDetails": {
+        "completedAt": "2026-09-16T15:19:53.788+05:30",
+        "notes": "Repaired pipe crack with heavy-duty sleeve clamp and verified zero leaks.",
+        "images": [
+          {
+            "url": "https://images.unsplash.com/photo-1584467735815-f778f274e296?w=800"
+          }
+        ],
+        "coordinates": [
+          74.2433,
+          16.9602
+        ]
+      },
+      "resolvedAt": "2026-09-16T15:19:53.788+05:30",
+      "verifiedAt": "2026-09-16T15:19:53.801+05:30"
+    },
+    {
+      "_id": "e7f6122a9f214febb9ab213a",
+      "title": "Urgent Water Pipe Crack near Ward 2 Community Hall",
+      "description": "Continuous high-pressure water loss on paved street.",
+      "category": "Water leakage",
+      "status": "VERIFIED RESOLVED",
+      "createdBy": "6aa3c5dd76dd8149601cc83c",
+      "assignedWorker": "6aa3cd29807f4547b549bf99",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          73.8567,
+          18.5204
+        ],
+        "landmark": "Main Village Square",
+        "address": "Chandoli Gram Panchayat",
+        "timing": "16 Sep 2026, 03:18 PM (IST)",
+        "accuracy": 4.0,
+        "detectedAt": "2026-09-16T15:18:41.981+05:30"
+      },
+      "priority": {
+        "level": "High",
+        "score": 78
+      },
+      "reliabilityScore": 88,
+      "reliabilityLevel": "High",
+      "recurrenceLevel": "Medium",
+      "images": [
+        {
+          "url": "/assets/hero-card-mockup-lWDlMTb5.jpg"
+        }
+      ],
+      "corroborationCount": 0,
+      "communityValidationStats": {
+        "confirms": 0,
+        "stillExists": 0,
+        "resolved": 0
+      },
+      "upvotes": 0,
+      "downvotes": 0,
+      "createdAt": "2026-09-16T15:18:41.981+05:30",
+      "updatedAt": "2026-09-16T15:18:42.063+05:30",
+      "assignedAt": "2026-09-16T15:18:41.995+05:30",
+      "progressNotes": [
+        {
+          "note": "Excavation completed, preparing high-pressure sleeve clamp.",
+          "images": [],
+          "createdAt": "2026-09-16T15:18:42.036+05:30"
+        }
+      ],
+      "completionDetails": {
+        "completedAt": "2026-09-16T15:18:42.049+05:30",
+        "notes": "Repaired pipe crack with heavy-duty sleeve clamp and verified zero leaks.",
+        "images": [
+          {
+            "url": "https://images.unsplash.com/photo-1584467735815-f778f274e296?w=800"
+          }
+        ],
+        "coordinates": [
+          74.2433,
+          16.9602
+        ]
+      },
+      "resolvedAt": "2026-09-16T15:18:42.049+05:30",
+      "verifiedAt": "2026-09-16T15:18:42.063+05:30"
+    },
     {
       "_id": "6aa3c5de76dd8149601cc865",
       "title": "Major underground pipeline burst flooding main road near Water Tank Hill",
@@ -1631,6 +1764,36 @@
           "status": "UNDER ACTION",
           "timestamp": "2026-09-16T14:49:42.696+05:30",
           "comment": "Work in progress by Rohan"
+        },
+        {
+          "status": "UNDER ACTION",
+          "timestamp": "2026-09-16T14:57:33.085+05:30",
+          "comment": "Work in progress by Rohan"
+        },
+        {
+          "status": "UNDER ACTION",
+          "timestamp": "2026-09-16T15:09:58.441+05:30",
+          "comment": "Work in progress by Rohan"
+        },
+        {
+          "status": "UNDER ACTION",
+          "timestamp": "2026-09-16T15:10:38.346+05:30",
+          "comment": "Work in progress by Rohan"
+        },
+        {
+          "status": "UNDER ACTION",
+          "timestamp": "2026-09-16T15:18:29.338+05:30",
+          "comment": "Work in progress by Rohan"
+        },
+        {
+          "status": "UNDER ACTION",
+          "timestamp": "2026-09-16T15:18:41.878+05:30",
+          "comment": "Work in progress by Rohan"
+        },
+        {
+          "status": "UNDER ACTION",
+          "timestamp": "2026-09-16T15:19:53.616+05:30",
+          "comment": "Work in progress by Rohan"
         }
       ]
     },
@@ -1797,6 +1960,36 @@
         {
           "status": "UNDER ACTION",
           "timestamp": "2026-09-16T14:49:42.696+05:30",
+          "comment": "Work in progress by Rohan"
+        },
+        {
+          "status": "UNDER ACTION",
+          "timestamp": "2026-09-16T14:57:33.085+05:30",
+          "comment": "Work in progress by Rohan"
+        },
+        {
+          "status": "UNDER ACTION",
+          "timestamp": "2026-09-16T15:09:58.441+05:30",
+          "comment": "Work in progress by Rohan"
+        },
+        {
+          "status": "UNDER ACTION",
+          "timestamp": "2026-09-16T15:10:38.346+05:30",
+          "comment": "Work in progress by Rohan"
+        },
+        {
+          "status": "UNDER ACTION",
+          "timestamp": "2026-09-16T15:18:29.338+05:30",
+          "comment": "Work in progress by Rohan"
+        },
+        {
+          "status": "UNDER ACTION",
+          "timestamp": "2026-09-16T15:18:41.878+05:30",
+          "comment": "Work in progress by Rohan"
+        },
+        {
+          "status": "UNDER ACTION",
+          "timestamp": "2026-09-16T15:19:53.616+05:30",
           "comment": "Work in progress by Rohan"
         }
       ]
@@ -2536,7 +2729,7 @@
       "voiceTranscript": "",
       "completionDetails": {
         "notes": "Drainage blockage cleared, debris removed, water flow fully restored by Rohan Patil.",
-        "completedAt": "2026-09-16T14:49:42.696+05:30",
+        "completedAt": "2026-09-16T15:19:53.616+05:30",
         "images": [
           {
             "url": "https://images.unsplash.com/photo-1584467735815-f778f274e296?w=800"
@@ -3482,6 +3675,36 @@
         {
           "status": "UNDER ACTION",
           "timestamp": "2026-09-16T14:49:42.696+05:30",
+          "comment": "Work in progress by Rohan"
+        },
+        {
+          "status": "UNDER ACTION",
+          "timestamp": "2026-09-16T14:57:33.085+05:30",
+          "comment": "Work in progress by Rohan"
+        },
+        {
+          "status": "UNDER ACTION",
+          "timestamp": "2026-09-16T15:09:58.441+05:30",
+          "comment": "Work in progress by Rohan"
+        },
+        {
+          "status": "UNDER ACTION",
+          "timestamp": "2026-09-16T15:10:38.346+05:30",
+          "comment": "Work in progress by Rohan"
+        },
+        {
+          "status": "UNDER ACTION",
+          "timestamp": "2026-09-16T15:18:29.338+05:30",
+          "comment": "Work in progress by Rohan"
+        },
+        {
+          "status": "UNDER ACTION",
+          "timestamp": "2026-09-16T15:18:41.878+05:30",
+          "comment": "Work in progress by Rohan"
+        },
+        {
+          "status": "UNDER ACTION",
+          "timestamp": "2026-09-16T15:19:53.616+05:30",
           "comment": "Work in progress by Rohan"
         }
       ]
@@ -5045,7 +5268,7 @@
         "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-08-22T09:11:58.780Z"
       },
-      "status": "ACTION COMPLETED",
+      "status": "REOPENED",
       "priority": {
         "score": 62,
         "level": "High",
@@ -5059,8 +5282,8 @@
         }
       },
       "createdBy": "6aa3c5dd76dd8149601cc840",
-      "assignedWorker": "6aa3cd29807f4547b549bf96",
-      "assignedAt": "2026-08-22T09:11:58.780Z",
+      "assignedWorker": "6aa3cd29807f4547b549bf97",
+      "assignedAt": "2026-09-16T15:18:29.722+05:30",
       "reliabilityScore": 76,
       "reliabilityLevel": "High",
       "reliabilityFactors": {
@@ -5127,15 +5350,17 @@
       },
       "voiceTranscript": "",
       "completionDetails": {
-        "notes": "Work completed according to Gram Panchayat technical standards.",
+        "completedAt": "2026-09-16T15:18:29.641+05:30",
+        "notes": "Pipeline replaced and road resurfacing complete. Verified water flow restored.",
         "images": [
           {
-            "url": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80",
-            "_id": "6aa3c5de76dd8149601cca1c",
-            "uploadedAt": "2026-09-11T09:11:58.783Z"
+            "url": "https://images.unsplash.com/photo-1584467735815-f778f274e296?w=800"
           }
         ],
-        "completedAt": "2026-08-24T09:11:58.780Z"
+        "coordinates": [
+          74.243312,
+          16.960245
+        ]
       },
       "adminVerification": {
         "verifiedBy": null,
@@ -5149,8 +5374,8 @@
         "comment": "",
         "submittedAt": null
       },
-      "resolvedAt": "2026-08-24T09:11:58.780Z",
-      "verifiedAt": null,
+      "resolvedAt": "2026-09-16T15:18:29.641+05:30",
+      "verifiedAt": "2026-09-16T15:18:29.694+05:30",
       "aiDetection": {
         "detectedCategory": "",
         "confidence": 0,
@@ -5161,8 +5386,16 @@
       },
       "isPublic": true,
       "createdAt": "2026-08-22T09:11:58.780Z",
-      "updatedAt": "2026-09-11T09:43:05.123Z",
-      "progressNotes": [],
+      "updatedAt": "2026-09-16T15:18:29.708+05:30",
+      "progressNotes": [
+        {
+          "note": "Excavation completed, cleared pipeline blockages.",
+          "images": [
+            "https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?w=800"
+          ],
+          "createdAt": "2026-09-16T15:18:29.628+05:30"
+        }
+      ],
       "__v": 0
     },
     {
@@ -5564,6 +5797,260 @@
     }
   ],
   "issueHistories": [
+    {
+      "_id": "33987386798d9acce3a82c49",
+      "issueId": "386381f00f614150fd723211",
+      "eventType": "VERIFIED_RESOLVED",
+      "previousState": "ACTION COMPLETED",
+      "newState": "VERIFIED RESOLVED",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "comment": "Verified & approved by Panchayat Admin.",
+      "timestamp": "2026-09-16T15:19:53.801+05:30",
+      "createdAt": "2026-09-16T15:19:53.801+05:30"
+    },
+    {
+      "_id": "72b8216f1fdef1e16d83b4ac",
+      "issueId": "386381f00f614150fd723211",
+      "eventType": "WORK_COMPLETED",
+      "previousState": "UNDER ACTION",
+      "newState": "ACTION COMPLETED",
+      "userName": "KD (Field Worker Lead)",
+      "userRole": "worker",
+      "comment": "Field work completed. Notes: Repaired pipe crack with heavy-duty sleeve clamp and verified zero leaks.",
+      "timestamp": "2026-09-16T15:19:53.788+05:30",
+      "createdAt": "2026-09-16T15:19:53.788+05:30"
+    },
+    {
+      "_id": "cd2ab8ca3d0cd562c3943eb3",
+      "issueId": "386381f00f614150fd723211",
+      "eventType": "PROGRESS_UPDATE",
+      "previousState": "UNDER ACTION",
+      "newState": "UNDER ACTION",
+      "userName": "KD (Field Worker Lead)",
+      "userRole": "worker",
+      "comment": "Progress update: Excavation completed, preparing high-pressure sleeve clamp.",
+      "timestamp": "2026-09-16T15:19:53.774+05:30",
+      "createdAt": "2026-09-16T15:19:53.774+05:30"
+    },
+    {
+      "_id": "84d5da032c980918bf455464",
+      "issueId": "386381f00f614150fd723211",
+      "eventType": "WORK_STARTED",
+      "previousState": "ASSIGNED",
+      "newState": "UNDER ACTION",
+      "userName": "Rohan Patil (Field Specialist)",
+      "userRole": "worker",
+      "comment": "Field repair initiated by Rohan Patil (Field Specialist).",
+      "timestamp": "2026-09-16T15:19:53.760+05:30",
+      "createdAt": "2026-09-16T15:19:53.760+05:30"
+    },
+    {
+      "_id": "f133565be4849edfbdada830",
+      "issueId": "386381f00f614150fd723211",
+      "eventType": "WORK_ACCEPTED",
+      "previousState": "ASSIGNED",
+      "newState": "ACCEPTED",
+      "userName": "Rohan Patil (Field Specialist)",
+      "userRole": "worker",
+      "comment": "Task accepted by Rohan Patil (Field Specialist).",
+      "timestamp": "2026-09-16T15:19:53.746+05:30",
+      "createdAt": "2026-09-16T15:19:53.746+05:30"
+    },
+    {
+      "_id": "ddf9d9ccda767ea7fe1781cd",
+      "issueId": "386381f00f614150fd723211",
+      "eventType": "WORKER_ASSIGNED",
+      "previousState": "NEW",
+      "newState": "ASSIGNED",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "comment": "Dispatched to Rohan Patil (Field Specialist).",
+      "timestamp": "2026-09-16T15:19:53.732+05:30",
+      "createdAt": "2026-09-16T15:19:53.732+05:30"
+    },
+    {
+      "_id": "b9a101e45eafe4456a2fd181",
+      "issueId": "386381f00f614150fd723211",
+      "eventType": "CREATED",
+      "previousState": "",
+      "newState": "NEW",
+      "userId": "6aa3c5dd76dd8149601cc83c",
+      "userName": "Aarav Kumar",
+      "userRole": "citizen",
+      "comment": "Issue reported in Water leakage category.",
+      "timestamp": "2026-09-16T15:19:53.718+05:30",
+      "createdAt": "2026-09-16T15:19:53.718+05:30"
+    },
+    {
+      "_id": "26728d861ac001fa22d4ea1e",
+      "issueId": "e7f6122a9f214febb9ab213a",
+      "eventType": "VERIFIED_RESOLVED",
+      "previousState": "ACTION COMPLETED",
+      "newState": "VERIFIED RESOLVED",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "comment": "Verified & approved by Panchayat Admin.",
+      "timestamp": "2026-09-16T15:18:42.063+05:30",
+      "createdAt": "2026-09-16T15:18:42.063+05:30"
+    },
+    {
+      "_id": "59a3253e32e1fb8f93f70d43",
+      "issueId": "e7f6122a9f214febb9ab213a",
+      "eventType": "WORK_COMPLETED",
+      "previousState": "UNDER ACTION",
+      "newState": "ACTION COMPLETED",
+      "userName": "KD (Field Worker Lead)",
+      "userRole": "worker",
+      "comment": "Field work completed. Notes: Repaired pipe crack with heavy-duty sleeve clamp and verified zero leaks.",
+      "timestamp": "2026-09-16T15:18:42.049+05:30",
+      "createdAt": "2026-09-16T15:18:42.049+05:30"
+    },
+    {
+      "_id": "f0a6df9447f2461cf7d2b1a7",
+      "issueId": "e7f6122a9f214febb9ab213a",
+      "eventType": "PROGRESS_UPDATE",
+      "previousState": "UNDER ACTION",
+      "newState": "UNDER ACTION",
+      "userName": "KD (Field Worker Lead)",
+      "userRole": "worker",
+      "comment": "Progress update: Excavation completed, preparing high-pressure sleeve clamp.",
+      "timestamp": "2026-09-16T15:18:42.036+05:30",
+      "createdAt": "2026-09-16T15:18:42.036+05:30"
+    },
+    {
+      "_id": "5060b03e9d686cc26f8e1cc2",
+      "issueId": "e7f6122a9f214febb9ab213a",
+      "eventType": "WORK_STARTED",
+      "previousState": "ASSIGNED",
+      "newState": "UNDER ACTION",
+      "userName": "Rohan Patil (Field Specialist)",
+      "userRole": "worker",
+      "comment": "Field repair initiated by Rohan Patil (Field Specialist).",
+      "timestamp": "2026-09-16T15:18:42.023+05:30",
+      "createdAt": "2026-09-16T15:18:42.023+05:30"
+    },
+    {
+      "_id": "c475aff48f3e47cc2a3e0362",
+      "issueId": "e7f6122a9f214febb9ab213a",
+      "eventType": "WORK_ACCEPTED",
+      "previousState": "ASSIGNED",
+      "newState": "ACCEPTED",
+      "userName": "Rohan Patil (Field Specialist)",
+      "userRole": "worker",
+      "comment": "Task accepted by Rohan Patil (Field Specialist).",
+      "timestamp": "2026-09-16T15:18:42.009+05:30",
+      "createdAt": "2026-09-16T15:18:42.009+05:30"
+    },
+    {
+      "_id": "7fd6fd81d313fc78d3cf304e",
+      "issueId": "e7f6122a9f214febb9ab213a",
+      "eventType": "WORKER_ASSIGNED",
+      "previousState": "NEW",
+      "newState": "ASSIGNED",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "comment": "Dispatched to Rohan Patil (Field Specialist).",
+      "timestamp": "2026-09-16T15:18:41.995+05:30",
+      "createdAt": "2026-09-16T15:18:41.995+05:30"
+    },
+    {
+      "_id": "672f42e9cc3630fb8da5e964",
+      "issueId": "e7f6122a9f214febb9ab213a",
+      "eventType": "CREATED",
+      "previousState": "",
+      "newState": "NEW",
+      "userId": "6aa3c5dd76dd8149601cc83c",
+      "userName": "Aarav Kumar",
+      "userRole": "citizen",
+      "comment": "Issue reported in Water leakage category.",
+      "timestamp": "2026-09-16T15:18:41.981+05:30",
+      "createdAt": "2026-09-16T15:18:41.981+05:30"
+    },
+    {
+      "_id": "925dc398d9318f4367e32700",
+      "issueId": "6aa3c5de76dd8149601cca16",
+      "eventType": "WORKER_ASSIGNED",
+      "previousState": "REOPENED",
+      "newState": "REOPENED",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "comment": "Reassigned to Ramesh Patil. Note: Handing off to civil road specialist",
+      "timestamp": "2026-09-16T15:18:29.722+05:30",
+      "createdAt": "2026-09-16T15:18:29.722+05:30"
+    },
+    {
+      "_id": "8ff5d47149795f6a843d2efe",
+      "issueId": "6aa3c5de76dd8149601cca16",
+      "eventType": "TASK_REOPENED",
+      "previousState": "VERIFIED RESOLVED",
+      "newState": "REOPENED",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "comment": "Task reopened: Additional pressure testing required",
+      "timestamp": "2026-09-16T15:18:29.708+05:30",
+      "createdAt": "2026-09-16T15:18:29.708+05:30"
+    },
+    {
+      "_id": "4ae5600ee392e9d7cf83ea72",
+      "issueId": "6aa3c5de76dd8149601cca16",
+      "eventType": "VERIFIED_RESOLVED",
+      "previousState": "ACTION COMPLETED",
+      "newState": "VERIFIED RESOLVED",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "comment": "Verified & approved by Panchayat Admin.",
+      "timestamp": "2026-09-16T15:18:29.694+05:30",
+      "createdAt": "2026-09-16T15:18:29.694+05:30"
+    },
+    {
+      "_id": "2234113e99b204a2b3b6e772",
+      "issueId": "6aa3c5de76dd8149601cca16",
+      "eventType": "WORK_COMPLETED",
+      "previousState": "UNDER ACTION",
+      "newState": "ACTION COMPLETED",
+      "userName": "KD (Field Worker Lead)",
+      "userRole": "worker",
+      "comment": "Field work completed. Notes: Pipeline replaced and road resurfacing complete. Verified water flow restored.",
+      "timestamp": "2026-09-16T15:18:29.641+05:30",
+      "createdAt": "2026-09-16T15:18:29.641+05:30"
+    },
+    {
+      "_id": "180736d2822efc27fb7727f8",
+      "issueId": "6aa3c5de76dd8149601cca16",
+      "eventType": "PROGRESS_UPDATE",
+      "previousState": "UNDER ACTION",
+      "newState": "UNDER ACTION",
+      "userName": "KD (Field Worker Lead)",
+      "userRole": "worker",
+      "comment": "Progress update: Excavation completed, cleared pipeline blockages.",
+      "timestamp": "2026-09-16T15:18:29.628+05:30",
+      "createdAt": "2026-09-16T15:18:29.628+05:30"
+    },
+    {
+      "_id": "d857eeb4a2d56499b25bf73b",
+      "issueId": "6aa3c5de76dd8149601cca16",
+      "eventType": "WORK_STARTED",
+      "previousState": "ACTION COMPLETED",
+      "newState": "UNDER ACTION",
+      "userName": "KD (Field Worker Lead)",
+      "userRole": "worker",
+      "comment": "Field repair initiated by KD (Field Worker Lead).",
+      "timestamp": "2026-09-16T15:18:29.613+05:30",
+      "createdAt": "2026-09-16T15:18:29.613+05:30"
+    },
+    {
+      "_id": "435969539a55c9a4f96103cf",
+      "issueId": "6aa3c5de76dd8149601cca16",
+      "eventType": "WORK_ACCEPTED",
+      "previousState": "ACTION COMPLETED",
+      "newState": "ACCEPTED",
+      "userName": "KD (Field Worker Lead)",
+      "userRole": "worker",
+      "comment": "Task accepted by KD (Field Worker Lead).",
+      "timestamp": "2026-09-16T15:18:29.599+05:30",
+      "createdAt": "2026-09-16T15:18:29.599+05:30"
+    },
     {
       "_id": "33e74a6d476785f94e5bcf94",
       "issueId": "6aa3c83bfb133c6389a69646",
@@ -7698,9 +8185,129 @@
       "roleTarget": "admin",
       "read": false,
       "createdAt": "2026-09-16T14:49:43.068+05:30"
+    },
+    {
+      "_id": "5e8762b12cd83016a3736343",
+      "title": "Work Completed: Streetlight failure report at Ward 3 locality #32",
+      "message": "Worker submitted completion proof for issue #ca16. Ready for Gram Panchayat verification.",
+      "roleTarget": "admin",
+      "read": false,
+      "createdAt": "2026-09-16T15:18:29.641+05:30"
+    },
+    {
+      "_id": "f81a9736022132cc3d643f44",
+      "userId": "6aa3cd29807f4547b549bf99",
+      "roleTarget": "worker",
+      "type": "WORKER_ASSIGNED",
+      "title": "New Task Assigned: Urgent Water Pipe Crack near Ward 2 Community Hall",
+      "message": "You have been assigned to resolve Water leakage at Main Village Square.",
+      "issueId": "e7f6122a9f214febb9ab213a",
+      "read": false,
+      "createdAt": "2026-09-16T15:18:41.995+05:30"
+    },
+    {
+      "_id": "e34df8b3e25aebedb877f219",
+      "title": "Work Completed: Urgent Water Pipe Crack near Ward 2 Community Hall",
+      "message": "Worker submitted completion proof for issue #213a. Ready for Gram Panchayat verification.",
+      "roleTarget": "admin",
+      "read": false,
+      "createdAt": "2026-09-16T15:18:42.049+05:30"
+    },
+    {
+      "_id": "c7b7f6664f33853f8843f607",
+      "userId": "6aa3cd29807f4547b549bf99",
+      "roleTarget": "worker",
+      "type": "WORKER_ASSIGNED",
+      "title": "New Task Assigned: Urgent Water Pipe Crack near Ward 2 Community Hall",
+      "message": "You have been assigned to resolve Water leakage at Main Village Square.",
+      "issueId": "386381f00f614150fd723211",
+      "read": false,
+      "createdAt": "2026-09-16T15:19:53.732+05:30"
+    },
+    {
+      "_id": "a564964c385f204468ed1c91",
+      "title": "Work Completed: Urgent Water Pipe Crack near Ward 2 Community Hall",
+      "message": "Worker submitted completion proof for issue #3211. Ready for Gram Panchayat verification.",
+      "roleTarget": "admin",
+      "read": false,
+      "createdAt": "2026-09-16T15:19:53.788+05:30"
     }
   ],
   "tasks": [
+    {
+      "_id": "386381f00f614150fd723211",
+      "taskId": "TSK-3211",
+      "issueId": "386381f00f614150fd723211",
+      "workerId": "6aa3cd29807f4547b549bf99",
+      "title": "Urgent Water Pipe Crack near Ward 2 Community Hall",
+      "category": "Water leakage",
+      "priority": "High",
+      "description": "Continuous high-pressure water loss on paved street.",
+      "location": {
+        "landmark": "Main Village Square",
+        "address": "Chandoli Gram Panchayat",
+        "coordinates": [
+          73.8567,
+          18.5204
+        ]
+      },
+      "deadline": "2026-09-18T15:19:53.732430+05:30",
+      "requiredAction": "Inspect site, resolve Water leakage, upload after photos, and mark completed.",
+      "beforeImage": "/assets/hero-card-mockup-lWDlMTb5.jpg",
+      "afterImage": "https://images.unsplash.com/photo-1584467735815-f778f274e296?w=800",
+      "status": "VERIFIED",
+      "workerNotes": "Repaired pipe crack with heavy-duty sleeve clamp and verified zero leaks.",
+      "assignedAt": "2026-09-16T15:19:53.732+05:30",
+      "createdAt": "2026-09-16T15:19:53.718+05:30",
+      "acceptedAt": "2026-09-16T15:19:53.746+05:30",
+      "startedAt": "2026-09-16T15:19:53.760+05:30",
+      "progressUpdates": [
+        {
+          "note": "Excavation completed, preparing high-pressure sleeve clamp.",
+          "image": "",
+          "timestamp": "2026-09-16T15:19:53.774+05:30"
+        }
+      ],
+      "completedAt": "2026-09-16T15:19:53.788+05:30",
+      "verifiedAt": "2026-09-16T15:19:53.801+05:30"
+    },
+    {
+      "_id": "e7f6122a9f214febb9ab213a",
+      "taskId": "TSK-213A",
+      "issueId": "e7f6122a9f214febb9ab213a",
+      "workerId": "6aa3cd29807f4547b549bf99",
+      "title": "Urgent Water Pipe Crack near Ward 2 Community Hall",
+      "category": "Water leakage",
+      "priority": "High",
+      "description": "Continuous high-pressure water loss on paved street.",
+      "location": {
+        "landmark": "Main Village Square",
+        "address": "Chandoli Gram Panchayat",
+        "coordinates": [
+          73.8567,
+          18.5204
+        ]
+      },
+      "deadline": "2026-09-18T15:18:41.995278+05:30",
+      "requiredAction": "Inspect site, resolve Water leakage, upload after photos, and mark completed.",
+      "beforeImage": "/assets/hero-card-mockup-lWDlMTb5.jpg",
+      "afterImage": "https://images.unsplash.com/photo-1584467735815-f778f274e296?w=800",
+      "status": "VERIFIED",
+      "workerNotes": "Repaired pipe crack with heavy-duty sleeve clamp and verified zero leaks.",
+      "assignedAt": "2026-09-16T15:18:41.995+05:30",
+      "createdAt": "2026-09-16T15:18:41.981+05:30",
+      "acceptedAt": "2026-09-16T15:18:42.009+05:30",
+      "startedAt": "2026-09-16T15:18:42.023+05:30",
+      "progressUpdates": [
+        {
+          "note": "Excavation completed, preparing high-pressure sleeve clamp.",
+          "image": "",
+          "timestamp": "2026-09-16T15:18:42.036+05:30"
+        }
+      ],
+      "completedAt": "2026-09-16T15:18:42.049+05:30",
+      "verifiedAt": "2026-09-16T15:18:42.063+05:30"
+    },
     {
       "_id": "6aa3cec78d7b359c6c7ad3d5",
       "taskId": "TSK-D3D5",
@@ -7950,7 +8557,7 @@
       "_id": "6aa3c5de76dd8149601cca16",
       "taskId": "TSK-CA16",
       "issueId": "6aa3c5de76dd8149601cca16",
-      "workerId": "6aa3cd29807f4547b549bf96",
+      "workerId": "6aa3cd29807f4547b549bf97",
       "title": "Streetlight failure report at Ward 3 locality #32",
       "category": "Streetlight failure",
       "priority": "High",
@@ -7966,11 +8573,22 @@
       "deadline": "2026-09-18T14:49:36.814118+05:30",
       "requiredAction": "Inspect site, resolve Streetlight failure, upload after photos, and mark completed.",
       "beforeImage": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80",
-      "status": "COMPLETED",
-      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
+      "afterImage": "https://images.unsplash.com/photo-1584467735815-f778f274e296?w=800",
+      "status": "REOPENED",
+      "workerNotes": "Pipeline replaced and road resurfacing complete. Verified water flow restored.",
       "assignedAt": "2026-08-22T09:11:58.780Z",
-      "createdAt": "2026-08-22T09:11:58.780Z"
+      "createdAt": "2026-08-22T09:11:58.780Z",
+      "acceptedAt": "2026-09-16T15:18:29.599+05:30",
+      "startedAt": "2026-09-16T15:18:29.613+05:30",
+      "progressUpdates": [
+        {
+          "note": "Excavation completed, cleared pipeline blockages.",
+          "image": "https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?w=800",
+          "timestamp": "2026-09-16T15:18:29.628+05:30"
+        }
+      ],
+      "completedAt": "2026-09-16T15:18:29.641+05:30",
+      "verifiedAt": "2026-09-16T15:18:29.694+05:30"
     },
     {
       "_id": "6aa3c5de76dd8149601cca09",
