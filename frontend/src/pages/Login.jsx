@@ -6,7 +6,7 @@ import { Compass, Lock, Mail, AlertCircle } from 'lucide-react';
 
 export default function Login() {
   const { t } = useTranslation();
-  const { login, demoLogin } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -110,69 +110,6 @@ export default function Login() {
               {loading ? 'Authenticating...' : 'Sign In'}
             </button>
           </form>
-
-          {/* Quick 1-Click Demo Login */}
-          <div className="pt-2 border-t border-slate-100">
-            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider text-center mb-2">
-              ⚡ Quick 1-Click Test Login
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={async () => {
-                  setLoading(true);
-                  setError('');
-                  try {
-                    await demoLogin('citizen');
-                    navigate('/citizen');
-                  } catch (e) {
-                    setError(e.response?.data?.message || 'Login failed');
-                  } finally {
-                    setLoading(false);
-                  }
-                }}
-                className="py-2 px-1 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-[10px] font-bold text-center transition cursor-pointer"
-              >
-                👤 Citizen
-              </button>
-              <button
-                type="button"
-                onClick={async () => {
-                  setLoading(true);
-                  setError('');
-                  try {
-                    await demoLogin('admin');
-                    navigate('/admin');
-                  } catch (e) {
-                    setError(e.response?.data?.message || 'Login failed');
-                  } finally {
-                    setLoading(false);
-                  }
-                }}
-                className="py-2 px-1 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold text-center transition cursor-pointer"
-              >
-                🛡️ Admin
-              </button>
-              <button
-                type="button"
-                onClick={async () => {
-                  setLoading(true);
-                  setError('');
-                  try {
-                    await demoLogin('worker');
-                    navigate('/worker');
-                  } catch (e) {
-                    setError(e.response?.data?.message || 'Login failed');
-                  } finally {
-                    setLoading(false);
-                  }
-                }}
-                className="py-2 px-1 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 text-[10px] font-bold text-center transition cursor-pointer"
-              >
-                👷 Worker
-              </button>
-            </div>
-          </div>
 
           <div className="text-center text-xs text-slate-500 pt-2 border-t border-slate-100">
             <span>New citizen? </span>
