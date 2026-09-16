@@ -12,7 +12,7 @@ frontend/.env
 # Build outputs
 /dist/
 build/
-frontend/dist/
+# frontend/dist/
 dist-ssr/
 !python_backend/dist/
 
