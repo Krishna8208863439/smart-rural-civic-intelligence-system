@@ -53,9 +53,11 @@ def get_live_server_time():
     })
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-FRONTEND_DIST = os.path.join(os.path.dirname(BASE_DIR), 'frontend', 'dist')
-if not os.path.exists(FRONTEND_DIST):
+# Check python_backend/dist first, then frontend/dist
+if os.path.exists(os.path.join(BASE_DIR, 'dist', 'index.html')):
     FRONTEND_DIST = os.path.join(BASE_DIR, 'dist')
+else:
+    FRONTEND_DIST = os.path.join(os.path.dirname(BASE_DIR), 'frontend', 'dist')
 
 UPLOADS_DIR = os.path.join(BASE_DIR, 'uploads')
 os.makedirs(UPLOADS_DIR, exist_ok=True)
@@ -1675,21 +1677,25 @@ def serve_uploads(filename):
 
 @app.route('/assets/<path:filename>')
 def serve_assets(filename):
-    assets_dir = os.path.join(FRONTEND_DIST, 'assets')
-    if os.path.exists(os.path.join(assets_dir, filename)):
-        return send_from_directory(assets_dir, filename)
+    for candidate in [FRONTEND_DIST, os.path.join(BASE_DIR, 'dist'), os.path.join(os.path.dirname(BASE_DIR), 'frontend', 'dist')]:
+        assets_dir = os.path.join(candidate, 'assets')
+        target = os.path.join(assets_dir, filename)
+        if os.path.exists(target) and os.path.isfile(target):
+            return send_from_directory(assets_dir, filename)
     return ('Asset not found', 404)
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve_spa(path):
     if path:
-        full_path = os.path.join(FRONTEND_DIST, path)
-        if os.path.isfile(full_path):
-            return send_from_directory(FRONTEND_DIST, path)
-    index_file = os.path.join(FRONTEND_DIST, 'index.html')
-    if os.path.exists(index_file):
-        return send_file(index_file)
+        for candidate in [FRONTEND_DIST, os.path.join(BASE_DIR, 'dist'), os.path.join(os.path.dirname(BASE_DIR), 'frontend', 'dist')]:
+            full_path = os.path.join(candidate, path)
+            if os.path.isfile(full_path):
+                return send_from_directory(candidate, path)
+    for candidate in [FRONTEND_DIST, os.path.join(BASE_DIR, 'dist'), os.path.join(os.path.dirname(BASE_DIR), 'frontend', 'dist')]:
+        index_file = os.path.join(candidate, 'index.html')
+        if os.path.exists(index_file):
+            return send_file(index_file)
     return "<h1>Smart Rural Civic Intelligence System</h1><p>Frontend dist directory not found.</p>", 404
 
 if __name__ == '__main__':
