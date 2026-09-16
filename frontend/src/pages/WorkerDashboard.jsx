@@ -12,6 +12,7 @@ import {
   CheckCircle2,
   MapPin,
   AlertCircle,
+  AlertTriangle,
   Play,
   Upload,
   FileCheck,

@@ -111,11 +111,18 @@ export default function Login() {
             </button>
           </form>
 
-          <div className="text-center text-xs text-slate-500 pt-2 border-t border-slate-100">
-            <span>New citizen? </span>
-            <Link to="/register" className="font-bold text-emerald-700 hover:underline">
-              Create an account
-            </Link>
+          <div className="text-center text-xs text-slate-500 pt-2 border-t border-slate-100 flex items-center justify-between">
+            <div>
+              <span>New citizen? </span>
+              <Link to="/register" className="font-bold text-emerald-700 hover:underline">
+                Create account
+              </Link>
+            </div>
+            <div>
+              <Link to="/worker/login" className="font-bold text-emerald-800 hover:text-emerald-950 hover:underline">
+                Field Worker Portal →
+              </Link>
+            </div>
           </div>
         </div>
       </div>

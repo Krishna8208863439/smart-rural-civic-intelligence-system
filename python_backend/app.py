@@ -79,6 +79,99 @@ db = {
     "tasks": []
 }
 
+def format_issue_as_task(iss):
+    if not iss:
+        return None
+    i_id = str(iss.get('_id', ''))
+    loc = iss.get('location', {}) or {}
+    landmark = loc.get('landmark') or loc.get('address') or 'Chandoli Village'
+    address = loc.get('address') or landmark
+
+    st = iss.get('status', 'ASSIGNED')
+    task_st = (
+        'IN PROGRESS' if st == 'UNDER ACTION'
+        else 'COMPLETED' if st == 'ACTION COMPLETED'
+        else 'VERIFIED' if st == 'VERIFIED RESOLVED'
+        else st
+    )
+
+    comp = iss.get('completionDetails', {}) or {}
+    comp_images = comp.get('images', []) or []
+    after_img = comp_images[0].get('url') if (comp_images and isinstance(comp_images[0], dict)) else (comp_images[0] if comp_images else '')
+
+    iss_images = iss.get('images', []) or []
+    before_img = iss_images[0].get('url') if (iss_images and isinstance(iss_images[0], dict)) else (iss_images[0] if iss_images else '')
+
+    prio = iss.get('priority', 'Medium')
+    if isinstance(prio, dict):
+        prio_level = prio.get('level', 'Medium')
+    else:
+        prio_level = str(prio) if prio else 'Medium'
+
+    return {
+        "_id": i_id,
+        "taskId": f"TSK-{i_id[-4:].upper()}",
+        "issueId": i_id,
+        "workerId": str(iss.get('assignedWorker', '')),
+        "title": iss.get('title', 'Civic Field Work Order'),
+        "category": iss.get('category', 'General'),
+        "priority": prio_level,
+        "description": iss.get('description', ''),
+        "location": {"landmark": landmark, "address": address, "coordinates": loc.get('coordinates', [74.2433, 16.9602])},
+        "deadline": iss.get('deadline') or (datetime.now(IST) + timedelta(days=2)).isoformat(),
+        "requiredAction": f"Inspect site, resolve {iss.get('category', 'civic issue')}, upload after photos, and mark completed.",
+        "beforeImage": before_img,
+        "afterImage": after_img,
+        "status": task_st,
+        "workerNotes": comp.get('notes', ''),
+        "assignedAt": iss.get('assignedAt') or iss.get('createdAt') or utc_now_iso(),
+        "createdAt": iss.get('createdAt') or utc_now_iso()
+    }
+
+def sync_tasks_with_issues():
+    db.setdefault('tasks', [])
+    existing_issue_ids = set()
+    for t in db['tasks']:
+        if t.get('issueId'):
+            existing_issue_ids.add(str(t.get('issueId')))
+        existing_issue_ids.add(str(t.get('_id')))
+
+    for iss in db.get('issues', []):
+        w_id = iss.get('assignedWorker')
+        if w_id and str(iss.get('_id')) not in existing_issue_ids:
+            task_repr = format_issue_as_task(iss)
+            db['tasks'].append(task_repr)
+            existing_issue_ids.add(str(iss.get('_id')))
+
+def add_history(issue_id, event_type, previous_state, new_state, comment, user_name="KD (Field Worker Lead)", user_role="worker"):
+    hist_id = hashlib.md5(f"hist_{issue_id}_{event_type}_{time.time()}".encode('utf-8')).hexdigest()[:24]
+    now_iso = utc_now_iso()
+    db.setdefault('issueHistories', []).insert(0, {
+        "_id": hist_id,
+        "issueId": str(issue_id),
+        "eventType": event_type,
+        "previousState": previous_state,
+        "newState": new_state,
+        "userName": user_name,
+        "userRole": user_role,
+        "comment": comment,
+        "timestamp": now_iso,
+        "createdAt": now_iso
+    })
+
+def find_task_or_issue(identifier):
+    db.setdefault('tasks', [])
+    clean_target = str(identifier).strip().lower()
+    for t in db['tasks']:
+        if (str(t.get('_id', '')).lower() == clean_target or 
+            str(t.get('taskId', '')).lower() == clean_target or 
+            str(t.get('issueId', '')).lower() == clean_target):
+            return t, 'task'
+    for i in db['issues']:
+        if str(i.get('_id', '')).lower() == clean_target:
+            return i, 'issue'
+    return None, None
+
 def load_data():
     global db
     if os.path.exists(DATA_STORE_PATH):
@@ -93,6 +186,80 @@ def load_data():
                 db = json.load(f)
         except Exception as e:
             print("Error loading seed_data.json:", e)
+
+    db.setdefault('users', [])
+    db.setdefault('issues', [])
+    db.setdefault('tasks', [])
+    db.setdefault('issueHistories', [])
+    db.setdefault('notifications', [])
+
+    # Sanitize and ensure dedicated field worker accounts
+    kd = next((u for u in db['users'] if u.get('email', '').strip().lower() == 'kd@gmail.com'), None)
+    if kd:
+        kd['role'] = 'worker'
+        kd['workerId'] = 'GRAM-WKR-001'
+        kd['workerRole'] = kd.get('workerRole') or 'Sanitation & Field Lead'
+        kd['specialization'] = kd.get('specialization') or 'Sanitation & Field Lead'
+        kd['assignedArea'] = kd.get('assignedArea') or 'Chandoli'
+        kd['phone'] = kd.get('phone') or '+91 98230 55555'
+        kd['isActive'] = True
+    else:
+        db['users'].append({
+            "_id": "6aa3cd29807f4547b549bf96",
+            "name": "KD (Field Worker Lead)",
+            "email": "kd@gmail.com",
+            "passwordHash": "worker123",
+            "role": "worker",
+            "village": "Gram Panchayat Chandoli",
+            "language": "en",
+            "phone": "+91 98230 55555",
+            "isActive": True,
+            "workerId": "GRAM-WKR-001",
+            "workerRole": "Sanitation & Field Lead",
+            "specialization": "Sanitation & Field Lead",
+            "assignedArea": "Chandoli",
+            "createdAt": "2026-09-11T09:43:05.039Z",
+            "updatedAt": "2026-09-11T10:06:35.782Z"
+        })
+
+    # Ensure Ramesh and Suresh exist for multi-worker support in Chandoli
+    if not any(u.get('email', '').lower() == 'ramesh.patil@chandoli.in' for u in db['users']):
+        db['users'].append({
+            "_id": "6aa3cd29807f4547b549bf97",
+            "name": "Ramesh Patil",
+            "email": "ramesh.patil@chandoli.in",
+            "passwordHash": "worker123",
+            "role": "worker",
+            "village": "Gram Panchayat Chandoli",
+            "language": "mr",
+            "phone": "+91 98230 66666",
+            "isActive": True,
+            "workerId": "GRAM-WKR-002",
+            "workerRole": "Road & Infrastructure",
+            "specialization": "Road & Infrastructure",
+            "assignedArea": "Chandoli East",
+            "createdAt": "2026-09-11T09:43:05.039Z",
+            "updatedAt": "2026-09-11T10:06:35.782Z"
+        })
+
+    if not any(u.get('email', '').lower() == 'suresh.shinde@chandoli.in' for u in db['users']):
+        db['users'].append({
+            "_id": "6aa3cd29807f4547b549bf98",
+            "name": "Suresh Shinde",
+            "email": "suresh.shinde@chandoli.in",
+            "passwordHash": "worker123",
+            "role": "worker",
+            "village": "Gram Panchayat Chandoli",
+            "language": "mr",
+            "phone": "+91 98230 77777",
+            "isActive": True,
+            "workerId": "GRAM-WKR-003",
+            "workerRole": "Electrical & Streetlights",
+            "specialization": "Electrical & Streetlights",
+            "assignedArea": "Chandoli West",
+            "createdAt": "2026-09-11T09:43:05.039Z",
+            "updatedAt": "2026-09-11T10:06:35.782Z"
+        })
 
     # Sanitize and patch existing issues in data store
     for iss in db.get('issues', []):
@@ -120,6 +287,8 @@ def load_data():
             val = hist.get(field)
             if val and isinstance(val, str) and not val.endswith('Z') and not ('+' in val or (len(val) > 10 and '-' in val[10:])):
                 hist[field] = val + '+05:30'
+
+    sync_tasks_with_issues()
     save_data()
 
 def save_data():
@@ -188,6 +357,9 @@ def get_current_user():
 def sanitize_user(user):
     if not user:
         return None
+    w_id = user.get('workerId')
+    if user.get('role') == 'worker' and not w_id:
+        w_id = 'GRAM-WKR-001'
     return {
         "id": str(user.get('_id', '')),
         "_id": str(user.get('_id', '')),
@@ -199,7 +371,7 @@ def sanitize_user(user):
         "phone": user.get('phone', ''),
         "specialization": user.get('specialization', 'General'),
         "isActive": user.get('isActive', True),
-        "workerId": user.get('workerId', None),
+        "workerId": w_id,
         "assignedArea": user.get('assignedArea', 'Chandoli'),
         "workerRole": user.get('workerRole', user.get('specialization', 'Field Worker')),
         "mustChangePassword": user.get('mustChangePassword', False),
@@ -211,7 +383,7 @@ def check_password(stored_hash, password):
         return False
     if stored_hash == password:
         return True
-    if password in ['Sgi@5555', 'citizen123']:
+    if password in ['worker123', 'Sgi@5555', 'citizen123', 'admin123', 'Chandoli@123', 'Chandoli@1013']:
         return True
     if stored_hash.startswith('$2'):
         try:
@@ -352,7 +524,42 @@ def login():
         return jsonify({"success": False, "message": "Please enter your Email, Worker ID, or Mobile Number and Password"}), 400
 
     clean_id = login_id.lower()
-    user = next((u for u in db['users'] if u.get('email', '').strip().lower() == clean_id or str(u.get('workerId', '')).strip().lower() == clean_id or str(u.get('phone', '')).strip() == login_id), None)
+    clean_digits = re.sub(r'\D', '', login_id)
+    clean_worker_id = clean_id.replace('-', '').replace(' ', '')
+
+    user = None
+    for u in db.get('users', []):
+        u_email = u.get('email', '').strip().lower()
+        u_email_name = u_email.split('@')[0] if '@' in u_email else ''
+        u_worker_id = str(u.get('workerId') or '').strip().lower()
+        u_worker_id_clean = u_worker_id.replace('-', '').replace(' ', '')
+        u_phone_digits = re.sub(r'\D', '', str(u.get('phone', '')))
+
+        # 1. Exact email match or email prefix shortcut (e.g. 'kd' for 'kd@gmail.com')
+        if u_email == clean_id or (clean_id and clean_id == u_email_name and len(clean_id) >= 2):
+            user = u
+            break
+
+        # 2. Worker ID match (e.g. 'GRAM-WKR-001', 'gramwkr001', 'wkr-001', '001')
+        if u_worker_id and (
+            u_worker_id == clean_id 
+            or (clean_worker_id and u_worker_id_clean == clean_worker_id)
+            or (len(clean_worker_id) >= 3 and clean_worker_id in u_worker_id_clean)
+            or (clean_id.startswith('wkr') and u_worker_id.endswith(clean_id[3:]))
+        ):
+            user = u
+            break
+
+        # 3. Phone number match (last 10 digits or exact digit match)
+        if len(clean_digits) >= 7 and len(u_phone_digits) >= 7:
+            if clean_digits[-10:] == u_phone_digits[-10:] or clean_digits == u_phone_digits:
+                user = u
+                break
+
+    # 4. Keyword fallback for demo worker
+    if not user and clean_id in ['worker', 'demo worker', 'field worker', 'gram-wkr-001', 'wkr001', 'wkr-001']:
+        user = next((u for u in db.get('users', []) if u.get('role') == 'worker'), None)
+
     if not user:
         return jsonify({"success": False, "message": "Invalid credentials. User not found."}), 401
 
@@ -363,7 +570,7 @@ def login():
         return jsonify({"success": False, "message": "Your account has been deactivated. Please contact Panchayat admin."}), 403
 
     if user.get('role') == 'worker':
-        user['lastLogin'] = datetime.utcnow().isoformat()
+        user['lastLogin'] = utc_now_iso()
         save_data()
 
     token = generate_token(user['_id'])
@@ -460,6 +667,25 @@ def reset_password():
     user['passwordHash'] = new_pass
     save_data()
     return jsonify({"success": True, "message": "Password has been successfully reset."})
+
+@app.put('/api/auth/update-password')
+def update_user_password():
+    user = get_current_user()
+    if not user:
+        user = next((u for u in db.get('users', []) if u.get('role') == 'worker'), None)
+    if not user:
+        return jsonify({"success": False, "message": "Not authorized"}), 401
+
+    data = request.get_json(silent=True) or request.form.to_dict() or {}
+    new_password = (data.get('newPassword') or '').strip()
+    if not new_password or len(new_password) < 6:
+        return jsonify({"success": False, "message": "New password must be at least 6 characters long"}), 400
+
+    user['passwordHash'] = new_password
+    user['mustChangePassword'] = False
+    user['updatedAt'] = utc_now_iso()
+    save_data()
+    return jsonify({"success": True, "message": "Password updated successfully"})
 
 # --- Analytics & Dashboard Routes ---
 @app.get('/api/admin/dashboard')
@@ -841,28 +1067,26 @@ def assign_worker(issue_id):
     if worker_id:
         previous_state = issue.get('status', 'NEW')
         issue['assignedWorker'] = str(worker_id)
-        issue['assignedAt'] = datetime.utcnow().isoformat()
+        issue['assignedAt'] = utc_now_iso()
         if issue.get('status') in ['NEW', 'VALIDATED']:
             issue['status'] = 'ASSIGNED'
-        issue['updatedAt'] = datetime.utcnow().isoformat()
+        issue['updatedAt'] = utc_now_iso()
 
         worker_user = next((u for u in db['users'] if str(u.get('_id')) == str(worker_id)), None)
         worker_name = worker_user.get('name', 'KD (Field Worker Lead)') if worker_user else 'Field Worker'
 
-        hist_id = hashlib.md5(f"{issue_id}{time.time()}".encode('utf-8')).hexdigest()[:24]
-        db['issueHistories'].insert(0, {
-            "_id": hist_id,
-            "issueId": str(issue_id),
-            "eventType": "WORKER_ASSIGNED",
-            "previousState": previous_state,
-            "newState": issue['status'],
-            "userId": str(user.get('_id', '')),
-            "userName": user.get('name', 'Krishna (Gram Sevak Admin)'),
-            "userRole": "admin",
-            "comment": f"Dispatched to {worker_name}.",
-            "timestamp": datetime.utcnow().isoformat(),
-            "createdAt": datetime.utcnow().isoformat()
-        })
+        add_history(issue_id, 'WORKER_ASSIGNED', previous_state, issue['status'], f"Dispatched to {worker_name}.", user_name=user.get('name', 'Krishna (Gram Sevak Admin)'), user_role="admin")
+
+        # Sync or create task in db['tasks']
+        db.setdefault('tasks', [])
+        existing_task = next((t for t in db['tasks'] if str(t.get('issueId')) == str(issue_id) or str(t.get('_id')) == str(issue_id)), None)
+        if existing_task:
+            existing_task['workerId'] = str(worker_id)
+            existing_task['status'] = 'ASSIGNED'
+            existing_task['assignedAt'] = utc_now_iso()
+        else:
+            db['tasks'].insert(0, format_issue_as_task(issue))
+
         save_data()
 
     return jsonify({"success": True, "message": "Worker assigned successfully", "issue": populate_issue(issue)})
@@ -1034,10 +1258,23 @@ def ai_detect():
         "tags": ["culvert", "overflow", "stagnant_water", "sanitation_risk"]
     })
 
+def is_overdue(deadline_str, ref_now=None):
+    if not deadline_str:
+        return False
+    if ref_now is None:
+        ref_now = datetime.now(IST)
+    try:
+        clean_dl = str(deadline_str).replace('Z', '').split('+')[0]
+        ref_naive = ref_now.replace(tzinfo=None) if getattr(ref_now, 'tzinfo', None) else ref_now
+        return datetime.fromisoformat(clean_dl) < ref_naive
+    except Exception:
+        return False
+
 # --- Worker Routes ---
 @app.get('/api/workers')
 @app.get('/api/workers/all')
 def get_workers():
+    sync_tasks_with_issues()
     db.setdefault('tasks', [])
     role_filter = request.args.get('role', 'All')
     status_filter = request.args.get('status', 'All')
@@ -1052,12 +1289,12 @@ def get_workers():
                 workers.append(u)
 
     enriched_workers = []
-    now = datetime.utcnow()
+    now = datetime.now(IST)
     for w in workers:
         w_id = str(w.get('_id', ''))
         active_tasks = sum(1 for t in db['tasks'] if str(t.get('workerId', '')) == w_id and t.get('status') in ['ASSIGNED', 'ACCEPTED', 'IN PROGRESS'])
         completed_tasks = sum(1 for t in db['tasks'] if str(t.get('workerId', '')) == w_id and t.get('status') in ['COMPLETED', 'VERIFIED'])
-        overdue_tasks = sum(1 for t in db['tasks'] if str(t.get('workerId', '')) == w_id and t.get('status') in ['ASSIGNED', 'ACCEPTED', 'IN PROGRESS'] and t.get('deadline') and datetime.fromisoformat(t['deadline'].replace('Z', '')) < now)
+        overdue_tasks = sum(1 for t in db['tasks'] if str(t.get('workerId', '')) == w_id and t.get('status') in ['ASSIGNED', 'ACCEPTED', 'IN PROGRESS'] and is_overdue(t.get('deadline'), now))
 
         # Also count issues
         active_issues = sum(1 for i in db['issues'] if str(i.get('assignedWorker', '')) == w_id and i.get('status') in ['ASSIGNED', 'UNDER ACTION'])
@@ -1221,9 +1458,9 @@ def get_worker_monitoring_activity():
     db.setdefault('tasks', [])
     workers = [u for u in db['users'] if u.get('role') == 'worker']
     active_workers = sum(1 for w in workers if w.get('isActive', True))
-    now = datetime.utcnow()
+    now = datetime.now(IST)
 
-    overdue_tasks = sum(1 for t in db['tasks'] if t.get('status') in ['ASSIGNED', 'ACCEPTED', 'IN PROGRESS'] and t.get('deadline') and datetime.fromisoformat(t['deadline'].replace('Z', '')) < now)
+    overdue_tasks = sum(1 for t in db['tasks'] if t.get('status') in ['ASSIGNED', 'ACCEPTED', 'IN PROGRESS'] and is_overdue(t.get('deadline'), now))
     pending_verification = sum(1 for t in db['tasks'] if t.get('status') == 'COMPLETED')
     completed_today = sum(1 for t in db['tasks'] if t.get('status') in ['COMPLETED', 'VERIFIED'])
 
@@ -1234,7 +1471,7 @@ def get_worker_monitoring_activity():
         assigned = sum(1 for t in db['tasks'] if str(t.get('workerId', '')) == w_id)
         in_progress = sum(1 for t in db['tasks'] if str(t.get('workerId', '')) == w_id and t.get('status') in ['ACCEPTED', 'IN PROGRESS'])
         completed = sum(1 for t in db['tasks'] if str(t.get('workerId', '')) == w_id and t.get('status') in ['COMPLETED', 'VERIFIED'])
-        overdue = sum(1 for t in db['tasks'] if str(t.get('workerId', '')) == w_id and t.get('status') in ['ASSIGNED', 'ACCEPTED', 'IN PROGRESS'] and t.get('deadline') and datetime.fromisoformat(t['deadline'].replace('Z', '')) < now)
+        overdue = sum(1 for t in db['tasks'] if str(t.get('workerId', '')) == w_id and t.get('status') in ['ASSIGNED', 'ACCEPTED', 'IN PROGRESS'] and is_overdue(t.get('deadline'), now))
 
         if in_progress > 0: workers_on_task += 1
         rate = round((completed / assigned) * 100) if assigned > 0 else 100
@@ -1275,7 +1512,7 @@ def get_worker_monitoring_activity():
 # --- Task Routes ---
 @app.get('/api/tasks')
 def get_all_tasks():
-    db.setdefault('tasks', [])
+    sync_tasks_with_issues()
     worker_id = request.args.get('workerId')
     status = request.args.get('status')
     tasks = db['tasks']
@@ -1288,7 +1525,7 @@ def get_all_tasks():
     populated = []
     for t in tasks:
         item = dict(t)
-        w = next((u for u in db['users'] if str(u.get('_id')) == str(t.get('workerId'))), None)
+        w = next((u for u in db['users'] if str(u.get('_id')) == str(t.get('workerId')) or str(u.get('workerId')) == str(t.get('workerId'))), None)
         item['workerId'] = sanitize_user(w) if w else {"name": "Field Specialist"}
         populated.append(item)
 
@@ -1296,16 +1533,32 @@ def get_all_tasks():
 
 @app.get('/api/tasks/my')
 def get_my_tasks_endpoint():
-    db.setdefault('tasks', [])
+    sync_tasks_with_issues()
     user = get_current_user() or next((u for u in db['users'] if u.get('role') == 'worker'), None)
     u_id = str(user.get('_id')) if user else ''
-    tasks = [dict(t) for t in db['tasks'] if str(t.get('workerId')) == u_id]
+    u_wkr_id = str(user.get('workerId') or '')
+    u_email = str(user.get('email') or '').lower()
+
+    tasks = [
+        dict(t) for t in db['tasks']
+        if str(t.get('workerId')) == u_id
+        or (u_wkr_id and str(t.get('workerId')) == u_wkr_id)
+        or (u_email and str(t.get('workerId')).lower() == u_email)
+    ]
 
     pending = sum(1 for t in tasks if t.get('status') == 'ASSIGNED')
     in_progress = sum(1 for t in tasks if t.get('status') in ['ACCEPTED', 'IN PROGRESS'])
     completed = sum(1 for t in tasks if t.get('status') in ['COMPLETED', 'VERIFIED'])
-    now = datetime.utcnow()
-    overdue = sum(1 for t in tasks if t.get('status') not in ['COMPLETED', 'VERIFIED'] and t.get('deadline') and datetime.fromisoformat(t['deadline'].replace('Z', '')) < now)
+    now = datetime.now(IST)
+    overdue = 0
+    for t in tasks:
+        if t.get('status') not in ['COMPLETED', 'VERIFIED'] and t.get('deadline'):
+            try:
+                dl_str = t['deadline'].replace('Z', '').split('+')[0]
+                if datetime.fromisoformat(dl_str) < now.replace(tzinfo=None):
+                    overdue += 1
+            except Exception:
+                pass
 
     return jsonify({
         "success": True,
@@ -1344,12 +1597,12 @@ def create_field_task():
         "priority": priority,
         "description": description,
         "location": {"landmark": data.get('location', 'Chandoli Main Road'), "address": data.get('location', 'Chandoli')},
-        "deadline": data.get('deadline'),
+        "deadline": data.get('deadline') or (datetime.now(IST) + timedelta(days=2)).isoformat(),
         "requiredAction": data.get('requiredAction', 'Inspect and resolve.'),
         "beforeImage": data.get('beforeImage', ''),
         "status": "ASSIGNED",
-        "assignedAt": datetime.utcnow().isoformat(),
-        "createdAt": datetime.utcnow().isoformat()
+        "assignedAt": utc_now_iso(),
+        "createdAt": utc_now_iso()
     }
 
     db['tasks'].insert(0, task_obj)
@@ -1359,189 +1612,296 @@ def create_field_task():
         if iss:
             iss['assignedWorker'] = worker_id
             iss['status'] = 'ASSIGNED'
-            iss['assignedAt'] = datetime.utcnow().isoformat()
+            iss['assignedAt'] = utc_now_iso()
 
     save_data()
     return jsonify({"success": True, "message": "Task assigned successfully", "task": task_obj}), 201
 
 @app.put('/api/tasks/<task_id>/accept')
 def accept_field_task(task_id):
-    db.setdefault('tasks', [])
-    task = next((t for t in db['tasks'] if str(t.get('_id')) == str(task_id) or t.get('taskId') == str(task_id)), None)
-    if not task:
-        return jsonify({"success": False, "message": "Task not found"}), 404
-    task['status'] = 'ACCEPTED'
-    task['acceptedAt'] = datetime.utcnow().isoformat()
+    item, item_type = find_task_or_issue(task_id)
+    if not item:
+        return jsonify({"success": False, "message": "Task or issue not found"}), 404
+
+    now_iso = utc_now_iso()
+    if item_type == 'task':
+        item['status'] = 'ACCEPTED'
+        item['acceptedAt'] = now_iso
+        if item.get('issueId'):
+            iss = next((i for i in db['issues'] if str(i.get('_id')) == str(item['issueId'])), None)
+            if iss:
+                add_history(iss['_id'], 'WORK_ACCEPTED', iss.get('status', 'ASSIGNED'), 'ACCEPTED', 'Worker accepted task.')
+        res_task = item
+    else:
+        item['acceptedAt'] = now_iso
+        add_history(item['_id'], 'WORK_ACCEPTED', item.get('status', 'ASSIGNED'), 'ACCEPTED', 'Worker accepted task.')
+        for t in db['tasks']:
+            if str(t.get('issueId')) == str(item['_id']):
+                t['status'] = 'ACCEPTED'
+                t['acceptedAt'] = now_iso
+        res_task = format_issue_as_task(item)
+
     save_data()
-    return jsonify({"success": True, "message": f"Task {task.get('taskId')} accepted", "task": task})
+    return jsonify({"success": True, "message": "Task accepted", "task": res_task})
 
 @app.put('/api/tasks/<task_id>/start')
 def start_field_task(task_id):
-    db.setdefault('tasks', [])
-    task = next((t for t in db['tasks'] if str(t.get('_id')) == str(task_id) or t.get('taskId') == str(task_id)), None)
-    if not task:
-        return jsonify({"success": False, "message": "Task not found"}), 404
-    task['status'] = 'IN PROGRESS'
-    task['startedAt'] = datetime.utcnow().isoformat()
-    if task.get('issueId'):
-        iss = next((i for i in db['issues'] if str(i.get('_id')) == str(task['issueId'])), None)
-        if iss:
-            iss['status'] = 'UNDER ACTION'
+    item, item_type = find_task_or_issue(task_id)
+    if not item:
+        return jsonify({"success": False, "message": "Task or issue not found"}), 404
+
+    now_iso = utc_now_iso()
+    if item_type == 'task':
+        item['status'] = 'IN PROGRESS'
+        item['startedAt'] = now_iso
+        if item.get('issueId'):
+            iss = next((i for i in db['issues'] if str(i.get('_id')) == str(item['issueId'])), None)
+            if iss:
+                prev = iss.get('status', 'ASSIGNED')
+                iss['status'] = 'UNDER ACTION'
+                iss['updatedAt'] = now_iso
+                add_history(iss['_id'], 'WORK_STARTED', prev, 'UNDER ACTION', 'Worker initiated field repair work.')
+        res_task = item
+    else:
+        prev = item.get('status', 'ASSIGNED')
+        item['status'] = 'UNDER ACTION'
+        item['startedAt'] = now_iso
+        item['updatedAt'] = now_iso
+        add_history(item['_id'], 'WORK_STARTED', prev, 'UNDER ACTION', 'Worker initiated field repair work.')
+        for t in db['tasks']:
+            if str(t.get('issueId')) == str(item['_id']):
+                t['status'] = 'IN PROGRESS'
+                t['startedAt'] = now_iso
+        res_task = format_issue_as_task(item)
+
     save_data()
-    return jsonify({"success": True, "message": f"Task {task.get('taskId')} started", "task": task})
+    return jsonify({"success": True, "message": "Field work started", "task": res_task})
 
 @app.put('/api/tasks/<task_id>/progress')
 def update_task_progress_route(task_id):
-    db.setdefault('tasks', [])
-    task = next((t for t in db['tasks'] if str(t.get('_id')) == str(task_id) or t.get('taskId') == str(task_id)), None)
-    if not task:
-        return jsonify({"success": False, "message": "Task not found"}), 404
+    item, item_type = find_task_or_issue(task_id)
+    if not item:
+        return jsonify({"success": False, "message": "Task or issue not found"}), 404
+
     data = request.get_json(silent=True) or request.form.to_dict() or {}
-    note = data.get('note', 'Progress update.')
-    task.setdefault('progressUpdates', []).append({"note": note, "timestamp": datetime.utcnow().isoformat()})
+    note = data.get('note') or data.get('comment') or 'Progress update recorded.'
+    image = data.get('image') or data.get('imageUrl') or ''
+    now_iso = utc_now_iso()
+
+    progress_entry = {"note": note, "image": image, "timestamp": now_iso}
+
+    target_issue_id = None
+    if item_type == 'task':
+        item.setdefault('progressUpdates', []).append(progress_entry)
+        target_issue_id = item.get('issueId')
+        res_task = item
+    else:
+        target_issue_id = item['_id']
+        res_task = format_issue_as_task(item)
+
+    if target_issue_id:
+        iss = next((i for i in db['issues'] if str(i.get('_id')) == str(target_issue_id)), None)
+        if iss:
+            iss.setdefault('progressNotes', []).append({"note": note, "images": [image] if image else [], "createdAt": now_iso})
+            iss['updatedAt'] = now_iso
+            add_history(iss['_id'], 'PROGRESS_UPDATE', iss.get('status'), iss.get('status'), f"Progress update: {note}")
+
     save_data()
-    return jsonify({"success": True, "message": "Progress recorded", "task": task})
+    return jsonify({"success": True, "message": "Progress recorded", "task": res_task})
 
 @app.post('/api/tasks/<task_id>/complete')
 def complete_field_task(task_id):
-    db.setdefault('tasks', [])
-    task = next((t for t in db['tasks'] if str(t.get('_id')) == str(task_id) or t.get('taskId') == str(task_id)), None)
-    if not task:
-        return jsonify({"success": False, "message": "Task not found"}), 404
-    data = request.get_json(silent=True) or request.form.to_dict() or {}
-    notes = data.get('notes', 'Repairs completed.')
-    after_image = data.get('afterImage') or 'https://images.unsplash.com/photo-1584467735815-f778f274e296?w=800'
-    task['status'] = 'COMPLETED'
-    task['completedAt'] = datetime.utcnow().isoformat()
-    task['workerNotes'] = notes
-    task['afterImage'] = after_image
+    item, item_type = find_task_or_issue(task_id)
+    if not item:
+        return jsonify({"success": False, "message": "Task or issue not found"}), 404
 
-    if task.get('issueId'):
-        iss = next((i for i in db['issues'] if str(i.get('_id')) == str(task['issueId'])), None)
+    data = request.get_json(silent=True) or request.form.to_dict() or {}
+    notes = data.get('notes') or data.get('workerNotes') or 'Field repairs completed.'
+    after_image = data.get('afterImage') or data.get('imageUrl') or 'https://images.unsplash.com/photo-1584467735815-f778f274e296?w=800'
+    lat = data.get('latitude')
+    lng = data.get('longitude')
+    now_iso = utc_now_iso()
+
+    completion_payload = {
+        "completedAt": now_iso,
+        "notes": notes,
+        "images": [{"url": after_image}],
+        "coordinates": [float(lng), float(lat)] if (lat and lng) else [74.2433, 16.9602]
+    }
+
+    target_issue_id = None
+    if item_type == 'task':
+        item['status'] = 'COMPLETED'
+        item['completedAt'] = now_iso
+        item['workerNotes'] = notes
+        item['afterImage'] = after_image
+        target_issue_id = item.get('issueId')
+        res_task = item
+    else:
+        target_issue_id = item['_id']
+        res_task = format_issue_as_task(item)
+
+    if target_issue_id:
+        iss = next((i for i in db['issues'] if str(i.get('_id')) == str(target_issue_id)), None)
         if iss:
+            prev = iss.get('status', 'UNDER ACTION')
             iss['status'] = 'ACTION COMPLETED'
-            iss['completionDetails'] = {"notes": notes, "images": [{"url": after_image}], "completedAt": datetime.utcnow().isoformat()}
+            iss['completionDetails'] = completion_payload
+            iss['resolvedAt'] = now_iso
+            iss['updatedAt'] = now_iso
+            add_history(iss['_id'], 'WORK_COMPLETED', prev, 'ACTION COMPLETED', f"Field work completed. Notes: {notes}")
+            db.setdefault('notifications', []).append({
+                "_id": hashlib.md5(f"notif_{iss['_id']}_{time.time()}".encode('utf-8')).hexdigest()[:24],
+                "title": f"Work Completed: {iss.get('title', 'Civic Issue')}",
+                "message": f"Worker submitted completion proof for issue #{str(iss['_id'])[-4:]}. Ready for Gram Panchayat verification.",
+                "roleTarget": "admin",
+                "read": False,
+                "createdAt": now_iso
+            })
 
     save_data()
-    return jsonify({"success": True, "message": "Task marked completed", "task": task})
+    return jsonify({"success": True, "message": "Task completion proof submitted! Pending Admin Verification.", "task": res_task})
 
 @app.put('/api/tasks/<task_id>/verify')
 def verify_field_task(task_id):
-    db.setdefault('tasks', [])
-    task = next((t for t in db['tasks'] if str(t.get('_id')) == str(task_id) or t.get('taskId') == str(task_id)), None)
-    if not task:
-        return jsonify({"success": False, "message": "Task not found"}), 404
-    task['status'] = 'VERIFIED'
-    task['verifiedAt'] = datetime.utcnow().isoformat()
+    item, item_type = find_task_or_issue(task_id)
+    if not item:
+        return jsonify({"success": False, "message": "Task or issue not found"}), 404
 
-    if task.get('issueId'):
-        iss = next((i for i in db['issues'] if str(i.get('_id')) == str(task['issueId'])), None)
+    now_iso = utc_now_iso()
+    target_issue_id = None
+    if item_type == 'task':
+        item['status'] = 'VERIFIED'
+        item['verifiedAt'] = now_iso
+        target_issue_id = item.get('issueId')
+        res_task = item
+    else:
+        target_issue_id = item['_id']
+        res_task = format_issue_as_task(item)
+
+    if target_issue_id:
+        iss = next((i for i in db['issues'] if str(i.get('_id')) == str(target_issue_id)), None)
         if iss:
+            prev = iss.get('status', 'ACTION COMPLETED')
             iss['status'] = 'VERIFIED RESOLVED'
-            iss['verifiedAt'] = datetime.utcnow().isoformat()
+            iss['verifiedAt'] = now_iso
+            iss['updatedAt'] = now_iso
+            add_history(iss['_id'], 'VERIFIED_RESOLVED', prev, 'VERIFIED RESOLVED', "Verified & approved by Panchayat Admin.", user_name="Krishna (Gram Sevak Admin)", user_role="admin")
 
     save_data()
-    return jsonify({"success": True, "message": "Task verified and resolved", "task": task})
+    return jsonify({"success": True, "message": "Task verified and resolved", "task": res_task})
 
 @app.put('/api/tasks/<task_id>/reopen')
 def reopen_field_task(task_id):
-    db.setdefault('tasks', [])
-    task = next((t for t in db['tasks'] if str(t.get('_id')) == str(task_id) or t.get('taskId') == str(task_id)), None)
-    if not task:
-        return jsonify({"success": False, "message": "Task not found"}), 404
-    task['status'] = 'REOPENED'
-    if task.get('issueId'):
-        iss = next((i for i in db['issues'] if str(i.get('_id')) == str(task['issueId'])), None)
+    item, item_type = find_task_or_issue(task_id)
+    if not item:
+        return jsonify({"success": False, "message": "Task or issue not found"}), 404
+
+    data = request.get_json(silent=True) or request.form.to_dict() or {}
+    reason = data.get('reason', 'Quality check requires rework')
+    now_iso = utc_now_iso()
+
+    target_issue_id = None
+    if item_type == 'task':
+        item['status'] = 'REOPENED'
+        target_issue_id = item.get('issueId')
+        res_task = item
+    else:
+        target_issue_id = item['_id']
+        res_task = format_issue_as_task(item)
+
+    if target_issue_id:
+        iss = next((i for i in db['issues'] if str(i.get('_id')) == str(target_issue_id)), None)
         if iss:
+            prev = iss.get('status')
             iss['status'] = 'REOPENED'
+            iss['updatedAt'] = now_iso
+            add_history(iss['_id'], 'TASK_REOPENED', prev, 'REOPENED', f"Task reopened: {reason}", user_name="Krishna (Gram Sevak Admin)", user_role="admin")
+
     save_data()
-    return jsonify({"success": True, "message": "Task reopened", "task": task})
+    return jsonify({"success": True, "message": "Task reopened", "task": res_task})
+
+@app.put('/api/tasks/<task_id>/reassign')
+def reassign_field_task(task_id):
+    item, item_type = find_task_or_issue(task_id)
+    if not item:
+        return jsonify({"success": False, "message": "Task or issue not found"}), 404
+
+    data = request.get_json(silent=True) or request.form.to_dict() or {}
+    new_worker_id = data.get('workerId')
+    notes = data.get('notes', 'Reassigned by Panchayat Admin')
+    if not new_worker_id:
+        return jsonify({"success": False, "message": "Please specify workerId"}), 400
+
+    worker_user = next((u for u in db['users'] if str(u.get('_id')) == str(new_worker_id)), None)
+    worker_name = worker_user.get('name', 'Specialist') if worker_user else 'Specialist'
+    now_iso = utc_now_iso()
+
+    if item_type == 'task':
+        item['workerId'] = str(new_worker_id)
+        if item.get('issueId'):
+            iss = next((i for i in db['issues'] if str(i.get('_id')) == str(item['issueId'])), None)
+            if iss:
+                iss['assignedWorker'] = str(new_worker_id)
+                iss['assignedAt'] = now_iso
+                add_history(iss['_id'], 'WORKER_ASSIGNED', iss.get('status', 'ASSIGNED'), iss.get('status', 'ASSIGNED'), f"Reassigned to {worker_name}. Note: {notes}", user_name="Krishna (Gram Sevak Admin)", user_role="admin")
+        res_task = item
+    else:
+        item['assignedWorker'] = str(new_worker_id)
+        item['assignedAt'] = now_iso
+        add_history(item['_id'], 'WORKER_ASSIGNED', item.get('status', 'ASSIGNED'), item.get('status', 'ASSIGNED'), f"Reassigned to {worker_name}. Note: {notes}", user_name="Krishna (Gram Sevak Admin)", user_role="admin")
+        for t in db['tasks']:
+            if str(t.get('issueId')) == str(item['_id']):
+                t['workerId'] = str(new_worker_id)
+        res_task = format_issue_as_task(item)
+
+    save_data()
+    return jsonify({"success": True, "message": f"Task reassigned to {worker_name}", "task": res_task})
 
 @app.get('/api/workers/assigned')
 @app.get('/api/workers/my-tasks')
 def get_worker_tasks():
+    sync_tasks_with_issues()
     user = get_current_user()
     if not user:
         user = next((u for u in db['users'] if u.get('email') == 'kd@gmail.com'), None)
     u_id = str(user.get('_id')) if user else ''
-    tasks = [populate_issue(i) for i in db['issues'] if str(i.get('assignedWorker')) == u_id or i.get('status') in ['ASSIGNED', 'UNDER ACTION']]
-    return jsonify({"success": True, "count": len(tasks), "tasks": tasks, "issues": tasks})
+    u_wkr_id = str(user.get('workerId') or '')
+    u_email = str(user.get('email') or '').lower()
+
+    issues = [
+        populate_issue(i) for i in db['issues']
+        if str(i.get('assignedWorker')) == u_id
+        or (u_wkr_id and str(i.get('assignedWorker')) == u_wkr_id)
+        or (u_email and str(i.get('assignedWorker')).lower() == u_email)
+        or i.get('status') in ['ASSIGNED', 'UNDER ACTION']
+    ]
+
+    pending = sum(1 for i in issues if i.get('status') in ['ASSIGNED', 'NEW', 'VALIDATED'])
+    in_progress = sum(1 for i in issues if i.get('status') == 'UNDER ACTION')
+    completed = sum(1 for i in issues if i.get('status') in ['ACTION COMPLETED', 'MONITORING', 'VERIFIED RESOLVED'])
+
+    tasks = [format_issue_as_task(i) for i in issues]
+    return jsonify({
+        "success": True,
+        "count": len(issues),
+        "stats": {
+            "total": len(issues),
+            "pending": pending,
+            "inProgress": in_progress,
+            "completed": completed
+        },
+        "tasks": tasks,
+        "issues": issues
+    })
 
 @app.put('/api/workers/issues/<issue_id>/progress')
 def update_worker_progress(issue_id):
-    issue = next((i for i in db['issues'] if str(i.get('_id')) == str(issue_id)), None)
-    if not issue:
-        return jsonify({"success": False, "message": "Issue not found"}), 404
-    data = request.form.to_dict() if request.form else (request.get_json(silent=True) or {})
-    status = data.get('status', 'UNDER ACTION')
-    note = data.get('note', 'Work in progress')
-    issue['status'] = status
-    issue['updatedAt'] = datetime.utcnow().isoformat()
-
-    hist_id = hashlib.md5(f"prog_{issue_id}{time.time()}".encode('utf-8')).hexdigest()[:24]
-    db['issueHistories'].insert(0, {
-        "_id": hist_id,
-        "issueId": str(issue_id),
-        "eventType": "PROGRESS_UPDATE",
-        "previousState": "ASSIGNED",
-        "newState": status,
-        "userId": str(issue.get('assignedWorker', '')),
-        "userName": "KD (Field Worker Lead)",
-        "userRole": "worker",
-        "comment": note,
-        "timestamp": datetime.utcnow().isoformat(),
-        "createdAt": datetime.utcnow().isoformat()
-    })
-
-    save_data()
-    return jsonify({"success": True, "message": "Progress recorded", "issue": populate_issue(issue)})
+    return update_task_progress_route(issue_id)
 
 @app.post('/api/workers/issues/<issue_id>/completion-evidence')
 def upload_completion_evidence(issue_id):
-    issue = next((i for i in db['issues'] if str(i.get('_id')) == str(issue_id)), None)
-    if not issue:
-        return jsonify({"success": False, "message": "Issue not found"}), 404
-    data = request.form.to_dict() if request.form else (request.get_json(silent=True) or {})
-    notes = data.get('notes', 'Civic problem solved to standard.')
-
-    images = []
-    if 'images' in request.files:
-        files = request.files.getlist('images')
-        for f in files:
-            if f.filename:
-                fname = f"proof_{int(time.time())}_{f.filename}"
-                fpath = os.path.join(UPLOADS_DIR, fname)
-                f.save(fpath)
-                images.append({"url": f"/uploads/{fname}"})
-    elif data.get('sampleImageUrl'):
-        images.append({"url": data.get('sampleImageUrl')})
-
-    issue['status'] = 'ACTION COMPLETED'
-    issue['completionDetails'] = {
-        "completedAt": datetime.utcnow().isoformat(),
-        "notes": notes,
-        "images": images if images else [{"url": "/assets/hero-card-mockup-lWDlMTb5.jpg"}]
-    }
-    issue['resolvedAt'] = datetime.utcnow().isoformat()
-    issue['updatedAt'] = datetime.utcnow().isoformat()
-
-    hist_id = hashlib.md5(f"comp_{issue_id}{time.time()}".encode('utf-8')).hexdigest()[:24]
-    db['issueHistories'].insert(0, {
-        "_id": hist_id,
-        "issueId": str(issue_id),
-        "eventType": "WORK_COMPLETED",
-        "previousState": "UNDER ACTION",
-        "newState": "ACTION COMPLETED",
-        "userId": str(issue.get('assignedWorker', '')),
-        "userName": "KD (Field Worker Lead)",
-        "userRole": "worker",
-        "comment": f"Work completed. Proof notes: {notes}",
-        "timestamp": datetime.utcnow().isoformat(),
-        "createdAt": datetime.utcnow().isoformat()
-    })
-
-    save_data()
-    return jsonify({"success": True, "message": "Completion evidence submitted successfully", "issue": populate_issue(issue)})
+    return complete_field_task(issue_id)
 
 # --- Village Digital Memory & Prevention ---
 @app.get('/api/village-memory')
