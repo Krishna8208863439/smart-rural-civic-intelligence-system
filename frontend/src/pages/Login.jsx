@@ -111,16 +111,6 @@ export default function Login() {
             </button>
           </form>
 
-          {/* Dedicated Field Worker Portal Link */}
-          <div className="p-3 bg-emerald-50/70 rounded-2xl border border-emerald-200/70 text-center text-xs">
-            <span className="text-emerald-900 font-semibold block mb-1">Are you a Gram Panchayat Field Worker?</span>
-            <Link
-              to="/worker/login"
-              className="inline-flex items-center space-x-1 font-bold text-emerald-800 hover:text-emerald-950 hover:underline"
-            >
-              <span>Go to Field Worker Portal Login →</span>
-            </Link>
-          </div>
 
           <div className="text-center text-xs text-slate-500 pt-2 border-t border-slate-100">
             <span>New citizen? </span>
