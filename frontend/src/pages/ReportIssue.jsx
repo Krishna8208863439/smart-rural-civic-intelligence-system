@@ -22,9 +22,52 @@ import {
   Bot,
   RefreshCw,
   Clock,
+  Search,
 } from 'lucide-react';
-import { getAccurateLivePosition } from '../utils/geolocation';
+import { getAccurateLivePosition, forwardGeocodeAddress, reverseGeocodeCoords } from '../utils/geolocation';
 import { getLiveIstString } from '../utils/formatDate';
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+const reportPinIcon = L.divIcon({
+  className: 'custom-report-pin',
+  html: `
+    <div style="position: relative; width: 36px; height: 36px; transform: translate(-50%, -100%); cursor: pointer;">
+      <div style="position: absolute; inset: 0; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: 2.5px solid white; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.45); display: flex; align-items: center; justify-content: center;">
+        <div style="transform: rotate(45deg); display: flex; align-items: center; justify-content: center; color: white;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3.5" fill="white"/>
+            <path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
+          </svg>
+        </div>
+      </div>
+      <div style="position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); width: 12px; height: 4px; background: rgba(0,0,0,0.3); border-radius: 50%; filter: blur(1.5px);"></div>
+    </div>
+  `,
+  iconSize: [0, 0],
+});
+
+function MapPanController({ center }) {
+  const map = useMap();
+  useEffect(() => {
+    if (center && center[0] && center[1]) {
+      map.flyTo(center, 16, { animate: true, duration: 0.8 });
+    }
+  }, [center, map]);
+  return null;
+}
+
+function MapClickHandler({ onMapClick }) {
+  useMapEvents({
+    click(e) {
+      if (onMapClick) {
+        onMapClick(e.latlng.lat, e.latlng.lng);
+      }
+    },
+  });
+  return null;
+}
 
 
 
@@ -41,8 +84,10 @@ export default function ReportIssue() {
   const [landmark, setLandmark] = useState('');
   const [address, setAddress] = useState('');
   const [ward, setWard] = useState('Ward 1');
-  const [latitude, setLatitude] = useState('16.74064');
-  const [longitude, setLongitude] = useState('74.38409');
+  const [latitude, setLatitude] = useState('16.73180');
+  const [longitude, setLongitude] = useState('73.90790');
+  const [locatingAddress, setLocatingAddress] = useState(false);
+  const [showManualCoords, setShowManualCoords] = useState(false);
   const [gpsLoading, setGpsLoading] = useState(false);
   const [gpsTiming, setGpsTiming] = useState('');
   const [gpsAccuracy, setGpsAccuracy] = useState(null);
@@ -405,12 +450,13 @@ export default function ReportIssue() {
     try {
       const result = await getAccurateLivePosition({
         onStatusChange: (msg) => setGpsStatusMsg(msg),
-        defaultCoords: [16.74064, 74.38409],
+        defaultCoords: [16.73180, 73.90790],
       });
 
       const latStr = result.lat.toFixed(5);
       const lngStr = result.lng.toFixed(5);
       setLatitude(latStr);
+      setLongitude(lngStr);
       setGpsAccuracy(result.accuracy);
       setGpsTiming(result.timing.display || result.timing.dateTime);
       setGpsSource(result.source);
@@ -426,6 +472,55 @@ export default function ReportIssue() {
       console.warn('GPS detection error:', err);
     } finally {
       setGpsLoading(false);
+      setGpsStatusMsg('');
+    }
+  };
+
+  // Handle Map Pin Drag or Map Click
+  const handleMapPinAdjust = async (newLat, newLng) => {
+    const latStr = Number(newLat).toFixed(5);
+    const lngStr = Number(newLng).toFixed(5);
+    setLatitude(latStr);
+    setLongitude(lngStr);
+    setGpsAccuracy(5);
+    setGpsSource('Accurate Map Pinpoint');
+    setGpsTiming(`${liveDate}, ${liveClock} (IST)`);
+
+    try {
+      const rev = await reverseGeocodeCoords(newLat, newLng);
+      if (rev?.address) {
+        setAddress(rev.address);
+        setLandmark(rev.landmark || rev.address.split(',')[0]);
+      }
+    } catch (e) {
+      console.warn('Reverse geocode error:', e);
+    }
+  };
+
+  // Forward Geocode Address / Village Search
+  const handleLocateAddress = async (e) => {
+    if (e) e.preventDefault();
+    if (!address.trim()) return;
+
+    setLocatingAddress(true);
+    setGpsStatusMsg(`Searching "${address.trim()}"...`);
+    try {
+      const geo = await forwardGeocodeAddress(address.trim());
+      if (geo) {
+        const latStr = geo.lat.toFixed(5);
+        const lngStr = geo.lng.toFixed(5);
+        setLatitude(latStr);
+        setLongitude(lngStr);
+        setGpsAccuracy(geo.accuracy);
+        setGpsTiming(`${liveDate}, ${liveClock} (IST)`);
+        setGpsSource('Accurate Locality Search');
+        setAddress(geo.displayName);
+        setLandmark(geo.displayName.split(',')[0]);
+      } else {
+        alert(`Could not locate "${address}". Try typing your village name (e.g. "Chandoli", "Shirala", "Devrai", "Kolhapur").`);
+      }
+    } finally {
+      setLocatingAddress(false);
       setGpsStatusMsg('');
     }
   };
@@ -861,18 +956,36 @@ export default function ReportIssue() {
               </button>
             </div>
 
-            <input
-              type="text"
-              value={address}
-              onChange={(e) => {
-                setAddress(e.target.value);
-                setLandmark(e.target.value);
-              }}
-              placeholder="e.g. MG Road, Near Gram Panchayat Office, Ward 1"
-              required
-              className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition font-medium"
-            />
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                type="text"
+                value={address}
+                onChange={(e) => {
+                  setAddress(e.target.value);
+                  setLandmark(e.target.value);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleLocateAddress();
+                  }
+                }}
+                placeholder="Type village, street, or landmark (e.g. Chandoli Main Road, Ward 1)"
+                required
+                className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition font-medium"
+              />
+              <button
+                type="button"
+                onClick={handleLocateAddress}
+                disabled={locatingAddress || !address.trim()}
+                className="inline-flex items-center justify-center space-x-1.5 px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white shadow-xs transition cursor-pointer disabled:opacity-50 shrink-0"
+              >
+                <Search className="w-3.5 h-3.5" />
+                <span>{locatingAddress ? 'Locating...' : '🔍 Pin Address'}</span>
+              </button>
+            </div>
 
+            {/* Accurate Live Pin Status readout */}
             {latitude && longitude && (
               <div className="mt-2.5 flex flex-wrap items-center gap-2 text-[11px] font-semibold text-emerald-800 bg-emerald-50/90 border border-emerald-200/90 px-3.5 py-2 rounded-xl">
                 <div className="flex items-center space-x-2">
@@ -897,6 +1010,98 @@ export default function ReportIssue() {
                 )}
               </div>
             )}
+
+            {/* Interactive Location Pinpoint Mini-Map */}
+            <div className="mt-3 overflow-hidden rounded-2xl border border-slate-200 shadow-xs bg-slate-100">
+              <div className="h-56 w-full relative">
+                <MapContainer
+                  center={[parseFloat(latitude) || 16.73180, parseFloat(longitude) || 73.90790]}
+                  zoom={16}
+                  scrollWheelZoom={false}
+                  className="h-full w-full z-0"
+                >
+                  <TileLayer
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+                  <MapPanController center={[parseFloat(latitude) || 16.73180, parseFloat(longitude) || 73.90790]} />
+                  <MapClickHandler onMapClick={handleMapPinAdjust} />
+                  <Marker
+                    position={[parseFloat(latitude) || 16.73180, parseFloat(longitude) || 73.90790]}
+                    icon={reportPinIcon}
+                    draggable={true}
+                    eventHandlers={{
+                      dragend: (e) => {
+                        const pos = e.target.getLatLng();
+                        handleMapPinAdjust(pos.lat, pos.lng);
+                      },
+                    }}
+                  >
+                    <Popup>
+                      <div className="p-1 text-xs space-y-0.5">
+                        <div className="font-bold text-slate-900">📍 Incident Pinned Spot</div>
+                        <div className="text-slate-600 text-[11px]">{address || 'Village Incident Spot'}</div>
+                        <div className="text-emerald-700 font-mono text-[10px] font-bold">
+                          {latitude}°N, {longitude}°E
+                        </div>
+                        <div className="text-[10px] text-amber-600 italic">
+                          🎯 Drag pin or click map to move
+                        </div>
+                      </div>
+                    </Popup>
+                  </Marker>
+                </MapContainer>
+              </div>
+              <div className="p-2.5 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-600">
+                <span className="flex items-center space-x-1 text-slate-500 font-medium">
+                  <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                  <span>Tip: Drag the pin or click anywhere on the map to pinpoint your exact spot</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setShowManualCoords(!showManualCoords)}
+                  className="text-blue-600 hover:text-blue-800 font-bold underline cursor-pointer"
+                >
+                  {showManualCoords ? 'Hide Coordinates' : '⚙️ Enter Exact Lat/Lng'}
+                </button>
+              </div>
+
+              {/* Manual Lat/Lng Inputs */}
+              {showManualCoords && (
+                <div className="p-3 bg-white border-t border-slate-200 flex flex-wrap items-center gap-2 text-xs">
+                  <span className="font-bold text-slate-700">Coordinates:</span>
+                  <div className="flex items-center space-x-1">
+                    <span className="text-slate-500 text-[11px]">Lat:</span>
+                    <input
+                      type="number"
+                      step="any"
+                      value={latitude}
+                      onChange={(e) => setLatitude(e.target.value)}
+                      placeholder="e.g. 16.73180"
+                      className="w-28 px-2 py-1 rounded-lg border border-slate-300 bg-white text-xs font-mono"
+                    />
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <span className="text-slate-500 text-[11px]">Lng:</span>
+                    <input
+                      type="number"
+                      step="any"
+                      value={longitude}
+                      onChange={(e) => setLongitude(e.target.value)}
+                      placeholder="e.g. 73.90790"
+                      className="w-28 px-2 py-1 rounded-lg border border-slate-300 bg-white text-xs font-mono"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleMapPinAdjust(parseFloat(latitude) || 16.73180, parseFloat(longitude) || 73.90790)}
+                    className="px-3 py-1 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-[11px] shadow-xs cursor-pointer"
+                  >
+                    Lock Pin
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

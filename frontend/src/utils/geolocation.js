@@ -125,6 +125,47 @@ export const reverseGeocodeCoords = async (lat, lng) => {
 };
 
 /**
+ * Forward geocode address or village name to coordinates via OpenStreetMap Nominatim
+ */
+export const forwardGeocodeAddress = async (query) => {
+  if (!query || !query.trim()) return null;
+  const clean = query.trim();
+  const queriesToTry = [
+    clean.toLowerCase().includes('maharashtra') ? clean : `${clean}, Maharashtra, India`,
+    clean,
+  ];
+
+  for (const q of queriesToTry) {
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&countrycodes=in&limit=1`,
+        {
+          headers: {
+            'Accept': 'application/json',
+            'User-Agent': 'SmartRuralCivicIntelligence/2.0',
+          },
+        }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.length > 0) {
+          const first = data[0];
+          return {
+            lat: parseFloat(first.lat),
+            lng: parseFloat(first.lon),
+            displayName: first.display_name,
+            accuracy: 15,
+          };
+        }
+      }
+    } catch (e) {
+      console.warn('Geocoding query error:', e);
+    }
+  }
+  return null;
+};
+
+/**
  * Multi-Provider IP-based geolocation fallback when browser GPS is blocked, denied, or restricted
  */
 export const getIpGeolocationFallback = async () => {
@@ -281,7 +322,24 @@ export const getAccurateLivePosition = async (options = {}) => {
     const lat = highAccPos.coords.latitude;
     const lng = highAccPos.coords.longitude;
     const acc = highAccPos.coords.accuracy;
-    return await finalizeResult(lat, lng, acc, 'High-Precision Live GPS Lock');
+
+    // On Windows PCs without GPS hardware, accuracy can be 10,000m to 100,000m
+    if (acc > 3000) {
+      reportStatus('Checking refined network positioning...');
+      const ipPos = await getIpGeolocationFallback();
+      if (ipPos && ipPos.accuracy < acc) {
+        return await finalizeResult(ipPos.lat, ipPos.lng, ipPos.accuracy, ipPos.source);
+      }
+      return await finalizeResult(lat, lng, acc, `Coarse Network Estimate (±${Math.round(acc / 1000)}km)`);
+    }
+
+    const sourceLabel = acc <= 30
+      ? 'High-Precision Mobile GPS'
+      : acc <= 200
+        ? 'Wi-Fi Pinpoint Location'
+        : 'Network Triangulation';
+
+    return await finalizeResult(lat, lng, acc, sourceLabel);
   } catch (tier1Err) {
     console.warn('Tier 1 High Accuracy GPS timed out or failed:', tier1Err.message || tier1Err.code);
 
