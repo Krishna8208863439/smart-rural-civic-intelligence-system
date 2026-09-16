@@ -104,10 +104,10 @@ function MapPanController({ center }) {
   return null;
 }
 
-function MapPinClickHandler({ isAdjustMode, onPinAdjust }) {
+function MapPinClickHandler({ onPinAdjust }) {
   useMapEvents({
     click(e) {
-      if (isAdjustMode && onPinAdjust) {
+      if (onPinAdjust) {
         onPinAdjust([e.latlng.lat, e.latlng.lng]);
       }
     },
@@ -173,6 +173,116 @@ export default function IssueDetails() {
   const [saveLocationSuccess, setSaveLocationSuccess] = useState('');
   const [searchLocationQuery, setSearchLocationQuery] = useState('');
   const [searchingLocation, setSearchingLocation] = useState(false);
+  const [manualLat, setManualLat] = useState('');
+  const [manualLng, setManualLng] = useState('');
+  const [showManualCoords, setShowManualCoords] = useState(false);
+
+  // Live ticking Indian Standard Time (IST) clock
+  const [liveTickingClock, setLiveTickingClock] = useState(() => {
+    return new Date().toLocaleTimeString('en-IN', {
+      timeZone: 'Asia/Kolkata',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true,
+    });
+  });
+  const [liveTickingDate, setLiveTickingDate] = useState(() => {
+    return new Date().toLocaleDateString('en-IN', {
+      timeZone: 'Asia/Kolkata',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  });
+
+  useEffect(() => {
+    const clockTimer = setInterval(() => {
+      const now = new Date();
+      setLiveTickingClock(
+        now.toLocaleTimeString('en-IN', {
+          timeZone: 'Asia/Kolkata',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: true,
+        })
+      );
+      setLiveTickingDate(
+        now.toLocaleDateString('en-IN', {
+          timeZone: 'Asia/Kolkata',
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+        })
+      );
+    }, 1000);
+    return () => clearInterval(clockTimer);
+  }, []);
+
+  // Automatic live GPS detection on mount
+  useEffect(() => {
+    if (typeof navigator !== 'undefined' && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          const acc = Math.round(pos.coords.accuracy);
+          setLiveUserCoords([lat, lng]);
+          setLiveAccuracy(acc);
+          setLiveSource('Device Live GPS Fix');
+          reverseGeocodeCoords(lat, lng).then((rev) => {
+            if (rev?.address) setLiveAddress(rev.address);
+          });
+        },
+        (err) => console.log('Auto GPS mount note:', err.message),
+        { enableHighAccuracy: true, timeout: 6000, maximumAge: 30000 }
+      );
+    }
+  }, []);
+
+  const handleQuickVillageSelect = async (name, lat, lng) => {
+    const newCoords = [lat, lng];
+    const timingStr = `${liveTickingDate}, ${liveTickingClock} (IST)`;
+    setCustomPinCoords(newCoords);
+    setMapCenter(newCoords);
+    setLiveTiming(timingStr);
+    setLiveAccuracy(5);
+    setLiveSource(`Direct Village Pin (${name})`);
+    try {
+      const rev = await reverseGeocodeCoords(lat, lng);
+      const addr = rev?.address || `${name}, Maharashtra, India`;
+      setLiveAddress(addr);
+      await handleSaveLivePin(newCoords, addr, name, timingStr, 5);
+    } catch (e) {
+      await handleSaveLivePin(newCoords, `${name}, Maharashtra, India`, name, timingStr, 5);
+    }
+  };
+
+  const handleManualCoordsSubmit = async (e) => {
+    if (e) e.preventDefault();
+    const lat = parseFloat(manualLat);
+    const lng = parseFloat(manualLng);
+    if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+      setLiveError('Please enter valid numerical latitude (-90 to 90) and longitude (-180 to 180).');
+      return;
+    }
+    const newCoords = [lat, lng];
+    const timingStr = `${liveTickingDate}, ${liveTickingClock} (IST)`;
+    setCustomPinCoords(newCoords);
+    setMapCenter(newCoords);
+    setLiveTiming(timingStr);
+    setLiveAccuracy(3);
+    setLiveSource('Manual GPS Coordinate Lock');
+    try {
+      const rev = await reverseGeocodeCoords(lat, lng);
+      const addr = rev?.address || `Coordinates (${lat.toFixed(5)}°N, ${lng.toFixed(5)}°E)`;
+      setLiveAddress(addr);
+      await handleSaveLivePin(newCoords, addr, rev?.landmark || 'Custom Pin', timingStr, 3);
+    } catch (e) {
+      await handleSaveLivePin(newCoords, undefined, undefined, timingStr, 3);
+    }
+  };
   const [mapCenter, setMapCenter] = useState(null);
   const [mapLayer, setMapLayer] = useState(DEFAULT_MAP_LAYER);
   const watchIdRef = useRef(null);
@@ -791,6 +901,31 @@ export default function IssueDetails() {
             )}
 
             <div className="pt-2 space-y-3">
+              {/* Real-time Indian Standard Time (IST) Digital Clock Banner */}
+              <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white shadow-md border border-slate-700/80">
+                <div className="flex items-center space-x-3">
+                  <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center shrink-0 shadow-inner">
+                    <Clock className="w-4 h-4 text-emerald-400 animate-pulse" />
+                  </div>
+                  <div>
+                    <div className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider flex items-center space-x-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                      <span>Real-Time Indian Standard Time (IST)</span>
+                    </div>
+                    <div className="text-sm font-extrabold font-mono text-white tracking-wide">
+                      {liveTickingDate} • {liveTickingClock}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <span className="text-[11px] px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 font-bold flex items-center space-x-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                    <span>100% Real-Time Clock Active</span>
+                  </span>
+                </div>
+              </div>
+
               {/* Landmark, Address and Accurate Coordinates readout */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3.5 rounded-2xl bg-slate-50/80 border border-slate-200">
                 <div className="flex items-start space-x-2.5">
@@ -810,23 +945,18 @@ export default function IssueDetails() {
                 <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
                   <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] font-bold shadow-xs">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span>Accurate Live Pin: {mapPos[0].toFixed(5)}°N, {mapPos[1].toFixed(5)}°E</span>
+                    <span>Pin: {mapPos[0].toFixed(5)}°N, {mapPos[1].toFixed(5)}°E</span>
                   </div>
                   <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-[11px] font-bold shadow-xs">
                     <Clock className="w-3.5 h-3.5 text-blue-600" />
                     <span>
-                      Timing: {liveTiming || issue.location?.timing || (issue.updatedAt ? new Date(issue.updatedAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }))} (IST)
+                      Locked: {liveTiming || issue.location?.timing || `${liveTickingDate}, ${liveTickingClock} (IST)`}
                     </span>
                   </div>
-                  {(liveAccuracy || issue.location?.accuracy) && (
-                    <div className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-[11px] font-medium">
-                      <span>Precision: ±{liveAccuracy || issue.location?.accuracy || 4}m</span>
-                    </div>
-                  )}
                 </div>
               </div>
 
-              {/* Instant Village / Town / City Search Bar for 100% Accurate Pin Placement */}
+              {/* Instant Village Search Bar */}
               <form onSubmit={handleSearchLocation} className="flex items-center gap-2 pt-1">
                 <div className="relative flex-1">
                   <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -834,18 +964,101 @@ export default function IssueDetails() {
                     type="text"
                     value={searchLocationQuery}
                     onChange={(e) => setSearchLocationQuery(e.target.value)}
-                    placeholder="Search your village, town, or road (e.g. Chandoli, Devrai, Pune, Kolhapur, Sangli)..."
+                    placeholder="Search any village/city in Maharashtra (e.g. Chandoli, Devrai, Pune, Kolhapur, Sangli, Satara)..."
                     className="w-full pl-9 pr-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 shadow-xs"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={searchingLocation || !searchLocationQuery.trim()}
-                  className="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 active:bg-black text-white shadow-xs transition cursor-pointer disabled:opacity-50 shrink-0"
+                  className="px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 active:bg-black text-white shadow-xs transition cursor-pointer disabled:opacity-50 shrink-0"
                 >
                   {searchingLocation ? 'Searching...' : '🔍 Pin Village'}
                 </button>
               </form>
+
+              {/* Quick Village Pills for Instant 1-Click Pin Placement */}
+              <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-600">
+                <span className="font-semibold text-slate-500 text-[11px]">Quick Pin:</span>
+                <button
+                  type="button"
+                  onClick={() => handleQuickVillageSelect('Gram Panchayat Chandoli', 16.73180, 73.90790)}
+                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition"
+                >
+                  📍 Chandoli
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleQuickVillageSelect('Devrai Manvad', 16.73250, 73.90920)}
+                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition"
+                >
+                  📍 Devrai
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleQuickVillageSelect('Sangli City', 16.85240, 74.58150)}
+                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition"
+                >
+                  📍 Sangli
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleQuickVillageSelect('Kolhapur Central', 16.70500, 74.24330)}
+                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition"
+                >
+                  📍 Kolhapur
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleQuickVillageSelect('Satara', 17.68050, 73.99300)}
+                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition"
+                >
+                  📍 Satara
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleQuickVillageSelect('Pune Central', 18.52040, 73.85670)}
+                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition"
+                >
+                  📍 Pune
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowManualCoords(!showManualCoords)}
+                  className="ml-auto text-[11px] text-blue-600 hover:text-blue-800 font-bold underline"
+                >
+                  {showManualCoords ? 'Hide Lat/Lng' : '⚙️ Enter Lat/Lng'}
+                </button>
+              </div>
+
+              {/* Manual Exact Latitude & Longitude Input Form */}
+              {showManualCoords && (
+                <form onSubmit={handleManualCoordsSubmit} className="p-3 rounded-xl bg-slate-100 border border-slate-200 flex flex-wrap items-center gap-2">
+                  <span className="text-xs font-bold text-slate-700">Manual GPS:</span>
+                  <input
+                    type="number"
+                    step="any"
+                    value={manualLat}
+                    onChange={(e) => setManualLat(e.target.value)}
+                    placeholder="Latitude (e.g. 16.73180)"
+                    className="px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white text-xs w-36 focus:outline-none"
+                  />
+                  <input
+                    type="number"
+                    step="any"
+                    value={manualLng}
+                    onChange={(e) => setManualLng(e.target.value)}
+                    placeholder="Longitude (e.g. 73.90790)"
+                    className="px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white text-xs w-36 focus:outline-none"
+                  />
+                  <button
+                    type="submit"
+                    className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold transition"
+                  >
+                    Set Pin
+                  </button>
+                </form>
+              )}
 
               {/* Action Toolbar: Detect Live GPS Pin, Open in Google Maps, Adjust Pin */}
               <div className="flex flex-wrap items-center gap-2 pt-1">
@@ -939,7 +1152,9 @@ export default function IssueDetails() {
                       )}
                     </div>
                     <div className="text-[11px] text-blue-700 flex flex-wrap items-center gap-x-2 gap-y-1">
-                      <span>GPS Precision: ±{liveAccuracy || 4}m</span>
+                      <span>
+                        GPS Precision: {liveAccuracy && liveAccuracy > 500 ? `±${Math.round(liveAccuracy/1000)}km (Desktop IP estimate • Click map or village for ±2m)` : `±${liveAccuracy || 4}m`}
+                      </span>
                       <span>•</span>
                       <span>Ground Distance: {getGroundDistance(liveUserCoords[0], liveUserCoords[1], mapPos[0], mapPos[1])}m from incident spot</span>
                       {liveTiming && (
@@ -1070,7 +1285,9 @@ export default function IssueDetails() {
                     <span className="font-mono text-slate-100">
                       {liveUserCoords[0].toFixed(5)}°N, {liveUserCoords[1].toFixed(5)}°E
                     </span>
-                    <span className="text-slate-400 text-[10px]">(±{liveAccuracy || 4}m)</span>
+                    <span className="text-slate-400 text-[10px]">
+                      ({liveAccuracy && liveAccuracy > 500 ? `Desktop IP ±${Math.round(liveAccuracy/1000)}km` : `±${liveAccuracy || 4}m`})
+                    </span>
                   </div>
                 )}
 
@@ -1084,10 +1301,7 @@ export default function IssueDetails() {
                   />
                   
                   <MapPanController center={mapCenter} />
-                  <MapPinClickHandler
-                    isAdjustMode={isPinAdjustMode}
-                    onPinAdjust={handlePinAdjust}
-                  />
+                  <MapPinClickHandler onPinAdjust={handlePinAdjust} />
 
                   {/* 1. Problem Incident Pin (Draggable when Adjust Mode is active) */}
                   <Marker
@@ -1150,7 +1364,7 @@ export default function IssueDetails() {
                       {liveAccuracy && (
                         <Circle
                           center={liveUserCoords}
-                          radius={liveAccuracy}
+                          radius={Math.min(liveAccuracy, 200)}
                           pathOptions={{ color: '#0284c7', fillColor: '#38bdf8', fillOpacity: 0.25, weight: 2 }}
                         />
                       )}

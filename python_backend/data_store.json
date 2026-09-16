@@ -222,7 +222,9 @@
         "address": "Bhosale Galli, Chandoli",
         "landmark": "Bhosale Galli",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 1"
+        "ward": "Ward 1",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-09-10T09:11:58.470Z"
       },
       "status": "VERIFIED RESOLVED",
       "priority": {
@@ -380,7 +382,9 @@
         "address": "Bazaar Peth Road",
         "landmark": "Weekly Market Vegetable Shed",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 2"
+        "ward": "Ward 2",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-09-09T09:11:58.486Z"
       },
       "status": "ASSIGNED",
       "priority": {
@@ -538,7 +542,9 @@
         "address": "School Road, Ward 2",
         "landmark": "Opposite Zilla Parishad Primary School Gate",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 3"
+        "ward": "Ward 3",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-09-08T09:11:58.494Z"
       },
       "status": "NEW",
       "priority": {
@@ -696,7 +702,9 @@
         "address": "River Bridge Road",
         "landmark": "50 meters before Bhima River Bridge",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 4"
+        "ward": "Ward 4",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-09-07T09:11:58.502Z"
       },
       "status": "UNDER ACTION",
       "priority": {
@@ -837,7 +845,9 @@
         "address": "Ambedkar Nagar Lane 2",
         "landmark": "Near Community Hall",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 5"
+        "ward": "Ward 5",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-09-05T09:11:58.511Z"
       },
       "status": "ACTION COMPLETED",
       "priority": {
@@ -984,7 +994,9 @@
         "address": "Ward 4 Sanitation Block",
         "landmark": "Behind Gram Panchayat Library",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 1"
+        "ward": "Ward 1",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-09-03T09:11:58.518Z"
       },
       "status": "MONITORING",
       "priority": {
@@ -1114,7 +1126,9 @@
         "address": "Hospital Road",
         "landmark": "Primary Health Center Entrance",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 2"
+        "ward": "Ward 2",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-08-28T09:11:58.528Z"
       },
       "status": "VERIFIED RESOLVED",
       "priority": {
@@ -1261,7 +1275,9 @@
         "address": "Shivaji Chowk Main Cross",
         "landmark": "Near Shivaji Maharaj Statue",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 3"
+        "ward": "Ward 3",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-09-02T09:11:58.538Z"
       },
       "status": "REOPENED",
       "priority": {
@@ -1419,7 +1435,9 @@
         "address": "Gaothan East Main Pipe",
         "landmark": "Near Maruti Temple Well",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 4"
+        "ward": "Ward 4",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-09-09T09:11:58.548Z"
       },
       "status": "VALIDATED",
       "priority": {
@@ -1576,7 +1594,9 @@
         "address": "Ring Road East",
         "landmark": "Adjacent to Crematorium Wall",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 5"
+        "ward": "Ward 5",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-09-10T09:11:58.558Z"
       },
       "status": "NEW",
       "priority": {
@@ -1734,7 +1754,9 @@
         "address": "Ward 2 Sector F",
         "landmark": "Near Pole #111",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 1"
+        "ward": "Ward 1",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-08-19T09:11:58.564Z"
       },
       "status": "ACTION COMPLETED",
       "priority": {
@@ -1881,7 +1903,9 @@
         "address": "Ward 3 Sector A",
         "landmark": "Near Pole #112",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 2"
+        "ward": "Ward 2",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-08-17T09:11:58.573Z"
       },
       "status": "MONITORING",
       "priority": {
@@ -2044,7 +2068,9 @@
         "address": "Ward 4 Sector B",
         "landmark": "Near Pole #113",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 3"
+        "ward": "Ward 3",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-08-15T09:11:58.588Z"
       },
       "status": "VERIFIED RESOLVED",
       "priority": {
@@ -2174,7 +2200,9 @@
         "address": "Ward 5 Sector C",
         "landmark": "Near Pole #114",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 4"
+        "ward": "Ward 4",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-08-13T09:11:58.607Z"
       },
       "status": "NEW",
       "priority": {
@@ -2332,7 +2360,9 @@
         "address": "Ward 1 Sector D",
         "landmark": "Near Pole #115",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 5"
+        "ward": "Ward 5",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-08-11T09:11:58.617Z"
       },
       "status": "VALIDATED",
       "priority": {
@@ -2490,7 +2520,9 @@
         "address": "Ward 2 Sector E",
         "landmark": "Near Pole #116",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 1"
+        "ward": "Ward 1",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-08-09T09:11:58.626Z"
       },
       "status": "ASSIGNED",
       "priority": {
@@ -2647,7 +2679,9 @@
         "address": "Ward 3 Sector F",
         "landmark": "Near Pole #117",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 2"
+        "ward": "Ward 2",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-08-07T09:11:58.637Z"
       },
       "status": "UNDER ACTION",
       "priority": {
@@ -2788,7 +2822,9 @@
         "address": "Ward 4 Sector A",
         "landmark": "Near Pole #118",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 3"
+        "ward": "Ward 3",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-08-05T09:11:58.647Z"
       },
       "status": "ACTION COMPLETED",
       "priority": {
@@ -2935,7 +2971,9 @@
         "address": "Ward 5 Sector B",
         "landmark": "Near Pole #119",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 4"
+        "ward": "Ward 4",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-08-03T09:11:58.652Z"
       },
       "status": "MONITORING",
       "priority": {
@@ -3098,7 +3136,9 @@
         "address": "Ward 1 Sector C",
         "landmark": "Near Pole #120",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 5"
+        "ward": "Ward 5",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-08-01T09:11:58.661Z"
       },
       "status": "VERIFIED RESOLVED",
       "priority": {
@@ -3228,7 +3268,9 @@
         "address": "Ward 2 Sector D",
         "landmark": "Near Pole #121",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 1"
+        "ward": "Ward 1",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-07-30T09:11:58.670Z"
       },
       "status": "NEW",
       "priority": {
@@ -3386,7 +3428,9 @@
         "address": "Ward 3 Sector E",
         "landmark": "Near Pole #122",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 2"
+        "ward": "Ward 2",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-07-28T09:11:58.680Z"
       },
       "status": "VALIDATED",
       "priority": {
@@ -3544,7 +3588,9 @@
         "address": "Ward 4 Sector F",
         "landmark": "Near Pole #123",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 3"
+        "ward": "Ward 3",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-09-09T09:11:58.688Z"
       },
       "status": "ASSIGNED",
       "priority": {
@@ -3701,7 +3747,9 @@
         "address": "Ward 5 Sector A",
         "landmark": "Near Pole #124",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 4"
+        "ward": "Ward 4",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-09-07T09:11:58.697Z"
       },
       "status": "UNDER ACTION",
       "priority": {
@@ -3842,7 +3890,9 @@
         "address": "Ward 1 Sector B",
         "landmark": "Near Pole #125",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 5"
+        "ward": "Ward 5",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-09-05T09:11:58.708Z"
       },
       "status": "ACTION COMPLETED",
       "priority": {
@@ -3989,7 +4039,9 @@
         "address": "Ward 2 Sector C",
         "landmark": "Near Pole #126",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 1"
+        "ward": "Ward 1",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-09-03T09:11:58.721Z"
       },
       "status": "MONITORING",
       "priority": {
@@ -4152,7 +4204,9 @@
         "address": "Ward 3 Sector D",
         "landmark": "Near Pole #127",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 2"
+        "ward": "Ward 2",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-09-01T09:11:58.730Z"
       },
       "status": "VERIFIED RESOLVED",
       "priority": {
@@ -4282,7 +4336,9 @@
         "address": "Ward 4 Sector E",
         "landmark": "Near Pole #128",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 3"
+        "ward": "Ward 3",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-08-30T09:11:58.738Z"
       },
       "status": "NEW",
       "priority": {
@@ -4440,7 +4496,9 @@
         "address": "Ward 5 Sector F",
         "landmark": "Near Pole #129",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 4"
+        "ward": "Ward 4",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-08-28T09:11:58.746Z"
       },
       "status": "VALIDATED",
       "priority": {
@@ -4598,7 +4656,9 @@
         "address": "Ward 1 Sector A",
         "landmark": "Near Pole #130",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 5"
+        "ward": "Ward 5",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-08-26T09:11:58.751Z"
       },
       "status": "ASSIGNED",
       "priority": {
@@ -4755,7 +4815,9 @@
         "address": "Ward 2 Sector B",
         "landmark": "Near Pole #131",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 1"
+        "ward": "Ward 1",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-08-24T09:11:58.763Z"
       },
       "status": "UNDER ACTION",
       "priority": {
@@ -4896,7 +4958,9 @@
         "address": "Ward 3 Sector C",
         "landmark": "Near Pole #132",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 2"
+        "ward": "Ward 2",
+        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "detectedAt": "2026-08-22T09:11:58.780Z"
       },
       "status": "ACTION COMPLETED",
       "priority": {
@@ -5426,8 +5490,8 @@
       "userName": "Krishna (Gram Sevak Admin)",
       "userRole": "admin",
       "comment": "Resolution verified and published to citizen. Admin Notes: \"Inspected and approved by Admin\"",
-      "timestamp": "2026-09-14T15:19:20.655679",
-      "createdAt": "2026-09-14T15:19:20.655684"
+      "timestamp": "2026-09-14T15:19:20.655679+05:30",
+      "createdAt": "2026-09-14T15:19:20.655684+05:30"
     },
     {
       "_id": "63b05c01e9fe8effc5f76e13",
@@ -5439,8 +5503,8 @@
       "userName": "Krishna (Gram Sevak Admin)",
       "userRole": "admin",
       "comment": "Work finished",
-      "timestamp": "2026-09-14T15:19:20.636630",
-      "createdAt": "2026-09-14T15:19:20.636634"
+      "timestamp": "2026-09-14T15:19:20.636630+05:30",
+      "createdAt": "2026-09-14T15:19:20.636634+05:30"
     },
     {
       "_id": "8550b88cd9370dc5bfd9d108",
@@ -5452,8 +5516,8 @@
       "userName": "Krishna (Gram Sevak Admin)",
       "userRole": "admin",
       "comment": "Dispatched to KD (Field Worker Lead).",
-      "timestamp": "2026-09-14T15:19:20.624992",
-      "createdAt": "2026-09-14T15:19:20.624995"
+      "timestamp": "2026-09-14T15:19:20.624992+05:30",
+      "createdAt": "2026-09-14T15:19:20.624995+05:30"
     },
     {
       "_id": "eae3ee92ff1faea521fa0b9b",
@@ -5465,8 +5529,8 @@
       "userName": "Krishna (Gram Sevak Admin)",
       "userRole": "admin",
       "comment": "Resolution verified and published to citizen. Admin Notes: \"Inspected and approved by Admin\"",
-      "timestamp": "2026-09-11T15:29:55.126723",
-      "createdAt": "2026-09-11T15:29:55.126730"
+      "timestamp": "2026-09-11T15:29:55.126723+05:30",
+      "createdAt": "2026-09-11T15:29:55.126730+05:30"
     },
     {
       "_id": "cf8a2b69e575dd35b3a474e3",
@@ -5478,8 +5542,8 @@
       "userName": "Krishna (Gram Sevak Admin)",
       "userRole": "admin",
       "comment": "Work finished",
-      "timestamp": "2026-09-11T15:29:55.090340",
-      "createdAt": "2026-09-11T15:29:55.090347"
+      "timestamp": "2026-09-11T15:29:55.090340+05:30",
+      "createdAt": "2026-09-11T15:29:55.090347+05:30"
     },
     {
       "_id": "5e904eab912809ae89e7aaf9",
@@ -5491,8 +5555,8 @@
       "userName": "Krishna (Gram Sevak Admin)",
       "userRole": "admin",
       "comment": "Dispatched to KD (Field Worker Lead).",
-      "timestamp": "2026-09-11T15:29:55.066166",
-      "createdAt": "2026-09-11T15:29:55.066173"
+      "timestamp": "2026-09-11T15:29:55.066166+05:30",
+      "createdAt": "2026-09-11T15:29:55.066173+05:30"
     },
     {
       "_id": "075bd8240c4bee0ed24573d6",
@@ -5504,8 +5568,8 @@
       "userName": "Krishna (Gram Sevak Admin)",
       "userRole": "admin",
       "comment": "Resolution verified and published to citizen. Admin Notes: \"Inspected and approved by Admin\"",
-      "timestamp": "2026-09-11T15:16:24.581154",
-      "createdAt": "2026-09-11T15:16:24.581157"
+      "timestamp": "2026-09-11T15:16:24.581154+05:30",
+      "createdAt": "2026-09-11T15:16:24.581157+05:30"
     },
     {
       "_id": "d6de03d57b534a71f932ff66",
@@ -5517,8 +5581,8 @@
       "userName": "Krishna (Gram Sevak Admin)",
       "userRole": "admin",
       "comment": "Work finished",
-      "timestamp": "2026-09-11T15:16:24.569531",
-      "createdAt": "2026-09-11T15:16:24.569534"
+      "timestamp": "2026-09-11T15:16:24.569531+05:30",
+      "createdAt": "2026-09-11T15:16:24.569534+05:30"
     },
     {
       "_id": "bf91ac0cc924caa7943ec5c7",
@@ -5530,8 +5594,8 @@
       "userName": "Krishna (Gram Sevak Admin)",
       "userRole": "admin",
       "comment": "Dispatched to KD (Field Worker Lead).",
-      "timestamp": "2026-09-11T15:16:24.558063",
-      "createdAt": "2026-09-11T15:16:24.558066"
+      "timestamp": "2026-09-11T15:16:24.558063+05:30",
+      "createdAt": "2026-09-11T15:16:24.558066+05:30"
     },
     {
       "_id": "6aa3c5de76dd8149601cc86e",

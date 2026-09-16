@@ -7,16 +7,50 @@ import hashlib
 import base64
 import re
 from datetime import datetime, timedelta, timezone
-from flask import Flask, request, jsonify, send_from_directory, send_file
+from flask import Flask, request, jsonify, send_from_directory, send_file, redirect
 
 IST = timezone(timedelta(hours=5, minutes=30))
 
 def utc_now_iso():
     return datetime.now(IST).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + '+05:30'
 
+def format_ist_display(dt=None):
+    if dt is None:
+        dt = datetime.now(IST)
+    return dt.strftime('%d %b %Y, %I:%M %p (IST)')
+
 
 # Initialize Flask
 app = Flask(__name__, static_folder=None)
+
+@app.before_request
+def enforce_https_on_pythonanywhere():
+    # Modern mobile and desktop browsers block HTML5 Geolocation API on non-HTTPS origins
+    proto = request.headers.get('X-Forwarded-Proto', 'http')
+    if proto == 'http' and not request.is_secure and 'pythonanywhere.com' in request.host:
+        url = request.url.replace('http://', 'https://', 1)
+        return redirect(url, code=301)
+
+@app.after_request
+def add_cache_control_headers(response):
+    # Prevent browser caching of index.html and dynamic API data on PythonAnywhere
+    if request.path.startswith('/api') or request.path == '/' or request.path.endswith('.html'):
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+    return response
+
+@app.route('/api/time', methods=['GET'])
+def get_live_server_time():
+    now_ist = datetime.now(IST)
+    return jsonify({
+        "status": "success",
+        "timestamp": now_ist.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + '+05:30',
+        "time": now_ist.strftime('%I:%M:%S %p'),
+        "date": now_ist.strftime('%d %b %Y'),
+        "display": now_ist.strftime('%d %b %Y, %I:%M:%S %p (IST)'),
+        "timezone": "Asia/Kolkata (IST, UTC+5:30)"
+    })
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 FRONTEND_DIST = os.path.join(os.path.dirname(BASE_DIR), 'frontend', 'dist')
@@ -68,6 +102,22 @@ def load_data():
                 "stillExists": 0,
                 "resolved": 1 if iss.get('status') in ['ACTION COMPLETED', 'VERIFIED RESOLVED'] else 0
             }
+        loc = iss.setdefault('location', {})
+        if not loc.get('timing'):
+            loc['timing'] = format_ist_display()
+        if not loc.get('detectedAt'):
+            loc['detectedAt'] = iss.get('createdAt') or utc_now_iso()
+        for field in ['createdAt', 'updatedAt']:
+            val = iss.get(field)
+            if val and isinstance(val, str) and not val.endswith('Z') and not ('+' in val or (len(val) > 10 and '-' in val[10:])):
+                iss[field] = val + '+05:30'
+
+    # Sanitize issueHistories
+    for hist in db.get('issueHistories', []):
+        for field in ['timestamp', 'createdAt']:
+            val = hist.get(field)
+            if val and isinstance(val, str) and not val.endswith('Z') and not ('+' in val or (len(val) > 10 and '-' in val[10:])):
+                hist[field] = val + '+05:30'
     save_data()
 
 def save_data():

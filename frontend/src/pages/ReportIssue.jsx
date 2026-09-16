@@ -24,6 +24,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { getAccurateLivePosition } from '../utils/geolocation';
+import { getLiveIstString } from '../utils/formatDate';
 
 
 
@@ -47,6 +48,8 @@ export default function ReportIssue() {
   const [gpsAccuracy, setGpsAccuracy] = useState(null);
   const [gpsSource, setGpsSource] = useState('');
   const [gpsStatusMsg, setGpsStatusMsg] = useState('');
+  const [liveClock, setLiveClock] = useState(() => getLiveIstString().time);
+  const [liveDate, setLiveDate] = useState(() => getLiveIstString().date);
   const [files, setFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
 
@@ -425,6 +428,34 @@ export default function ReportIssue() {
       setGpsLoading(false);
       setGpsStatusMsg('');
     }
+  };
+
+  // Real-time ticking clock interval
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const ist = getLiveIstString();
+      setLiveClock(ist.time);
+      setLiveDate(ist.date);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Auto-detect GPS on component mount
+  useEffect(() => {
+    handleDetectGPS();
+  }, []);
+
+  // Quick village teleport
+  const handleQuickVillage = (name, lat, lng) => {
+    const latStr = lat.toFixed(5);
+    const lngStr = lng.toFixed(5);
+    setLatitude(latStr);
+    setLongitude(lngStr);
+    setAddress(`${name}, Gram Panchayat Chandoli, Maharashtra, India`);
+    setLandmark(`${name} Central Area`);
+    setGpsAccuracy(5);
+    setGpsSource(`Quick Village (${name})`);
+    setGpsTiming(`${liveDate}, ${liveClock} (IST)`);
   };
 
   // AI Detection Engine
@@ -854,6 +885,53 @@ export default function ReportIssue() {
               required
               className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition font-medium"
             />
+
+            {/* Quick Village Pills */}
+            <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs text-slate-600">
+              <span className="font-semibold text-slate-500 text-[11px]">Quick Village:</span>
+              <button
+                type="button"
+                onClick={() => handleQuickVillage('Chandoli', 16.73180, 73.90790)}
+                className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition cursor-pointer"
+              >
+                📍 Chandoli
+              </button>
+              <button
+                type="button"
+                onClick={() => handleQuickVillage('Devrai', 16.73250, 73.90920)}
+                className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition cursor-pointer"
+              >
+                📍 Devrai
+              </button>
+              <button
+                type="button"
+                onClick={() => handleQuickVillage('Sangli', 16.85240, 74.58150)}
+                className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition cursor-pointer"
+              >
+                📍 Sangli
+              </button>
+              <button
+                type="button"
+                onClick={() => handleQuickVillage('Kolhapur', 16.70500, 74.24330)}
+                className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition cursor-pointer"
+              >
+                📍 Kolhapur
+              </button>
+              <button
+                type="button"
+                onClick={() => handleQuickVillage('Satara', 17.68050, 73.99300)}
+                className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition cursor-pointer"
+              >
+                📍 Satara
+              </button>
+              <button
+                type="button"
+                onClick={() => handleQuickVillage('Pune', 18.52040, 73.85670)}
+                className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition cursor-pointer"
+              >
+                📍 Pune
+              </button>
+            </div>
 
             {latitude && longitude && (
               <div className="mt-2.5 flex flex-wrap items-center gap-2 text-[11px] font-semibold text-emerald-800 bg-emerald-50/90 border border-emerald-200/90 px-3.5 py-2 rounded-xl">

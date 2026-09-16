@@ -12,6 +12,7 @@ import Home from './pages/Home';
 import CitizenDashboard from './pages/CitizenDashboard';
 import ReportIssue from './pages/ReportIssue';
 import IssueDetails from './pages/IssueDetails';
+import IssueMap from './pages/IssueMap';
 import VillageMemory from './pages/VillageMemory';
 import PreventiveManagement from './pages/PreventiveManagement';
 import CommunityValidationPage from './pages/CommunityValidationPage';
@@ -94,7 +95,14 @@ function AppRoutes() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/map" element={<Navigate to="/issues" replace />} />
+            <Route
+              path="/map"
+              element={
+                <ProtectedRoute>
+                  <IssueMap />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/memory"
               element={
