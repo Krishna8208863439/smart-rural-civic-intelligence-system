@@ -177,12 +177,12 @@
       "isActive": true,
       "specialization": "General",
       "createdAt": "2026-09-11T09:43:05.039Z",
-      "updatedAt": "2026-09-16T12:50:04.681+05:30",
+      "updatedAt": "2026-09-16T14:49:43.113+05:30",
       "__v": 0,
-      "lastLogin": "2026-09-16T13:08:51.151+05:30",
       "workerId": "GRAM-WKR-001",
       "workerRole": "Sanitation & Field Lead",
       "assignedArea": "Chandoli",
+      "lastLogin": "2026-09-16T14:49:43.098+05:30",
       "mustChangePassword": false
     },
     {
@@ -216,7 +216,7 @@
       "assignedArea": "Chandoli East",
       "createdAt": "2026-09-11T09:43:05.039Z",
       "updatedAt": "2026-09-11T10:06:35.782Z",
-      "lastLogin": "2026-09-16T12:50:04.552+05:30"
+      "lastLogin": "2026-09-16T14:49:42.953+05:30"
     },
     {
       "_id": "6aa3cd29807f4547b549bf98",
@@ -234,23 +234,7 @@
       "assignedArea": "Chandoli West",
       "createdAt": "2026-09-11T09:43:05.039Z",
       "updatedAt": "2026-09-11T10:06:35.782Z",
-      "lastLogin": "2026-09-16T12:50:04.565+05:30"
-    },
-    {
-      "_id": "08c31b6a389a43f4308bfc27",
-      "name": "Ganesh Gaikwad",
-      "email": "ganesh@chandoli.org",
-      "phone": "9890123456",
-      "workerId": "GRAM-WKR-004",
-      "passwordHash": "Ganesh@Password123",
-      "role": "worker",
-      "workerRole": "Water Supply Specialist",
-      "specialization": "Water Supply Specialist",
-      "assignedArea": "Chandoli Sector 2",
-      "isActive": true,
-      "mustChangePassword": true,
-      "createdAt": "2026-09-16T07:36:05.933739",
-      "lastLogin": "2026-09-16T13:10:36.929+05:30"
+      "lastLogin": "2026-09-16T14:49:42.970+05:30"
     },
     {
       "_id": "6aa3cd29807f4547b549bf99",
@@ -268,8 +252,7 @@
       "assignedArea": "Chandoli",
       "mustChangePassword": false,
       "createdAt": "2026-09-11T09:43:05.039Z",
-      "updatedAt": "2026-09-11T10:06:35.782Z",
-      "lastLogin": "2026-09-16T13:35:35.630+05:30"
+      "updatedAt": "2026-09-11T10:06:35.782Z"
     }
   ],
   "issues": [
@@ -292,17 +275,17 @@
       "location": {
         "type": "Point",
         "coordinates": [
-          74.38409,
-          16.74064
+          73.8523,
+          18.5189
         ],
-        "address": "Bhosale Galli, Chandoli",
-        "landmark": "Bhosale Galli",
+        "address": "Water Tank Hill Road, Ward 3",
+        "landmark": "Near Gram Panchayat Water Reservoir",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 1",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-09-10T09:11:58.470Z"
       },
-      "status": "VERIFIED RESOLVED",
+      "status": "UNDER ACTION",
       "priority": {
         "score": 58,
         "level": "Medium",
@@ -317,7 +300,7 @@
       },
       "createdBy": "6aa3c5dd76dd8149601cc83c",
       "assignedWorker": "6aa3cd29807f4547b549bf96",
-      "assignedAt": "2026-09-16T12:50:14.975+05:30",
+      "assignedAt": "2026-09-10T09:11:58.470Z",
       "reliabilityScore": 78,
       "reliabilityLevel": "High",
       "reliabilityFactors": {
@@ -394,29 +377,21 @@
         }
       ],
       "communityValidationStats": {
-        "confirms": 8,
-        "stillExists": 4,
-        "resolved": 4
+        "confirms": 4,
+        "stillExists": 0,
+        "resolved": 0
       },
       "voiceTranscript": "",
       "completionDetails": {
-        "completedAt": "2026-09-16T12:49:09.531+05:30",
-        "notes": "Pipeline replaced and road resurfacing complete. Verified water flow restored.",
-        "images": [
-          {
-            "url": "https://images.unsplash.com/photo-1584467735815-f778f274e296?w=800"
-          }
-        ],
-        "coordinates": [
-          74.243312,
-          16.960245
-        ]
+        "notes": "",
+        "images": [],
+        "completedAt": null
       },
       "adminVerification": {
-        "verifiedBy": "6aa3c76afb133c6389a695e0",
-        "verifiedAt": "2026-09-16T07:20:15.007615",
-        "notes": "Inspected and approved by Admin",
-        "forwardedToCitizen": true
+        "verifiedBy": null,
+        "verifiedAt": null,
+        "notes": "",
+        "forwardedToCitizen": false
       },
       "citizenFeedback": {
         "rating": null,
@@ -424,8 +399,8 @@
         "comment": "",
         "submittedAt": null
       },
-      "resolvedAt": "2026-09-16T07:20:14.990292",
-      "verifiedAt": "2026-09-16T07:20:15.007600",
+      "resolvedAt": null,
+      "verifiedAt": null,
       "aiDetection": {
         "detectedCategory": "",
         "confidence": 0,
@@ -436,23 +411,9 @@
       },
       "isPublic": true,
       "createdAt": "2026-09-10T09:11:58.470Z",
-      "updatedAt": "2026-09-16T07:20:15.007612+05:30",
-      "progressNotes": [
-        {
-          "note": "Cleared debris",
-          "images": [],
-          "createdAt": "2026-09-16T12:47:20.836+05:30"
-        },
-        {
-          "note": "Excavation completed, cleared pipeline blockages.",
-          "images": [
-            "https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?w=800"
-          ],
-          "createdAt": "2026-09-16T12:49:09.511+05:30"
-        }
-      ],
-      "__v": 0,
-      "corroborationCount": 4
+      "updatedAt": "2026-09-11T09:43:05.123Z",
+      "progressNotes": [],
+      "__v": 0
     },
     {
       "_id": "6aa3c5de76dd8149601cc874",
@@ -480,10 +441,10 @@
         "landmark": "Weekly Market Vegetable Shed",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 2",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-09-09T09:11:58.486Z"
       },
-      "status": "REOPENED",
+      "status": "ASSIGNED",
       "priority": {
         "score": 61,
         "level": "High",
@@ -497,8 +458,8 @@
         }
       },
       "createdBy": "6aa3c5dd76dd8149601cc83e",
-      "assignedWorker": "6aa3cd29807f4547b549bf97",
-      "assignedAt": "2026-09-16T12:50:04.726+05:30",
+      "assignedWorker": "6aa3cd29807f4547b549bf96",
+      "assignedAt": "2026-09-09T09:11:58.486Z",
       "reliabilityScore": 78,
       "reliabilityLevel": "High",
       "reliabilityFactors": {
@@ -582,17 +543,9 @@
       },
       "voiceTranscript": "",
       "completionDetails": {
-        "completedAt": "2026-09-16T12:50:04.643+05:30",
-        "notes": "Pipeline replaced and road resurfacing complete. Verified water flow restored.",
-        "images": [
-          {
-            "url": "https://images.unsplash.com/photo-1584467735815-f778f274e296?w=800"
-          }
-        ],
-        "coordinates": [
-          74.243312,
-          16.960245
-        ]
+        "notes": "",
+        "images": [],
+        "completedAt": null
       },
       "adminVerification": {
         "verifiedBy": null,
@@ -606,8 +559,8 @@
         "comment": "",
         "submittedAt": null
       },
-      "resolvedAt": "2026-09-16T12:50:04.643+05:30",
-      "verifiedAt": "2026-09-16T12:50:04.697+05:30",
+      "resolvedAt": null,
+      "verifiedAt": null,
       "aiDetection": {
         "detectedCategory": "",
         "confidence": 0,
@@ -618,16 +571,8 @@
       },
       "isPublic": true,
       "createdAt": "2026-09-09T09:11:58.486Z",
-      "updatedAt": "2026-09-16T12:50:04.712+05:30",
-      "progressNotes": [
-        {
-          "note": "Excavation completed, cleared pipeline blockages.",
-          "images": [
-            "https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?w=800"
-          ],
-          "createdAt": "2026-09-16T12:50:04.631+05:30"
-        }
-      ],
+      "updatedAt": "2026-09-11T09:43:05.123Z",
+      "progressNotes": [],
       "__v": 0
     },
     {
@@ -656,7 +601,7 @@
         "landmark": "Opposite Zilla Parishad Primary School Gate",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 3",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-09-08T09:11:58.494Z"
       },
       "status": "ASSIGNED",
@@ -816,7 +761,7 @@
         "landmark": "50 meters before Bhima River Bridge",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 4",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-09-07T09:11:58.502Z"
       },
       "status": "UNDER ACTION",
@@ -959,7 +904,7 @@
         "landmark": "Near Community Hall",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 5",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-09-05T09:11:58.511Z"
       },
       "status": "ACTION COMPLETED",
@@ -1108,7 +1053,7 @@
         "landmark": "Behind Gram Panchayat Library",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 1",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-09-03T09:11:58.518Z"
       },
       "status": "MONITORING",
@@ -1240,7 +1185,7 @@
         "landmark": "Primary Health Center Entrance",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 2",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-08-28T09:11:58.528Z"
       },
       "status": "VERIFIED RESOLVED",
@@ -1389,7 +1334,7 @@
         "landmark": "Near Shivaji Maharaj Statue",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 3",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-09-02T09:11:58.538Z"
       },
       "status": "REOPENED",
@@ -1549,7 +1494,7 @@
         "landmark": "Near Maruti Temple Well",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 4",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-09-09T09:11:58.548Z"
       },
       "status": "UNDER ACTION",
@@ -1684,7 +1629,7 @@
       "statusHistory": [
         {
           "status": "UNDER ACTION",
-          "timestamp": "2026-09-16T13:32:29.557+05:30",
+          "timestamp": "2026-09-16T14:49:42.696+05:30",
           "comment": "Work in progress by Rohan"
         }
       ]
@@ -1715,7 +1660,7 @@
         "landmark": "Adjacent to Crematorium Wall",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 5",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-09-10T09:11:58.558Z"
       },
       "status": "UNDER ACTION",
@@ -1851,7 +1796,7 @@
       "statusHistory": [
         {
           "status": "UNDER ACTION",
-          "timestamp": "2026-09-16T13:32:29.557+05:30",
+          "timestamp": "2026-09-16T14:49:42.696+05:30",
           "comment": "Work in progress by Rohan"
         }
       ]
@@ -1882,7 +1827,7 @@
         "landmark": "Near Pole #111",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 1",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-08-19T09:11:58.564Z"
       },
       "status": "ACTION COMPLETED",
@@ -2031,7 +1976,7 @@
         "landmark": "Near Pole #112",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 2",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-08-17T09:11:58.573Z"
       },
       "status": "MONITORING",
@@ -2196,7 +2141,7 @@
         "landmark": "Near Pole #113",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 3",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-08-15T09:11:58.588Z"
       },
       "status": "VERIFIED RESOLVED",
@@ -2328,7 +2273,7 @@
         "landmark": "Near Pole #114",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 4",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-08-13T09:11:58.607Z"
       },
       "status": "ASSIGNED",
@@ -2488,7 +2433,7 @@
         "landmark": "Near Pole #115",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 5",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-08-11T09:11:58.617Z"
       },
       "status": "ACTION COMPLETED",
@@ -2591,7 +2536,7 @@
       "voiceTranscript": "",
       "completionDetails": {
         "notes": "Drainage blockage cleared, debris removed, water flow fully restored by Rohan Patil.",
-        "completedAt": "2026-09-16T13:32:29.557+05:30",
+        "completedAt": "2026-09-16T14:49:42.696+05:30",
         "images": [
           {
             "url": "https://images.unsplash.com/photo-1584467735815-f778f274e296?w=800"
@@ -2652,7 +2597,7 @@
         "landmark": "Near Pole #116",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 1",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-08-09T09:11:58.626Z"
       },
       "status": "ASSIGNED",
@@ -2811,7 +2756,7 @@
         "landmark": "Near Pole #117",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 2",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-08-07T09:11:58.637Z"
       },
       "status": "UNDER ACTION",
@@ -2954,7 +2899,7 @@
         "landmark": "Near Pole #118",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 3",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-08-05T09:11:58.647Z"
       },
       "status": "ACTION COMPLETED",
@@ -3103,7 +3048,7 @@
         "landmark": "Near Pole #119",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 4",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-08-03T09:11:58.652Z"
       },
       "status": "MONITORING",
@@ -3268,7 +3213,7 @@
         "landmark": "Near Pole #120",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 5",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-08-01T09:11:58.661Z"
       },
       "status": "VERIFIED RESOLVED",
@@ -3400,7 +3345,7 @@
         "landmark": "Near Pole #121",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 1",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-07-30T09:11:58.670Z"
       },
       "status": "UNDER ACTION",
@@ -3536,7 +3481,7 @@
       "statusHistory": [
         {
           "status": "UNDER ACTION",
-          "timestamp": "2026-09-16T13:32:29.557+05:30",
+          "timestamp": "2026-09-16T14:49:42.696+05:30",
           "comment": "Work in progress by Rohan"
         }
       ]
@@ -3567,7 +3512,7 @@
         "landmark": "Near Pole #122",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 2",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-07-28T09:11:58.680Z"
       },
       "status": "VERIFIED RESOLVED",
@@ -3727,7 +3672,7 @@
         "landmark": "Near Pole #123",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 3",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-09-09T09:11:58.688Z"
       },
       "status": "ASSIGNED",
@@ -3886,7 +3831,7 @@
         "landmark": "Near Pole #124",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 4",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-09-07T09:11:58.697Z"
       },
       "status": "UNDER ACTION",
@@ -4029,7 +3974,7 @@
         "landmark": "Near Pole #125",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 5",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-09-05T09:11:58.708Z"
       },
       "status": "ACTION COMPLETED",
@@ -4178,7 +4123,7 @@
         "landmark": "Near Pole #126",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 1",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-09-03T09:11:58.721Z"
       },
       "status": "MONITORING",
@@ -4343,7 +4288,7 @@
         "landmark": "Near Pole #127",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 2",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-09-01T09:11:58.730Z"
       },
       "status": "VERIFIED RESOLVED",
@@ -4475,7 +4420,7 @@
         "landmark": "Near Pole #128",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 3",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-08-30T09:11:58.738Z"
       },
       "status": "NEW",
@@ -4635,7 +4580,7 @@
         "landmark": "Near Pole #129",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 4",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-08-28T09:11:58.746Z"
       },
       "status": "VALIDATED",
@@ -4795,7 +4740,7 @@
         "landmark": "Near Pole #130",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 5",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-08-26T09:11:58.751Z"
       },
       "status": "ASSIGNED",
@@ -4954,7 +4899,7 @@
         "landmark": "Near Pole #131",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 1",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-08-24T09:11:58.763Z"
       },
       "status": "UNDER ACTION",
@@ -5097,7 +5042,7 @@
         "landmark": "Near Pole #132",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 2",
-        "timing": "16 Sep 2026, 09:29 AM (IST)",
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
         "detectedAt": "2026-08-22T09:11:58.780Z"
       },
       "status": "ACTION COMPLETED",
@@ -5246,11 +5191,10 @@
         "landmark": "Live GPS Pin [16.73180, 73.90790]",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 1",
-        "timing": "16 Sep 2026, 08:45 AM (IST)",
-        "accuracy": 4,
-        "detectedAt": "2026-09-16T08:45:00.000Z"
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
+        "detectedAt": "2026-09-11T09:22:04.043Z"
       },
-      "status": "UNDER ACTION",
+      "status": "REOPENED",
       "priority": {
         "score": 35,
         "level": "Medium",
@@ -5264,8 +5208,8 @@
         }
       },
       "createdBy": "6aa3c76afb133c6389a695e0",
-      "assignedWorker": "6aa3cd29807f4547b549bf96",
-      "assignedAt": "2026-09-11T09:39:39.836Z",
+      "assignedWorker": "6aa3cd29807f4547b549bf97",
+      "assignedAt": "2026-09-16T14:49:43.159+05:30",
       "reliabilityScore": 97,
       "reliabilityLevel": "Very High",
       "reliabilityFactors": {
@@ -5348,9 +5292,17 @@
       },
       "voiceTranscript": "Chinese pani ka Park lekin jyada hai",
       "completionDetails": {
-        "notes": "",
-        "completedAt": null,
-        "images": []
+        "completedAt": "2026-09-16T14:49:43.068+05:30",
+        "notes": "Pipeline replaced and road resurfacing complete. Verified water flow restored.",
+        "images": [
+          {
+            "url": "https://images.unsplash.com/photo-1584467735815-f778f274e296?w=800"
+          }
+        ],
+        "coordinates": [
+          74.243312,
+          16.960245
+        ]
       },
       "adminVerification": {
         "verifiedBy": null,
@@ -5364,8 +5316,8 @@
         "comment": "",
         "submittedAt": null
       },
-      "resolvedAt": null,
-      "verifiedAt": null,
+      "resolvedAt": "2026-09-16T14:49:43.068+05:30",
+      "verifiedAt": "2026-09-16T14:49:43.126+05:30",
       "aiDetection": {
         "detectedCategory": "Water leakage",
         "confidence": 96,
@@ -5380,9 +5332,17 @@
         "autoPopulated": true
       },
       "isPublic": true,
-      "progressNotes": [],
+      "progressNotes": [
+        {
+          "note": "Excavation completed, cleared pipeline blockages.",
+          "images": [
+            "https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?w=800"
+          ],
+          "createdAt": "2026-09-16T14:49:43.054+05:30"
+        }
+      ],
       "createdAt": "2026-09-11T09:22:04.043Z",
-      "updatedAt": "2026-09-16T13:05:40.840+05:30",
+      "updatedAt": "2026-09-16T14:49:43.142+05:30",
       "__v": 0
     },
     {
@@ -5411,9 +5371,8 @@
         "landmark": "Live GPS Pin [16.73180, 73.90790]",
         "village": "Gram Panchayat Chandoli",
         "ward": "Ward 1",
-        "timing": "16 Sep 2026, 08:48 AM (IST)",
-        "accuracy": 4,
-        "detectedAt": "2026-09-16T08:48:00.000Z"
+        "timing": "16 Sep 2026, 02:49 PM (IST)",
+        "detectedAt": "2026-09-11T09:49:59.063Z"
       },
       "status": "ASSIGNED",
       "priority": {
@@ -5606,7 +5565,67 @@
   ],
   "issueHistories": [
     {
-      "_id": "b79837903f5bdeb84efe0423",
+      "_id": "33e74a6d476785f94e5bcf94",
+      "issueId": "6aa3c83bfb133c6389a69646",
+      "eventType": "WORKER_ASSIGNED",
+      "previousState": "REOPENED",
+      "newState": "REOPENED",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "comment": "Reassigned to Ramesh Patil. Note: Handing off to civil road specialist",
+      "timestamp": "2026-09-16T14:49:43.159+05:30",
+      "createdAt": "2026-09-16T14:49:43.159+05:30"
+    },
+    {
+      "_id": "c30acb1379ba1c38d9258bf2",
+      "issueId": "6aa3c83bfb133c6389a69646",
+      "eventType": "TASK_REOPENED",
+      "previousState": "VERIFIED RESOLVED",
+      "newState": "REOPENED",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "comment": "Task reopened: Additional pressure testing required",
+      "timestamp": "2026-09-16T14:49:43.142+05:30",
+      "createdAt": "2026-09-16T14:49:43.142+05:30"
+    },
+    {
+      "_id": "54ce21a94fefc797377a216d",
+      "issueId": "6aa3c83bfb133c6389a69646",
+      "eventType": "VERIFIED_RESOLVED",
+      "previousState": "ACTION COMPLETED",
+      "newState": "VERIFIED RESOLVED",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "comment": "Verified & approved by Panchayat Admin.",
+      "timestamp": "2026-09-16T14:49:43.126+05:30",
+      "createdAt": "2026-09-16T14:49:43.126+05:30"
+    },
+    {
+      "_id": "6b8160cbd43077a872ffbf65",
+      "issueId": "6aa3c83bfb133c6389a69646",
+      "eventType": "WORK_COMPLETED",
+      "previousState": "UNDER ACTION",
+      "newState": "ACTION COMPLETED",
+      "userName": "KD (Field Worker Lead)",
+      "userRole": "worker",
+      "comment": "Field work completed. Notes: Pipeline replaced and road resurfacing complete. Verified water flow restored.",
+      "timestamp": "2026-09-16T14:49:43.068+05:30",
+      "createdAt": "2026-09-16T14:49:43.068+05:30"
+    },
+    {
+      "_id": "f983ef6784fb63cb2e94e3b2",
+      "issueId": "6aa3c83bfb133c6389a69646",
+      "eventType": "PROGRESS_UPDATE",
+      "previousState": "UNDER ACTION",
+      "newState": "UNDER ACTION",
+      "userName": "KD (Field Worker Lead)",
+      "userRole": "worker",
+      "comment": "Progress update: Excavation completed, cleared pipeline blockages.",
+      "timestamp": "2026-09-16T14:49:43.054+05:30",
+      "createdAt": "2026-09-16T14:49:43.054+05:30"
+    },
+    {
+      "_id": "99bfffd12ec9892ff96a6d80",
       "issueId": "6aa3c83bfb133c6389a69646",
       "eventType": "WORK_STARTED",
       "previousState": "REOPENED",
@@ -5614,392 +5633,20 @@
       "userName": "KD (Field Worker Lead)",
       "userRole": "worker",
       "comment": "Worker initiated field repair work.",
-      "timestamp": "2026-09-16T13:05:40.854+05:30",
-      "createdAt": "2026-09-16T13:05:40.854+05:30"
+      "timestamp": "2026-09-16T14:49:43.038+05:30",
+      "createdAt": "2026-09-16T14:49:43.038+05:30"
     },
     {
-      "_id": "6e1c5e4d56d0bb59b1c3f76e",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "ADMIN_VERIFIED",
-      "previousState": "ACTION COMPLETED",
-      "newState": "VERIFIED RESOLVED",
-      "userId": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "comment": "Resolution verified and published to citizen. Admin Notes: \"Inspected and approved by Admin\"",
-      "timestamp": "2026-09-16T07:20:15.007635+05:30",
-      "createdAt": "2026-09-16T07:20:15.007638+05:30"
-    },
-    {
-      "_id": "8f054b0e84fdd41be37f0dd0",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "STATUS_CHANGE",
-      "previousState": "REOPENED",
-      "newState": "ACTION COMPLETED",
-      "userId": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "comment": "Work finished",
-      "timestamp": "2026-09-16T07:20:14.990306+05:30",
-      "createdAt": "2026-09-16T07:20:14.990308+05:30"
-    },
-    {
-      "_id": "4f7c4431e325e0c82c6c7991",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "WORKER_ASSIGNED",
-      "previousState": "REOPENED",
-      "newState": "REOPENED",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "comment": "Dispatched to KD (Field Worker Lead).",
-      "timestamp": "2026-09-16T12:50:14.975+05:30",
-      "createdAt": "2026-09-16T12:50:14.975+05:30"
-    },
-    {
-      "_id": "0a248e729a01da3e07c81e22",
-      "issueId": "6aa3c5de76dd8149601cc874",
-      "eventType": "WORKER_ASSIGNED",
-      "previousState": "REOPENED",
-      "newState": "REOPENED",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "comment": "Reassigned to Ramesh Patil. Note: Handing off to civil road specialist",
-      "timestamp": "2026-09-16T12:50:04.726+05:30",
-      "createdAt": "2026-09-16T12:50:04.726+05:30"
-    },
-    {
-      "_id": "a241034dd8a22c82c032afbc",
-      "issueId": "6aa3c5de76dd8149601cc874",
-      "eventType": "TASK_REOPENED",
-      "previousState": "VERIFIED RESOLVED",
-      "newState": "REOPENED",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "comment": "Task reopened: Additional pressure testing required",
-      "timestamp": "2026-09-16T12:50:04.712+05:30",
-      "createdAt": "2026-09-16T12:50:04.712+05:30"
-    },
-    {
-      "_id": "8f22b78db500eec3adc01483",
-      "issueId": "6aa3c5de76dd8149601cc874",
-      "eventType": "VERIFIED_RESOLVED",
-      "previousState": "ACTION COMPLETED",
-      "newState": "VERIFIED RESOLVED",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "comment": "Verified & approved by Panchayat Admin.",
-      "timestamp": "2026-09-16T12:50:04.697+05:30",
-      "createdAt": "2026-09-16T12:50:04.697+05:30"
-    },
-    {
-      "_id": "422947573f5bd1636c691b23",
-      "issueId": "6aa3c5de76dd8149601cc874",
-      "eventType": "WORK_COMPLETED",
-      "previousState": "UNDER ACTION",
-      "newState": "ACTION COMPLETED",
-      "userName": "KD (Field Worker Lead)",
-      "userRole": "worker",
-      "comment": "Field work completed. Notes: Pipeline replaced and road resurfacing complete. Verified water flow restored.",
-      "timestamp": "2026-09-16T12:50:04.643+05:30",
-      "createdAt": "2026-09-16T12:50:04.643+05:30"
-    },
-    {
-      "_id": "088f322208dcc1b84ba5940d",
-      "issueId": "6aa3c5de76dd8149601cc874",
-      "eventType": "PROGRESS_UPDATE",
-      "previousState": "UNDER ACTION",
-      "newState": "UNDER ACTION",
-      "userName": "KD (Field Worker Lead)",
-      "userRole": "worker",
-      "comment": "Progress update: Excavation completed, cleared pipeline blockages.",
-      "timestamp": "2026-09-16T12:50:04.631+05:30",
-      "createdAt": "2026-09-16T12:50:04.631+05:30"
-    },
-    {
-      "_id": "9afc1b3bc0694b121c96355c",
-      "issueId": "6aa3c5de76dd8149601cc874",
-      "eventType": "WORK_STARTED",
-      "previousState": "ASSIGNED",
-      "newState": "UNDER ACTION",
-      "userName": "KD (Field Worker Lead)",
-      "userRole": "worker",
-      "comment": "Worker initiated field repair work.",
-      "timestamp": "2026-09-16T12:50:04.603+05:30",
-      "createdAt": "2026-09-16T12:50:04.603+05:30"
-    },
-    {
-      "_id": "84fddf4d406262cb26cc1423",
-      "issueId": "6aa3c5de76dd8149601cc874",
+      "_id": "523820422712e098f200c476",
+      "issueId": "6aa3c83bfb133c6389a69646",
       "eventType": "WORK_ACCEPTED",
-      "previousState": "ASSIGNED",
+      "previousState": "REOPENED",
       "newState": "ACCEPTED",
       "userName": "KD (Field Worker Lead)",
       "userRole": "worker",
       "comment": "Worker accepted task.",
-      "timestamp": "2026-09-16T12:50:04.591+05:30",
-      "createdAt": "2026-09-16T12:50:04.591+05:30"
-    },
-    {
-      "_id": "023be09efb10a433d637e28c",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "WORKER_ASSIGNED",
-      "previousState": "REOPENED",
-      "newState": "REOPENED",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "comment": "Reassigned to Ramesh Patil. Note: Handing off to civil road specialist",
-      "timestamp": "2026-09-16T12:49:09.625+05:30",
-      "createdAt": "2026-09-16T12:49:09.625+05:30"
-    },
-    {
-      "_id": "730caae32416ef79650fe7cc",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "TASK_REOPENED",
-      "previousState": "VERIFIED RESOLVED",
-      "newState": "REOPENED",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "comment": "Task reopened: Additional pressure testing required",
-      "timestamp": "2026-09-16T12:49:09.599+05:30",
-      "createdAt": "2026-09-16T12:49:09.599+05:30"
-    },
-    {
-      "_id": "7ae1e82c24d35279efb2cf62",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "VERIFIED_RESOLVED",
-      "previousState": "ACTION COMPLETED",
-      "newState": "VERIFIED RESOLVED",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "comment": "Verified & approved by Panchayat Admin.",
-      "timestamp": "2026-09-16T12:49:09.585+05:30",
-      "createdAt": "2026-09-16T12:49:09.585+05:30"
-    },
-    {
-      "_id": "48915576ceccbb2bba426559",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "WORK_COMPLETED",
-      "previousState": "UNDER ACTION",
-      "newState": "ACTION COMPLETED",
-      "userName": "KD (Field Worker Lead)",
-      "userRole": "worker",
-      "comment": "Field work completed. Notes: Pipeline replaced and road resurfacing complete. Verified water flow restored.",
-      "timestamp": "2026-09-16T12:49:09.532+05:30",
-      "createdAt": "2026-09-16T12:49:09.532+05:30"
-    },
-    {
-      "_id": "a932caa04f06ea5c360ecc42",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "PROGRESS_UPDATE",
-      "previousState": "UNDER ACTION",
-      "newState": "UNDER ACTION",
-      "userName": "KD (Field Worker Lead)",
-      "userRole": "worker",
-      "comment": "Progress update: Excavation completed, cleared pipeline blockages.",
-      "timestamp": "2026-09-16T12:49:09.511+05:30",
-      "createdAt": "2026-09-16T12:49:09.511+05:30"
-    },
-    {
-      "_id": "1293b90b7e4fdfb8d73afac9",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "WORK_STARTED",
-      "previousState": "ACTION COMPLETED",
-      "newState": "UNDER ACTION",
-      "userName": "KD (Field Worker Lead)",
-      "userRole": "worker",
-      "comment": "Worker initiated field repair work.",
-      "timestamp": "2026-09-16T12:49:09.491+05:30",
-      "createdAt": "2026-09-16T12:49:09.491+05:30"
-    },
-    {
-      "_id": "ff4cfa62c8c8480d900f148a",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "WORK_ACCEPTED",
-      "previousState": "ACTION COMPLETED",
-      "newState": "ACCEPTED",
-      "userName": "KD (Field Worker Lead)",
-      "userRole": "worker",
-      "comment": "Worker accepted task.",
-      "timestamp": "2026-09-16T12:49:09.464+05:30",
-      "createdAt": "2026-09-16T12:49:09.464+05:30"
-    },
-    {
-      "_id": "9e1d30b920f8eacc2a46d093",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "WORK_COMPLETED",
-      "previousState": "UNDER ACTION",
-      "newState": "ACTION COMPLETED",
-      "userName": "KD (Field Worker Lead)",
-      "userRole": "worker",
-      "comment": "Field work completed. Notes: Done repair",
-      "timestamp": "2026-09-16T12:47:20.849+05:30",
-      "createdAt": "2026-09-16T12:47:20.849+05:30"
-    },
-    {
-      "_id": "08f9f2fd18d2a173486b3077",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "PROGRESS_UPDATE",
-      "previousState": "UNDER ACTION",
-      "newState": "UNDER ACTION",
-      "userName": "KD (Field Worker Lead)",
-      "userRole": "worker",
-      "comment": "Progress update: Cleared debris",
-      "timestamp": "2026-09-16T12:47:20.836+05:30",
-      "createdAt": "2026-09-16T12:47:20.836+05:30"
-    },
-    {
-      "_id": "9f4557b13e9232c807a383ce",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "WORK_STARTED",
-      "previousState": "VERIFIED RESOLVED",
-      "newState": "UNDER ACTION",
-      "userName": "KD (Field Worker Lead)",
-      "userRole": "worker",
-      "comment": "Worker initiated field repair work.",
-      "timestamp": "2026-09-16T12:47:20.822+05:30",
-      "createdAt": "2026-09-16T12:47:20.822+05:30"
-    },
-    {
-      "_id": "4f0def667693be85541e04bc",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "WORK_ACCEPTED",
-      "previousState": "VERIFIED RESOLVED",
-      "newState": "ACCEPTED",
-      "userName": "KD (Field Worker Lead)",
-      "userRole": "worker",
-      "comment": "Worker accepted task.",
-      "timestamp": "2026-09-16T12:47:20.809+05:30",
-      "createdAt": "2026-09-16T12:47:20.809+05:30"
-    },
-    {
-      "_id": "5bf17a1815422924fc24d0b3",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "LOCATION_UPDATED",
-      "previousState": "VERIFIED RESOLVED",
-      "newState": "VERIFIED RESOLVED",
-      "userId": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "comment": "Accurate live location updated to 16.74064\u00b0N, 74.38409\u00b0E (Bhosale Galli, Chandoli).",
-      "timestamp": "2026-09-14T15:23:07.126Z",
-      "createdAt": "2026-09-14T15:23:07.126Z"
-    },
-    {
-      "_id": "70b51a20d331326c8f3603cc",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "ADMIN_VERIFIED",
-      "previousState": "ACTION COMPLETED",
-      "newState": "VERIFIED RESOLVED",
-      "userId": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "comment": "Resolution verified and published to citizen. Admin Notes: \"Inspected and approved by Admin\"",
-      "timestamp": "2026-09-14T15:19:20.655679+05:30",
-      "createdAt": "2026-09-14T15:19:20.655684+05:30"
-    },
-    {
-      "_id": "63b05c01e9fe8effc5f76e13",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "STATUS_CHANGE",
-      "previousState": "VERIFIED RESOLVED",
-      "newState": "ACTION COMPLETED",
-      "userId": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "comment": "Work finished",
-      "timestamp": "2026-09-14T15:19:20.636630+05:30",
-      "createdAt": "2026-09-14T15:19:20.636634+05:30"
-    },
-    {
-      "_id": "8550b88cd9370dc5bfd9d108",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "WORKER_ASSIGNED",
-      "previousState": "VERIFIED RESOLVED",
-      "newState": "VERIFIED RESOLVED",
-      "userId": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "comment": "Dispatched to KD (Field Worker Lead).",
-      "timestamp": "2026-09-14T15:19:20.624992+05:30",
-      "createdAt": "2026-09-14T15:19:20.624995+05:30"
-    },
-    {
-      "_id": "eae3ee92ff1faea521fa0b9b",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "ADMIN_VERIFIED",
-      "previousState": "ACTION COMPLETED",
-      "newState": "VERIFIED RESOLVED",
-      "userId": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "comment": "Resolution verified and published to citizen. Admin Notes: \"Inspected and approved by Admin\"",
-      "timestamp": "2026-09-11T15:29:55.126723+05:30",
-      "createdAt": "2026-09-11T15:29:55.126730+05:30"
-    },
-    {
-      "_id": "cf8a2b69e575dd35b3a474e3",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "STATUS_CHANGE",
-      "previousState": "VERIFIED RESOLVED",
-      "newState": "ACTION COMPLETED",
-      "userId": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "comment": "Work finished",
-      "timestamp": "2026-09-11T15:29:55.090340+05:30",
-      "createdAt": "2026-09-11T15:29:55.090347+05:30"
-    },
-    {
-      "_id": "5e904eab912809ae89e7aaf9",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "WORKER_ASSIGNED",
-      "previousState": "VERIFIED RESOLVED",
-      "newState": "VERIFIED RESOLVED",
-      "userId": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "comment": "Dispatched to KD (Field Worker Lead).",
-      "timestamp": "2026-09-11T15:29:55.066166+05:30",
-      "createdAt": "2026-09-11T15:29:55.066173+05:30"
-    },
-    {
-      "_id": "075bd8240c4bee0ed24573d6",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "ADMIN_VERIFIED",
-      "previousState": "ACTION COMPLETED",
-      "newState": "VERIFIED RESOLVED",
-      "userId": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "comment": "Resolution verified and published to citizen. Admin Notes: \"Inspected and approved by Admin\"",
-      "timestamp": "2026-09-11T15:16:24.581154+05:30",
-      "createdAt": "2026-09-11T15:16:24.581157+05:30"
-    },
-    {
-      "_id": "d6de03d57b534a71f932ff66",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "STATUS_CHANGE",
-      "previousState": "UNDER ACTION",
-      "newState": "ACTION COMPLETED",
-      "userId": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "comment": "Work finished",
-      "timestamp": "2026-09-11T15:16:24.569531+05:30",
-      "createdAt": "2026-09-11T15:16:24.569534+05:30"
-    },
-    {
-      "_id": "bf91ac0cc924caa7943ec5c7",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "eventType": "WORKER_ASSIGNED",
-      "previousState": "UNDER ACTION",
-      "newState": "UNDER ACTION",
-      "userId": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "comment": "Dispatched to KD (Field Worker Lead).",
-      "timestamp": "2026-09-11T15:16:24.558063+05:30",
-      "createdAt": "2026-09-11T15:16:24.558066+05:30"
+      "timestamp": "2026-09-16T14:49:43.022+05:30",
+      "createdAt": "2026-09-16T14:49:43.022+05:30"
     },
     {
       "_id": "6aa3c5de76dd8149601cc86e",
@@ -7937,150 +7584,6 @@
       "createdAt": "2026-09-11T09:23:19.342Z",
       "updatedAt": "2026-09-11T09:25:08.612Z",
       "__v": 0
-    },
-    {
-      "_id": "45e7e4a32fedf05c38ce3d08",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "sourceUser": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "response": "CONFIRM",
-      "validationType": "CONFIRM",
-      "notes": "Citizen community verification vote",
-      "comment": "Citizen community verification vote",
-      "createdAt": "2026-09-11T15:16:24.523346"
-    },
-    {
-      "_id": "156d9b9787d486260104a256",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "sourceUser": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "response": "STILL_EXISTS",
-      "validationType": "STILL_EXISTS",
-      "notes": "Citizen community verification vote",
-      "comment": "Citizen community verification vote",
-      "createdAt": "2026-09-11T15:16:24.534472"
-    },
-    {
-      "_id": "ab7d8d0535cf6b2ea1b39fb3",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "sourceUser": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "response": "RESOLVED",
-      "validationType": "RESOLVED",
-      "notes": "Citizen community verification vote",
-      "comment": "Citizen community verification vote",
-      "createdAt": "2026-09-11T15:16:24.546226"
-    },
-    {
-      "_id": "61527ff4336abb134ff2072e",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "sourceUser": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "response": "CONFIRM",
-      "validationType": "CONFIRM",
-      "notes": "Citizen community verification vote",
-      "comment": "Citizen community verification vote",
-      "createdAt": "2026-09-11T15:29:55.003950"
-    },
-    {
-      "_id": "642519e2733c7080810255d3",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "sourceUser": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "response": "STILL_EXISTS",
-      "validationType": "STILL_EXISTS",
-      "notes": "Citizen community verification vote",
-      "comment": "Citizen community verification vote",
-      "createdAt": "2026-09-11T15:29:55.022485"
-    },
-    {
-      "_id": "11b7754841d7d8dfb4d01a41",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "sourceUser": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "response": "RESOLVED",
-      "validationType": "RESOLVED",
-      "notes": "Citizen community verification vote",
-      "comment": "Citizen community verification vote",
-      "createdAt": "2026-09-11T15:29:55.042608"
-    },
-    {
-      "_id": "f75f92f31fc94a6878978cce",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "sourceUser": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "response": "CONFIRM",
-      "validationType": "CONFIRM",
-      "notes": "Citizen community verification vote",
-      "comment": "Citizen community verification vote",
-      "createdAt": "2026-09-14T15:19:20.584070"
-    },
-    {
-      "_id": "157938c7217978b59ac8c77e",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "sourceUser": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "response": "STILL_EXISTS",
-      "validationType": "STILL_EXISTS",
-      "notes": "Citizen community verification vote",
-      "comment": "Citizen community verification vote",
-      "createdAt": "2026-09-14T15:19:20.598106"
-    },
-    {
-      "_id": "8f20564f10df0a265cc28c11",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "sourceUser": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "response": "RESOLVED",
-      "validationType": "RESOLVED",
-      "notes": "Citizen community verification vote",
-      "comment": "Citizen community verification vote",
-      "createdAt": "2026-09-14T15:19:20.611658"
-    },
-    {
-      "_id": "8e6f0c7cdbea6b58fcf6b197",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "sourceUser": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "response": "CONFIRM",
-      "validationType": "CONFIRM",
-      "notes": "Citizen community verification vote",
-      "comment": "Citizen community verification vote",
-      "createdAt": "2026-09-16T07:20:14.935200"
-    },
-    {
-      "_id": "5cc6ff00ed8c0772a860e5a9",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "sourceUser": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "response": "STILL_EXISTS",
-      "validationType": "STILL_EXISTS",
-      "notes": "Citizen community verification vote",
-      "comment": "Citizen community verification vote",
-      "createdAt": "2026-09-16T07:20:14.949045"
-    },
-    {
-      "_id": "78b74f23c232fe2e12900829",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "sourceUser": "6aa3c76afb133c6389a695e0",
-      "userName": "Krishna (Gram Sevak Admin)",
-      "userRole": "admin",
-      "response": "RESOLVED",
-      "validationType": "RESOLVED",
-      "notes": "Citizen community verification vote",
-      "comment": "Citizen community verification vote",
-      "createdAt": "2026-09-16T07:20:14.961561"
     }
   ],
   "notifications": [
@@ -8189,665 +7692,24 @@
       "__v": 0
     },
     {
-      "_id": "957c5fd8e78c1e659dea05cc",
-      "title": "Work Completed: Major underground pipeline burst flooding main road near Water Tank Hill",
-      "message": "Worker submitted completion proof for issue #c865. Ready for Gram Panchayat verification.",
+      "_id": "1803d1c68a4516131c6fd5ad",
+      "title": "Work Completed: Major Drinking Water Pipeline Fracture and Leakage",
+      "message": "Worker submitted completion proof for issue #9646. Ready for Gram Panchayat verification.",
       "roleTarget": "admin",
       "read": false,
-      "createdAt": "2026-09-16T12:47:20.849+05:30"
-    },
-    {
-      "_id": "8171cbd6b5fee90df4b8a31b",
-      "title": "Work Completed: Major underground pipeline burst flooding main road near Water Tank Hill",
-      "message": "Worker submitted completion proof for issue #c865. Ready for Gram Panchayat verification.",
-      "roleTarget": "admin",
-      "read": false,
-      "createdAt": "2026-09-16T12:49:09.531+05:30"
-    },
-    {
-      "_id": "5f699d2c84184297ce66a6d7",
-      "title": "Work Completed: Severe garbage accumulation and foul odor around Weekly Bazaar Ground",
-      "message": "Worker submitted completion proof for issue #c874. Ready for Gram Panchayat verification.",
-      "roleTarget": "admin",
-      "read": false,
-      "createdAt": "2026-09-16T12:50:04.643+05:30"
+      "createdAt": "2026-09-16T14:49:43.068+05:30"
     }
   ],
   "tasks": [
     {
-      "_id": "6aa3c5de76dd8149601cc865",
-      "taskId": "TSK-C865",
-      "issueId": "6aa3c5de76dd8149601cc865",
-      "workerId": "6aa3cd29807f4547b549bf96",
-      "title": "Major underground pipeline burst flooding main road near Water Tank Hill",
-      "category": "Water leakage",
-      "priority": "Medium",
-      "description": "Potable drinking water pipeline ruptured at the bend. Water is gushing onto the road and flooding residential yards. Pressure drop across Ward 3.",
-      "location": {
-        "landmark": "Bhosale Galli",
-        "address": "Bhosale Galli, Chandoli",
-        "coordinates": [
-          74.38409,
-          16.74064
-        ]
-      },
-      "deadline": "2026-09-18T12:46:59.364789+05:30",
-      "requiredAction": "Inspect site, resolve Water leakage, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "https://images.unsplash.com/photo-1584467735815-f778f274e296?w=800",
-      "status": "ASSIGNED",
-      "workerNotes": "Pipeline replaced and road resurfacing complete. Verified water flow restored.",
-      "assignedAt": "2026-09-16T12:50:14.975+05:30",
-      "createdAt": "2026-09-10T09:11:58.470Z",
-      "acceptedAt": "2026-09-16T12:49:09.464+05:30",
-      "startedAt": "2026-09-16T12:49:09.491+05:30",
-      "progressUpdates": [
-        {
-          "note": "Cleared debris",
-          "image": "",
-          "timestamp": "2026-09-16T12:47:20.836+05:30"
-        },
-        {
-          "note": "Excavation completed, cleared pipeline blockages.",
-          "image": "https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?w=800",
-          "timestamp": "2026-09-16T12:49:09.511+05:30"
-        }
-      ],
-      "completedAt": "2026-09-16T12:49:09.531+05:30",
-      "verifiedAt": "2026-09-16T12:49:09.585+05:30"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc874",
-      "taskId": "TSK-C874",
-      "issueId": "6aa3c5de76dd8149601cc874",
-      "workerId": "6aa3cd29807f4547b549bf97",
-      "title": "Severe garbage accumulation and foul odor around Weekly Bazaar Ground",
-      "category": "Waste accumulation",
-      "priority": "High",
-      "description": "Post Saturday market waste has remained uncollected for 4 days. Stray cattle and dogs are scattering decomposing vegetables into the road.",
-      "location": {
-        "landmark": "Weekly Market Vegetable Shed",
-        "address": "Bazaar Peth Road",
-        "coordinates": [
-          73.8569,
-          18.5206
-        ]
-      },
-      "deadline": "2026-09-18T12:46:59.364833+05:30",
-      "requiredAction": "Inspect site, resolve Waste accumulation, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "https://images.unsplash.com/photo-1584467735815-f778f274e296?w=800",
-      "status": "REOPENED",
-      "workerNotes": "Pipeline replaced and road resurfacing complete. Verified water flow restored.",
-      "assignedAt": "2026-09-09T09:11:58.486Z",
-      "createdAt": "2026-09-09T09:11:58.486Z",
-      "acceptedAt": "2026-09-16T12:50:04.591+05:30",
-      "startedAt": "2026-09-16T12:50:04.603+05:30",
-      "progressUpdates": [
-        {
-          "note": "Excavation completed, cleared pipeline blockages.",
-          "image": "https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?w=800",
-          "timestamp": "2026-09-16T12:50:04.631+05:30"
-        }
-      ],
-      "completedAt": "2026-09-16T12:50:04.643+05:30",
-      "verifiedAt": "2026-09-16T12:50:04.697+05:30"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc890",
-      "taskId": "TSK-C890",
-      "issueId": "6aa3c5de76dd8149601cc890",
-      "workerId": "6aa3cd29807f4547b549bf96",
-      "title": "Deep potholes and eroded asphalt along River Bridge Approach Road",
-      "category": "Damaged road",
-      "priority": "Medium",
-      "description": "Multiple 15cm deep potholes causing two-wheeler accidents, especially at night. Sugarcane carts struggling to navigate.",
-      "location": {
-        "landmark": "50 meters before Bhima River Bridge",
-        "address": "River Bridge Road",
-        "coordinates": [
-          73.8691,
-          18.5314
-        ]
-      },
-      "deadline": "2026-09-18T12:46:59.364848+05:30",
-      "requiredAction": "Inspect site, resolve Damaged road, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "",
-      "status": "IN PROGRESS",
-      "workerNotes": "",
-      "assignedAt": "2026-09-07T09:11:58.502Z",
-      "createdAt": "2026-09-07T09:11:58.502Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc89d",
-      "taskId": "TSK-C89D",
-      "issueId": "6aa3c5de76dd8149601cc89d",
-      "workerId": "6aa3cd29807f4547b549bf96",
-      "title": "Consecutive streetlight failure on 4 poles along Ambedkar Nagar Lane",
-      "category": "Streetlight failure",
-      "priority": "Medium",
-      "description": "Complete blackout on internal residential stretch for past 5 days. Women and elderly residents facing difficulty walking after 7 PM.",
-      "location": {
-        "landmark": "Near Community Hall",
-        "address": "Ambedkar Nagar Lane 2",
-        "coordinates": [
-          73.8597,
-          18.5167
-        ]
-      },
-      "deadline": "2026-09-18T12:46:59.364860+05:30",
-      "requiredAction": "Inspect site, resolve Streetlight failure, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80",
-      "status": "COMPLETED",
-      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
-      "assignedAt": "2026-09-05T09:11:58.511Z",
-      "createdAt": "2026-09-05T09:11:58.511Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc8ab",
-      "taskId": "TSK-C8AB",
-      "issueId": "6aa3c5de76dd8149601cc8ab",
-      "workerId": "6aa3cd29807f4547b549bf96",
-      "title": "Public community toilet flush water supply failure and soak pit overflow",
-      "category": "Sanitation",
-      "priority": "High",
-      "description": "Water motor pump burnt out. Soak pit overflowing into adjacent open ground. Urgent sanitation issue.",
-      "location": {
-        "landmark": "Behind Gram Panchayat Library",
-        "address": "Ward 4 Sanitation Block",
-        "coordinates": [
-          73.8542,
-          18.5211
-        ]
-      },
-      "deadline": "2026-09-18T12:46:59.364871+05:30",
-      "requiredAction": "Inspect site, resolve Sanitation, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80",
-      "status": "MONITORING",
-      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
-      "assignedAt": "2026-09-03T09:11:58.518Z",
-      "createdAt": "2026-09-03T09:11:58.518Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc8b7",
-      "taskId": "TSK-C8B7",
-      "issueId": "6aa3c5de76dd8149601cc8b7",
-      "workerId": "6aa3cd29807f4547b549bf96",
-      "title": "Repaired road crater and surface asphalt sealing near Primary Health Center",
-      "category": "Damaged road",
-      "priority": "High",
-      "description": "Crater filled with compact stone ballast and bitumen seal coat. Traffic flow restored smoothly.",
-      "location": {
-        "landmark": "Primary Health Center Entrance",
-        "address": "Hospital Road",
-        "coordinates": [
-          73.8582,
-          18.5229
-        ]
-      },
-      "deadline": "2026-09-18T12:46:59.364880+05:30",
-      "requiredAction": "Inspect site, resolve Damaged road, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=800&q=80",
-      "status": "VERIFIED",
-      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
-      "assignedAt": "2026-08-28T09:11:58.528Z",
-      "createdAt": "2026-08-28T09:11:58.528Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc8c7",
-      "taskId": "TSK-C8C7",
-      "issueId": "6aa3c5de76dd8149601cc8c7",
-      "workerId": "6aa3cd29807f4547b549bf96",
-      "title": "Persistent stormwater drain overflow at Shivaji Chowk junction",
+      "_id": "6aa3cec78d7b359c6c7ad3d5",
+      "taskId": "TSK-D3D5",
+      "issueId": "6aa3cec78d7b359c6c7ad3d5",
+      "workerId": "6aa3cd29807f4547b549bf99",
+      "title": "Severe Drainage Blockage with Overflowing Water",
       "category": "Drainage blockage",
       "priority": "Medium",
-      "description": "Drain cleaned last week but got blocked again after heavy showers. Water is backing up into nearby grocery shops.",
-      "location": {
-        "landmark": "Near Shivaji Maharaj Statue",
-        "address": "Shivaji Chowk Main Cross",
-        "coordinates": [
-          73.8573,
-          18.5215
-        ]
-      },
-      "deadline": "2026-09-18T12:46:59.364889+05:30",
-      "requiredAction": "Inspect site, resolve Drainage blockage, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1584467735815-f778f274e296?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "",
-      "status": "REOPENED",
-      "workerNotes": "",
-      "assignedAt": "2026-09-02T09:11:58.538Z",
-      "createdAt": "2026-09-02T09:11:58.538Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc8f0",
-      "taskId": "TSK-C8F0",
-      "issueId": "6aa3c5de76dd8149601cc8f0",
-      "workerId": "6aa3cd29807f4547b549bf96",
-      "title": "Streetlight failure report at Ward 2 locality #11",
-      "category": "Streetlight failure",
-      "priority": "Medium",
-      "description": "Community civic issue regarding streetlight failure causing disruption to residents. Prompt resolution requested.",
-      "location": {
-        "landmark": "Near Pole #111",
-        "address": "Ward 2 Sector F",
-        "coordinates": [
-          73.8442263430616,
-          18.526164798350923
-        ]
-      },
-      "deadline": "2026-09-18T12:46:59.364899+05:30",
-      "requiredAction": "Inspect site, resolve Streetlight failure, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80",
-      "status": "COMPLETED",
-      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
-      "assignedAt": "2026-08-19T09:11:58.564Z",
-      "createdAt": "2026-08-19T09:11:58.564Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc8fe",
-      "taskId": "TSK-C8FE",
-      "issueId": "6aa3c5de76dd8149601cc8fe",
-      "workerId": "6aa3cd29807f4547b549bf96",
-      "title": "Water supply report at Ward 3 locality #12",
-      "category": "Water supply",
-      "priority": "High",
-      "description": "Community civic issue regarding water supply causing disruption to residents. Prompt resolution requested.",
-      "location": {
-        "landmark": "Near Pole #112",
-        "address": "Ward 3 Sector A",
-        "coordinates": [
-          73.87003781627932,
-          18.516060285925718
-        ]
-      },
-      "deadline": "2026-09-18T12:46:59.364908+05:30",
-      "requiredAction": "Inspect site, resolve Water supply, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?auto=format&fit=crop&w=800&q=80",
-      "status": "MONITORING",
-      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
-      "assignedAt": "2026-08-17T09:11:58.573Z",
-      "createdAt": "2026-08-17T09:11:58.573Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc90e",
-      "taskId": "TSK-C90E",
-      "issueId": "6aa3c5de76dd8149601cc90e",
-      "workerId": "6aa3cd29807f4547b549bf96",
-      "title": "Sanitation report at Ward 4 locality #13",
-      "category": "Sanitation",
-      "priority": "Medium",
-      "description": "Community civic issue regarding sanitation causing disruption to residents. Prompt resolution requested.",
-      "location": {
-        "landmark": "Near Pole #113",
-        "address": "Ward 4 Sector B",
-        "coordinates": [
-          73.86166614893018,
-          18.527071870031232
-        ]
-      },
-      "deadline": "2026-09-18T12:46:59.364922+05:30",
-      "requiredAction": "Inspect site, resolve Sanitation, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80",
-      "status": "VERIFIED",
-      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
-      "assignedAt": "2026-08-15T09:11:58.588Z",
-      "createdAt": "2026-08-15T09:11:58.588Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc936",
-      "taskId": "TSK-C936",
-      "issueId": "6aa3c5de76dd8149601cc936",
-      "workerId": "6aa3cd29807f4547b549bf96",
-      "title": "Water leakage report at Ward 2 locality #16",
-      "category": "Water leakage",
-      "priority": "High",
-      "description": "Community civic issue regarding water leakage causing disruption to residents. Prompt resolution requested.",
-      "location": {
-        "landmark": "Near Pole #116",
-        "address": "Ward 2 Sector E",
-        "coordinates": [
-          73.87146005705102,
-          18.521417312637926
-        ]
-      },
-      "deadline": "2026-09-18T12:46:59.364931+05:30",
-      "requiredAction": "Inspect site, resolve Water leakage, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "",
-      "status": "ASSIGNED",
-      "workerNotes": "",
-      "assignedAt": "2026-08-09T09:11:58.626Z",
-      "createdAt": "2026-08-09T09:11:58.626Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc945",
-      "taskId": "TSK-C945",
-      "issueId": "6aa3c5de76dd8149601cc945",
-      "workerId": "6aa3cd29807f4547b549bf96",
-      "title": "Damaged road report at Ward 3 locality #17",
-      "category": "Damaged road",
-      "priority": "Medium",
-      "description": "Community civic issue regarding damaged road causing disruption to residents. Prompt resolution requested.",
-      "location": {
-        "landmark": "Near Pole #117",
-        "address": "Ward 3 Sector F",
-        "coordinates": [
-          73.86203231654983,
-          18.523094378694882
-        ]
-      },
-      "deadline": "2026-09-18T12:46:59.364940+05:30",
-      "requiredAction": "Inspect site, resolve Damaged road, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "",
-      "status": "IN PROGRESS",
-      "workerNotes": "",
-      "assignedAt": "2026-08-07T09:11:58.637Z",
-      "createdAt": "2026-08-07T09:11:58.637Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc952",
-      "taskId": "TSK-C952",
-      "issueId": "6aa3c5de76dd8149601cc952",
-      "workerId": "6aa3cd29807f4547b549bf96",
-      "title": "Streetlight failure report at Ward 4 locality #18",
-      "category": "Streetlight failure",
-      "priority": "High",
-      "description": "Community civic issue regarding streetlight failure causing disruption to residents. Prompt resolution requested.",
-      "location": {
-        "landmark": "Near Pole #118",
-        "address": "Ward 4 Sector A",
-        "coordinates": [
-          73.8465905762568,
-          18.527025716145612
-        ]
-      },
-      "deadline": "2026-09-18T12:46:59.364948+05:30",
-      "requiredAction": "Inspect site, resolve Streetlight failure, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80",
-      "status": "COMPLETED",
-      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
-      "assignedAt": "2026-08-05T09:11:58.647Z",
-      "createdAt": "2026-08-05T09:11:58.647Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc960",
-      "taskId": "TSK-C960",
-      "issueId": "6aa3c5de76dd8149601cc960",
-      "workerId": "6aa3cd29807f4547b549bf96",
-      "title": "Water supply report at Ward 5 locality #19",
-      "category": "Water supply",
-      "priority": "Medium",
-      "description": "Community civic issue regarding water supply causing disruption to residents. Prompt resolution requested.",
-      "location": {
-        "landmark": "Near Pole #119",
-        "address": "Ward 5 Sector B",
-        "coordinates": [
-          73.85295404088781,
-          18.52458544124616
-        ]
-      },
-      "deadline": "2026-09-18T12:46:59.364959+05:30",
-      "requiredAction": "Inspect site, resolve Water supply, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?auto=format&fit=crop&w=800&q=80",
-      "status": "MONITORING",
-      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
-      "assignedAt": "2026-08-03T09:11:58.652Z",
-      "createdAt": "2026-08-03T09:11:58.652Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc970",
-      "taskId": "TSK-C970",
-      "issueId": "6aa3c5de76dd8149601cc970",
-      "workerId": "6aa3cd29807f4547b549bf96",
-      "title": "Sanitation report at Ward 1 locality #20",
-      "category": "Sanitation",
-      "priority": "High",
-      "description": "Community civic issue regarding sanitation causing disruption to residents. Prompt resolution requested.",
-      "location": {
-        "landmark": "Near Pole #120",
-        "address": "Ward 1 Sector C",
-        "coordinates": [
-          73.85259021058614,
-          18.525376604270484
-        ]
-      },
-      "deadline": "2026-09-18T12:46:59.364969+05:30",
-      "requiredAction": "Inspect site, resolve Sanitation, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80",
-      "status": "VERIFIED",
-      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
-      "assignedAt": "2026-08-01T09:11:58.661Z",
-      "createdAt": "2026-08-01T09:11:58.661Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc998",
-      "taskId": "TSK-C998",
-      "issueId": "6aa3c5de76dd8149601cc998",
-      "workerId": "6aa3cd29807f4547b549bf96",
-      "title": "Water leakage report at Ward 4 locality #23",
-      "category": "Water leakage",
-      "priority": "Medium",
-      "description": "Community civic issue regarding water leakage causing disruption to residents. Prompt resolution requested.",
-      "location": {
-        "landmark": "Near Pole #123",
-        "address": "Ward 4 Sector F",
-        "coordinates": [
-          73.86793765883436,
-          18.508370718621045
-        ]
-      },
-      "deadline": "2026-09-18T12:46:59.364978+05:30",
-      "requiredAction": "Inspect site, resolve Water leakage, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "",
-      "status": "ASSIGNED",
-      "workerNotes": "",
-      "assignedAt": "2026-09-09T09:11:58.688Z",
-      "createdAt": "2026-09-09T09:11:58.688Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc9a7",
-      "taskId": "TSK-C9A7",
-      "issueId": "6aa3c5de76dd8149601cc9a7",
-      "workerId": "6aa3cd29807f4547b549bf96",
-      "title": "Damaged road report at Ward 5 locality #24",
-      "category": "Damaged road",
-      "priority": "Medium",
-      "description": "Community civic issue regarding damaged road causing disruption to residents. Prompt resolution requested.",
-      "location": {
-        "landmark": "Near Pole #124",
-        "address": "Ward 5 Sector A",
-        "coordinates": [
-          73.84816491893702,
-          18.52645077907146
-        ]
-      },
-      "deadline": "2026-09-18T12:46:59.364986+05:30",
-      "requiredAction": "Inspect site, resolve Damaged road, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "",
-      "status": "IN PROGRESS",
-      "workerNotes": "",
-      "assignedAt": "2026-09-07T09:11:58.697Z",
-      "createdAt": "2026-09-07T09:11:58.697Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc9b4",
-      "taskId": "TSK-C9B4",
-      "issueId": "6aa3c5de76dd8149601cc9b4",
-      "workerId": "6aa3cd29807f4547b549bf96",
-      "title": "Streetlight failure report at Ward 1 locality #25",
-      "category": "Streetlight failure",
-      "priority": "Medium",
-      "description": "Community civic issue regarding streetlight failure causing disruption to residents. Prompt resolution requested.",
-      "location": {
-        "landmark": "Near Pole #125",
-        "address": "Ward 1 Sector B",
-        "coordinates": [
-          73.84892717166744,
-          18.524354066557933
-        ]
-      },
-      "deadline": "2026-09-18T12:46:59.364996+05:30",
-      "requiredAction": "Inspect site, resolve Streetlight failure, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80",
-      "status": "COMPLETED",
-      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
-      "assignedAt": "2026-09-05T09:11:58.708Z",
-      "createdAt": "2026-09-05T09:11:58.708Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc9c2",
-      "taskId": "TSK-C9C2",
-      "issueId": "6aa3c5de76dd8149601cc9c2",
-      "workerId": "6aa3cd29807f4547b549bf96",
-      "title": "Water supply report at Ward 2 locality #26",
-      "category": "Water supply",
-      "priority": "Medium",
-      "description": "Community civic issue regarding water supply causing disruption to residents. Prompt resolution requested.",
-      "location": {
-        "landmark": "Near Pole #126",
-        "address": "Ward 2 Sector C",
-        "coordinates": [
-          73.8613008940995,
-          18.524941052209737
-        ]
-      },
-      "deadline": "2026-09-18T12:46:59.365005+05:30",
-      "requiredAction": "Inspect site, resolve Water supply, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?auto=format&fit=crop&w=800&q=80",
-      "status": "MONITORING",
-      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
-      "assignedAt": "2026-09-03T09:11:58.721Z",
-      "createdAt": "2026-09-03T09:11:58.721Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc9d2",
-      "taskId": "TSK-C9D2",
-      "issueId": "6aa3c5de76dd8149601cc9d2",
-      "workerId": "6aa3cd29807f4547b549bf96",
-      "title": "Sanitation report at Ward 3 locality #27",
-      "category": "Sanitation",
-      "priority": "High",
-      "description": "Community civic issue regarding sanitation causing disruption to residents. Prompt resolution requested.",
-      "location": {
-        "landmark": "Near Pole #127",
-        "address": "Ward 3 Sector D",
-        "coordinates": [
-          73.86865544836043,
-          18.53280447607389
-        ]
-      },
-      "deadline": "2026-09-18T12:46:59.365015+05:30",
-      "requiredAction": "Inspect site, resolve Sanitation, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80",
-      "status": "VERIFIED",
-      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
-      "assignedAt": "2026-09-01T09:11:58.730Z",
-      "createdAt": "2026-09-01T09:11:58.730Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc9fa",
-      "taskId": "TSK-C9FA",
-      "issueId": "6aa3c5de76dd8149601cc9fa",
-      "workerId": "6aa3cd29807f4547b549bf96",
-      "title": "Water leakage report at Ward 1 locality #30",
-      "category": "Water leakage",
-      "priority": "Medium",
-      "description": "Community civic issue regarding water leakage causing disruption to residents. Prompt resolution requested.",
-      "location": {
-        "landmark": "Near Pole #130",
-        "address": "Ward 1 Sector A",
-        "coordinates": [
-          73.87009772029877,
-          18.518123494730713
-        ]
-      },
-      "deadline": "2026-09-18T12:46:59.365024+05:30",
-      "requiredAction": "Inspect site, resolve Water leakage, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "",
-      "status": "ASSIGNED",
-      "workerNotes": "",
-      "assignedAt": "2026-08-26T09:11:58.751Z",
-      "createdAt": "2026-08-26T09:11:58.751Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cca09",
-      "taskId": "TSK-CA09",
-      "issueId": "6aa3c5de76dd8149601cca09",
-      "workerId": "6aa3cd29807f4547b549bf96",
-      "title": "Damaged road report at Ward 2 locality #31",
-      "category": "Damaged road",
-      "priority": "Medium",
-      "description": "Community civic issue regarding damaged road causing disruption to residents. Prompt resolution requested.",
-      "location": {
-        "landmark": "Near Pole #131",
-        "address": "Ward 2 Sector B",
-        "coordinates": [
-          73.84514247345726,
-          18.526922868258033
-        ]
-      },
-      "deadline": "2026-09-18T12:46:59.365032+05:30",
-      "requiredAction": "Inspect site, resolve Damaged road, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "",
-      "status": "IN PROGRESS",
-      "workerNotes": "",
-      "assignedAt": "2026-08-24T09:11:58.763Z",
-      "createdAt": "2026-08-24T09:11:58.763Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cca16",
-      "taskId": "TSK-CA16",
-      "issueId": "6aa3c5de76dd8149601cca16",
-      "workerId": "6aa3cd29807f4547b549bf96",
-      "title": "Streetlight failure report at Ward 3 locality #32",
-      "category": "Streetlight failure",
-      "priority": "High",
-      "description": "Community civic issue regarding streetlight failure causing disruption to residents. Prompt resolution requested.",
-      "location": {
-        "landmark": "Near Pole #132",
-        "address": "Ward 3 Sector C",
-        "coordinates": [
-          73.86544524932295,
-          18.509779809716566
-        ]
-      },
-      "deadline": "2026-09-18T12:46:59.365040+05:30",
-      "requiredAction": "Inspect site, resolve Streetlight failure, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80",
-      "status": "COMPLETED",
-      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
-      "assignedAt": "2026-08-22T09:11:58.780Z",
-      "createdAt": "2026-08-22T09:11:58.780Z"
-    },
-    {
-      "_id": "6aa3c83bfb133c6389a69646",
-      "taskId": "TSK-9646",
-      "issueId": "6aa3c83bfb133c6389a69646",
-      "workerId": "6aa3cd29807f4547b549bf96",
-      "title": "Major Drinking Water Pipeline Fracture and Leakage",
-      "category": "Water leakage",
-      "priority": "Medium",
-      "description": "Chinese pani ka Park lekin jyada hai",
+      "description": "Visual analysis indicates heavy accumulation of silt, organic debris, and plastic waste causing severe obstruction in the village drainage culvert. Stagnant dirty water is overflowing onto the street, posing an immediate public hygiene risk.",
       "location": {
         "landmark": "Live GPS Pin [16.73180, 73.90790]",
         "address": "Live GPS Pinned Location (16.73180\u00b0N, 73.90790\u00b0E)",
@@ -8856,171 +7718,14 @@
           16.7318
         ]
       },
-      "deadline": "2026-09-18T12:46:59.365048+05:30",
-      "requiredAction": "Inspect site, resolve Water leakage, upload after photos, and mark completed.",
-      "beforeImage": "/uploads/images-1789118523959-48739466.webp",
-      "afterImage": "",
-      "status": "IN PROGRESS",
-      "workerNotes": "",
-      "assignedAt": "2026-09-11T09:39:39.836Z",
-      "createdAt": "2026-09-11T09:22:04.043Z",
-      "startedAt": "2026-09-16T13:05:40.840+05:30"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc883",
-      "taskId": "TSK-C883",
-      "issueId": "6aa3c5de76dd8149601cc883",
-      "workerId": "6aa3cd29807f4547b549bf99",
-      "title": "Drainage culvert clogged with silt and plastic waste in front of ZP Primary School",
-      "category": "Drainage blockage",
-      "priority": "Medium",
-      "description": "Drain is overflowing with dark stagnant wastewater right at school entrance gate. Mosquito breeding hazard for students.",
-      "location": {
-        "landmark": "Opposite Zilla Parishad Primary School Gate",
-        "address": "School Road, Ward 2",
-        "coordinates": [
-          73.8614,
-          18.5247
-        ]
-      },
-      "deadline": "2026-09-18T13:31:54.428467+05:30",
+      "deadline": "2026-09-18T14:49:42.696367+05:30",
       "requiredAction": "Inspect site, resolve Drainage blockage, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f8?auto=format&fit=crop&w=800&q=80",
+      "beforeImage": "/uploads/images-1789120199023-591232832.webp",
       "afterImage": "",
       "status": "ASSIGNED",
       "workerNotes": "",
-      "assignedAt": "2026-09-08T09:11:58.494Z",
-      "createdAt": "2026-09-08T09:11:58.494Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc8d6",
-      "taskId": "TSK-C8D6",
-      "issueId": "6aa3c5de76dd8149601cc8d6",
-      "workerId": "6aa3cd29807f4547b549bf99",
-      "title": "Drinking water distribution valve jammed affecting Gaothan East sector",
-      "category": "Water supply",
-      "priority": "High",
-      "description": "No tap water supply in Gaothan East for 36 hours. Sluice valve handle broken during operation.",
-      "location": {
-        "landmark": "Near Maruti Temple Well",
-        "address": "Gaothan East Main Pipe",
-        "coordinates": [
-          73.8631,
-          18.5255
-        ]
-      },
-      "deadline": "2026-09-18T13:31:54.428495+05:30",
-      "requiredAction": "Inspect site, resolve Water supply, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "",
-      "status": "IN PROGRESS",
-      "workerNotes": "",
-      "assignedAt": "2026-09-09T09:11:58.548Z",
-      "createdAt": "2026-09-09T09:11:58.548Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc8e3",
-      "taskId": "TSK-C8E3",
-      "issueId": "6aa3c5de76dd8149601cc8e3",
-      "workerId": "6aa3cd29807f4547b549bf99",
-      "title": "Illegal construction debris and plastic dumping on open ground",
-      "category": "Waste accumulation",
-      "priority": "Medium",
-      "description": "Truckload of brick rubble and cement sacks dumped along village periphery road.",
-      "location": {
-        "landmark": "Adjacent to Crematorium Wall",
-        "address": "Ring Road East",
-        "coordinates": [
-          73.8655,
-          18.5192
-        ]
-      },
-      "deadline": "2026-09-18T13:31:54.428503+05:30",
-      "requiredAction": "Inspect site, resolve Waste accumulation, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1605600659908-0ef719419d41?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "",
-      "status": "IN PROGRESS",
-      "workerNotes": "",
-      "assignedAt": "2026-09-10T09:11:58.558Z",
-      "createdAt": "2026-09-10T09:11:58.558Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc91c",
-      "taskId": "TSK-C91C",
-      "issueId": "6aa3c5de76dd8149601cc91c",
-      "workerId": "6aa3cd29807f4547b549bf99",
-      "title": "Waste accumulation report at Ward 5 locality #14",
-      "category": "Waste accumulation",
-      "priority": "Medium",
-      "description": "Community civic issue regarding waste accumulation causing disruption to residents. Prompt resolution requested.",
-      "location": {
-        "landmark": "Near Pole #114",
-        "address": "Ward 5 Sector C",
-        "coordinates": [
-          73.85542564659978,
-          18.51021973373818
-        ]
-      },
-      "deadline": "2026-09-18T13:31:54.428511+05:30",
-      "requiredAction": "Inspect site, resolve Waste accumulation, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "",
-      "status": "ASSIGNED",
-      "workerNotes": "",
-      "assignedAt": "2026-08-13T09:11:58.607Z",
-      "createdAt": "2026-08-13T09:11:58.607Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc929",
-      "taskId": "TSK-C929",
-      "issueId": "6aa3c5de76dd8149601cc929",
-      "workerId": "6aa3cd29807f4547b549bf99",
-      "title": "Drainage blockage report at Ward 1 locality #15",
-      "category": "Drainage blockage",
-      "priority": "High",
-      "description": "Community civic issue regarding drainage blockage causing disruption to residents. Prompt resolution requested.",
-      "location": {
-        "landmark": "Near Pole #115",
-        "address": "Ward 1 Sector D",
-        "coordinates": [
-          73.85341239772792,
-          18.52982876058341
-        ]
-      },
-      "deadline": "2026-09-18T13:31:54.428519+05:30",
-      "requiredAction": "Inspect site, resolve Drainage blockage, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f8?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "https://images.unsplash.com/photo-1584467735815-f778f274e296?w=800",
-      "status": "COMPLETED",
-      "workerNotes": "Drainage blockage cleared, silt and debris removed, water flow fully restored by Rohan Patil.",
-      "assignedAt": "2026-08-11T09:11:58.617Z",
-      "createdAt": "2026-08-11T09:11:58.617Z"
-    },
-    {
-      "_id": "6aa3c5de76dd8149601cc97e",
-      "taskId": "TSK-C97E",
-      "issueId": "6aa3c5de76dd8149601cc97e",
-      "workerId": "6aa3cd29807f4547b549bf99",
-      "title": "Waste accumulation report at Ward 2 locality #21",
-      "category": "Waste accumulation",
-      "priority": "Medium",
-      "description": "Community civic issue regarding waste accumulation causing disruption to residents. Prompt resolution requested.",
-      "location": {
-        "landmark": "Near Pole #121",
-        "address": "Ward 2 Sector D",
-        "coordinates": [
-          73.8609312322939,
-          18.52667852295116
-        ]
-      },
-      "deadline": "2026-09-18T13:31:54.428528+05:30",
-      "requiredAction": "Inspect site, resolve Waste accumulation, upload after photos, and mark completed.",
-      "beforeImage": "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=800&q=80",
-      "afterImage": "",
-      "status": "IN PROGRESS",
-      "workerNotes": "",
-      "assignedAt": "2026-07-30T09:11:58.670Z",
-      "createdAt": "2026-07-30T09:11:58.670Z"
+      "assignedAt": "2026-09-11T09:49:59.063Z",
+      "createdAt": "2026-09-11T09:49:59.063Z"
     },
     {
       "_id": "6aa3c5de76dd8149601cc98b",
@@ -9039,7 +7744,7 @@
           18.53037454441036
         ]
       },
-      "deadline": "2026-09-18T13:31:54.428534+05:30",
+      "deadline": "2026-09-18T14:49:42.696348+05:30",
       "requiredAction": "Inspect site, resolve Drainage blockage, upload after photos, and mark completed.",
       "beforeImage": "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f8?auto=format&fit=crop&w=800&q=80",
       "afterImage": "",
@@ -9049,14 +7754,170 @@
       "createdAt": "2026-07-28T09:11:58.680Z"
     },
     {
-      "_id": "6aa3cec78d7b359c6c7ad3d5",
-      "taskId": "TSK-D3D5",
-      "issueId": "6aa3cec78d7b359c6c7ad3d5",
+      "_id": "6aa3c5de76dd8149601cc97e",
+      "taskId": "TSK-C97E",
+      "issueId": "6aa3c5de76dd8149601cc97e",
       "workerId": "6aa3cd29807f4547b549bf99",
-      "title": "Severe Drainage Blockage with Overflowing Water",
+      "title": "Waste accumulation report at Ward 2 locality #21",
+      "category": "Waste accumulation",
+      "priority": "Medium",
+      "description": "Community civic issue regarding waste accumulation causing disruption to residents. Prompt resolution requested.",
+      "location": {
+        "landmark": "Near Pole #121",
+        "address": "Ward 2 Sector D",
+        "coordinates": [
+          73.8609312322939,
+          18.52667852295116
+        ]
+      },
+      "deadline": "2026-09-18T14:49:42.696342+05:30",
+      "requiredAction": "Inspect site, resolve Waste accumulation, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "",
+      "status": "IN PROGRESS",
+      "workerNotes": "",
+      "assignedAt": "2026-07-30T09:11:58.670Z",
+      "createdAt": "2026-07-30T09:11:58.670Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc929",
+      "taskId": "TSK-C929",
+      "issueId": "6aa3c5de76dd8149601cc929",
+      "workerId": "6aa3cd29807f4547b549bf99",
+      "title": "Drainage blockage report at Ward 1 locality #15",
+      "category": "Drainage blockage",
+      "priority": "High",
+      "description": "Community civic issue regarding drainage blockage causing disruption to residents. Prompt resolution requested.",
+      "location": {
+        "landmark": "Near Pole #115",
+        "address": "Ward 1 Sector D",
+        "coordinates": [
+          73.85341239772792,
+          18.52982876058341
+        ]
+      },
+      "deadline": "2026-09-18T14:49:42.696330+05:30",
+      "requiredAction": "Inspect site, resolve Drainage blockage, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f8?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "https://images.unsplash.com/photo-1584467735815-f778f274e296?w=800",
+      "status": "COMPLETED",
+      "workerNotes": "Drainage blockage cleared, debris removed, water flow fully restored by Rohan Patil.",
+      "assignedAt": "2026-08-11T09:11:58.617Z",
+      "createdAt": "2026-08-11T09:11:58.617Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc91c",
+      "taskId": "TSK-C91C",
+      "issueId": "6aa3c5de76dd8149601cc91c",
+      "workerId": "6aa3cd29807f4547b549bf99",
+      "title": "Waste accumulation report at Ward 5 locality #14",
+      "category": "Waste accumulation",
+      "priority": "Medium",
+      "description": "Community civic issue regarding waste accumulation causing disruption to residents. Prompt resolution requested.",
+      "location": {
+        "landmark": "Near Pole #114",
+        "address": "Ward 5 Sector C",
+        "coordinates": [
+          73.85542564659978,
+          18.51021973373818
+        ]
+      },
+      "deadline": "2026-09-18T14:49:42.696323+05:30",
+      "requiredAction": "Inspect site, resolve Waste accumulation, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "",
+      "status": "ASSIGNED",
+      "workerNotes": "",
+      "assignedAt": "2026-08-13T09:11:58.607Z",
+      "createdAt": "2026-08-13T09:11:58.607Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc8e3",
+      "taskId": "TSK-C8E3",
+      "issueId": "6aa3c5de76dd8149601cc8e3",
+      "workerId": "6aa3cd29807f4547b549bf99",
+      "title": "Illegal construction debris and plastic dumping on open ground",
+      "category": "Waste accumulation",
+      "priority": "Medium",
+      "description": "Truckload of brick rubble and cement sacks dumped along village periphery road.",
+      "location": {
+        "landmark": "Adjacent to Crematorium Wall",
+        "address": "Ring Road East",
+        "coordinates": [
+          73.8655,
+          18.5192
+        ]
+      },
+      "deadline": "2026-09-18T14:49:42.696312+05:30",
+      "requiredAction": "Inspect site, resolve Waste accumulation, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1605600659908-0ef719419d41?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "",
+      "status": "IN PROGRESS",
+      "workerNotes": "",
+      "assignedAt": "2026-09-10T09:11:58.558Z",
+      "createdAt": "2026-09-10T09:11:58.558Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc8d6",
+      "taskId": "TSK-C8D6",
+      "issueId": "6aa3c5de76dd8149601cc8d6",
+      "workerId": "6aa3cd29807f4547b549bf99",
+      "title": "Drinking water distribution valve jammed affecting Gaothan East sector",
+      "category": "Water supply",
+      "priority": "High",
+      "description": "No tap water supply in Gaothan East for 36 hours. Sluice valve handle broken during operation.",
+      "location": {
+        "landmark": "Near Maruti Temple Well",
+        "address": "Gaothan East Main Pipe",
+        "coordinates": [
+          73.8631,
+          18.5255
+        ]
+      },
+      "deadline": "2026-09-18T14:49:42.696302+05:30",
+      "requiredAction": "Inspect site, resolve Water supply, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "",
+      "status": "IN PROGRESS",
+      "workerNotes": "",
+      "assignedAt": "2026-09-09T09:11:58.548Z",
+      "createdAt": "2026-09-09T09:11:58.548Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc883",
+      "taskId": "TSK-C883",
+      "issueId": "6aa3c5de76dd8149601cc883",
+      "workerId": "6aa3cd29807f4547b549bf99",
+      "title": "Drainage culvert clogged with silt and plastic waste in front of ZP Primary School",
       "category": "Drainage blockage",
       "priority": "Medium",
-      "description": "Visual analysis indicates heavy accumulation of silt, organic debris, and plastic waste causing severe obstruction in the village drainage culvert. Stagnant dirty water is overflowing onto the street, posing an immediate public hygiene risk.",
+      "description": "Drain is overflowing with dark stagnant wastewater right at school entrance gate. Mosquito breeding hazard for students.",
+      "location": {
+        "landmark": "Opposite Zilla Parishad Primary School Gate",
+        "address": "School Road, Ward 2",
+        "coordinates": [
+          73.8614,
+          18.5247
+        ]
+      },
+      "deadline": "2026-09-18T14:49:42.696270+05:30",
+      "requiredAction": "Inspect site, resolve Drainage blockage, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f8?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "",
+      "status": "ASSIGNED",
+      "workerNotes": "",
+      "assignedAt": "2026-09-08T09:11:58.494Z",
+      "createdAt": "2026-09-08T09:11:58.494Z"
+    },
+    {
+      "_id": "6aa3c83bfb133c6389a69646",
+      "taskId": "TSK-9646",
+      "issueId": "6aa3c83bfb133c6389a69646",
+      "workerId": "6aa3cd29807f4547b549bf97",
+      "title": "Major Drinking Water Pipeline Fracture and Leakage",
+      "category": "Water leakage",
+      "priority": "Medium",
+      "description": "Chinese pani ka Park lekin jyada hai",
       "location": {
         "landmark": "Live GPS Pin [16.73180, 73.90790]",
         "address": "Live GPS Pinned Location (16.73180\u00b0N, 73.90790\u00b0E)",
@@ -9065,14 +7926,623 @@
           16.7318
         ]
       },
-      "deadline": "2026-09-18T13:31:54.428550+05:30",
-      "requiredAction": "Inspect site, resolve Drainage blockage, upload after photos, and mark completed.",
-      "beforeImage": "/uploads/images-1789120199023-591232832.webp",
+      "deadline": "2026-09-18T14:49:36.814125+05:30",
+      "requiredAction": "Inspect site, resolve Water leakage, upload after photos, and mark completed.",
+      "beforeImage": "/uploads/images-1789118523959-48739466.webp",
+      "afterImage": "https://images.unsplash.com/photo-1584467735815-f778f274e296?w=800",
+      "status": "REOPENED",
+      "workerNotes": "Pipeline replaced and road resurfacing complete. Verified water flow restored.",
+      "assignedAt": "2026-09-11T09:39:39.836Z",
+      "createdAt": "2026-09-11T09:22:04.043Z",
+      "acceptedAt": "2026-09-16T14:49:43.022+05:30",
+      "startedAt": "2026-09-16T14:49:43.038+05:30",
+      "progressUpdates": [
+        {
+          "note": "Excavation completed, cleared pipeline blockages.",
+          "image": "https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?w=800",
+          "timestamp": "2026-09-16T14:49:43.054+05:30"
+        }
+      ],
+      "completedAt": "2026-09-16T14:49:43.068+05:30",
+      "verifiedAt": "2026-09-16T14:49:43.126+05:30"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cca16",
+      "taskId": "TSK-CA16",
+      "issueId": "6aa3c5de76dd8149601cca16",
+      "workerId": "6aa3cd29807f4547b549bf96",
+      "title": "Streetlight failure report at Ward 3 locality #32",
+      "category": "Streetlight failure",
+      "priority": "High",
+      "description": "Community civic issue regarding streetlight failure causing disruption to residents. Prompt resolution requested.",
+      "location": {
+        "landmark": "Near Pole #132",
+        "address": "Ward 3 Sector C",
+        "coordinates": [
+          73.86544524932295,
+          18.509779809716566
+        ]
+      },
+      "deadline": "2026-09-18T14:49:36.814118+05:30",
+      "requiredAction": "Inspect site, resolve Streetlight failure, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80",
+      "status": "COMPLETED",
+      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
+      "assignedAt": "2026-08-22T09:11:58.780Z",
+      "createdAt": "2026-08-22T09:11:58.780Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cca09",
+      "taskId": "TSK-CA09",
+      "issueId": "6aa3c5de76dd8149601cca09",
+      "workerId": "6aa3cd29807f4547b549bf96",
+      "title": "Damaged road report at Ward 2 locality #31",
+      "category": "Damaged road",
+      "priority": "Medium",
+      "description": "Community civic issue regarding damaged road causing disruption to residents. Prompt resolution requested.",
+      "location": {
+        "landmark": "Near Pole #131",
+        "address": "Ward 2 Sector B",
+        "coordinates": [
+          73.84514247345726,
+          18.526922868258033
+        ]
+      },
+      "deadline": "2026-09-18T14:49:36.814111+05:30",
+      "requiredAction": "Inspect site, resolve Damaged road, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "",
+      "status": "IN PROGRESS",
+      "workerNotes": "",
+      "assignedAt": "2026-08-24T09:11:58.763Z",
+      "createdAt": "2026-08-24T09:11:58.763Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc9fa",
+      "taskId": "TSK-C9FA",
+      "issueId": "6aa3c5de76dd8149601cc9fa",
+      "workerId": "6aa3cd29807f4547b549bf96",
+      "title": "Water leakage report at Ward 1 locality #30",
+      "category": "Water leakage",
+      "priority": "Medium",
+      "description": "Community civic issue regarding water leakage causing disruption to residents. Prompt resolution requested.",
+      "location": {
+        "landmark": "Near Pole #130",
+        "address": "Ward 1 Sector A",
+        "coordinates": [
+          73.87009772029877,
+          18.518123494730713
+        ]
+      },
+      "deadline": "2026-09-18T14:49:36.814104+05:30",
+      "requiredAction": "Inspect site, resolve Water leakage, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?auto=format&fit=crop&w=800&q=80",
       "afterImage": "",
       "status": "ASSIGNED",
       "workerNotes": "",
-      "assignedAt": "2026-09-11T09:49:59.063Z",
-      "createdAt": "2026-09-11T09:49:59.063Z"
+      "assignedAt": "2026-08-26T09:11:58.751Z",
+      "createdAt": "2026-08-26T09:11:58.751Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc9d2",
+      "taskId": "TSK-C9D2",
+      "issueId": "6aa3c5de76dd8149601cc9d2",
+      "workerId": "6aa3cd29807f4547b549bf96",
+      "title": "Sanitation report at Ward 3 locality #27",
+      "category": "Sanitation",
+      "priority": "High",
+      "description": "Community civic issue regarding sanitation causing disruption to residents. Prompt resolution requested.",
+      "location": {
+        "landmark": "Near Pole #127",
+        "address": "Ward 3 Sector D",
+        "coordinates": [
+          73.86865544836043,
+          18.53280447607389
+        ]
+      },
+      "deadline": "2026-09-18T14:49:36.814096+05:30",
+      "requiredAction": "Inspect site, resolve Sanitation, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80",
+      "status": "VERIFIED",
+      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
+      "assignedAt": "2026-09-01T09:11:58.730Z",
+      "createdAt": "2026-09-01T09:11:58.730Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc9c2",
+      "taskId": "TSK-C9C2",
+      "issueId": "6aa3c5de76dd8149601cc9c2",
+      "workerId": "6aa3cd29807f4547b549bf96",
+      "title": "Water supply report at Ward 2 locality #26",
+      "category": "Water supply",
+      "priority": "Medium",
+      "description": "Community civic issue regarding water supply causing disruption to residents. Prompt resolution requested.",
+      "location": {
+        "landmark": "Near Pole #126",
+        "address": "Ward 2 Sector C",
+        "coordinates": [
+          73.8613008940995,
+          18.524941052209737
+        ]
+      },
+      "deadline": "2026-09-18T14:49:36.814089+05:30",
+      "requiredAction": "Inspect site, resolve Water supply, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?auto=format&fit=crop&w=800&q=80",
+      "status": "MONITORING",
+      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
+      "assignedAt": "2026-09-03T09:11:58.721Z",
+      "createdAt": "2026-09-03T09:11:58.721Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc9b4",
+      "taskId": "TSK-C9B4",
+      "issueId": "6aa3c5de76dd8149601cc9b4",
+      "workerId": "6aa3cd29807f4547b549bf96",
+      "title": "Streetlight failure report at Ward 1 locality #25",
+      "category": "Streetlight failure",
+      "priority": "Medium",
+      "description": "Community civic issue regarding streetlight failure causing disruption to residents. Prompt resolution requested.",
+      "location": {
+        "landmark": "Near Pole #125",
+        "address": "Ward 1 Sector B",
+        "coordinates": [
+          73.84892717166744,
+          18.524354066557933
+        ]
+      },
+      "deadline": "2026-09-18T14:49:36.814082+05:30",
+      "requiredAction": "Inspect site, resolve Streetlight failure, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80",
+      "status": "COMPLETED",
+      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
+      "assignedAt": "2026-09-05T09:11:58.708Z",
+      "createdAt": "2026-09-05T09:11:58.708Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc9a7",
+      "taskId": "TSK-C9A7",
+      "issueId": "6aa3c5de76dd8149601cc9a7",
+      "workerId": "6aa3cd29807f4547b549bf96",
+      "title": "Damaged road report at Ward 5 locality #24",
+      "category": "Damaged road",
+      "priority": "Medium",
+      "description": "Community civic issue regarding damaged road causing disruption to residents. Prompt resolution requested.",
+      "location": {
+        "landmark": "Near Pole #124",
+        "address": "Ward 5 Sector A",
+        "coordinates": [
+          73.84816491893702,
+          18.52645077907146
+        ]
+      },
+      "deadline": "2026-09-18T14:49:36.814075+05:30",
+      "requiredAction": "Inspect site, resolve Damaged road, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "",
+      "status": "IN PROGRESS",
+      "workerNotes": "",
+      "assignedAt": "2026-09-07T09:11:58.697Z",
+      "createdAt": "2026-09-07T09:11:58.697Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc998",
+      "taskId": "TSK-C998",
+      "issueId": "6aa3c5de76dd8149601cc998",
+      "workerId": "6aa3cd29807f4547b549bf96",
+      "title": "Water leakage report at Ward 4 locality #23",
+      "category": "Water leakage",
+      "priority": "Medium",
+      "description": "Community civic issue regarding water leakage causing disruption to residents. Prompt resolution requested.",
+      "location": {
+        "landmark": "Near Pole #123",
+        "address": "Ward 4 Sector F",
+        "coordinates": [
+          73.86793765883436,
+          18.508370718621045
+        ]
+      },
+      "deadline": "2026-09-18T14:49:36.814067+05:30",
+      "requiredAction": "Inspect site, resolve Water leakage, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "",
+      "status": "ASSIGNED",
+      "workerNotes": "",
+      "assignedAt": "2026-09-09T09:11:58.688Z",
+      "createdAt": "2026-09-09T09:11:58.688Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc970",
+      "taskId": "TSK-C970",
+      "issueId": "6aa3c5de76dd8149601cc970",
+      "workerId": "6aa3cd29807f4547b549bf96",
+      "title": "Sanitation report at Ward 1 locality #20",
+      "category": "Sanitation",
+      "priority": "High",
+      "description": "Community civic issue regarding sanitation causing disruption to residents. Prompt resolution requested.",
+      "location": {
+        "landmark": "Near Pole #120",
+        "address": "Ward 1 Sector C",
+        "coordinates": [
+          73.85259021058614,
+          18.525376604270484
+        ]
+      },
+      "deadline": "2026-09-18T14:49:36.814055+05:30",
+      "requiredAction": "Inspect site, resolve Sanitation, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80",
+      "status": "VERIFIED",
+      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
+      "assignedAt": "2026-08-01T09:11:58.661Z",
+      "createdAt": "2026-08-01T09:11:58.661Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc960",
+      "taskId": "TSK-C960",
+      "issueId": "6aa3c5de76dd8149601cc960",
+      "workerId": "6aa3cd29807f4547b549bf96",
+      "title": "Water supply report at Ward 5 locality #19",
+      "category": "Water supply",
+      "priority": "Medium",
+      "description": "Community civic issue regarding water supply causing disruption to residents. Prompt resolution requested.",
+      "location": {
+        "landmark": "Near Pole #119",
+        "address": "Ward 5 Sector B",
+        "coordinates": [
+          73.85295404088781,
+          18.52458544124616
+        ]
+      },
+      "deadline": "2026-09-18T14:49:36.814048+05:30",
+      "requiredAction": "Inspect site, resolve Water supply, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?auto=format&fit=crop&w=800&q=80",
+      "status": "MONITORING",
+      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
+      "assignedAt": "2026-08-03T09:11:58.652Z",
+      "createdAt": "2026-08-03T09:11:58.652Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc952",
+      "taskId": "TSK-C952",
+      "issueId": "6aa3c5de76dd8149601cc952",
+      "workerId": "6aa3cd29807f4547b549bf96",
+      "title": "Streetlight failure report at Ward 4 locality #18",
+      "category": "Streetlight failure",
+      "priority": "High",
+      "description": "Community civic issue regarding streetlight failure causing disruption to residents. Prompt resolution requested.",
+      "location": {
+        "landmark": "Near Pole #118",
+        "address": "Ward 4 Sector A",
+        "coordinates": [
+          73.8465905762568,
+          18.527025716145612
+        ]
+      },
+      "deadline": "2026-09-18T14:49:36.814041+05:30",
+      "requiredAction": "Inspect site, resolve Streetlight failure, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80",
+      "status": "COMPLETED",
+      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
+      "assignedAt": "2026-08-05T09:11:58.647Z",
+      "createdAt": "2026-08-05T09:11:58.647Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc945",
+      "taskId": "TSK-C945",
+      "issueId": "6aa3c5de76dd8149601cc945",
+      "workerId": "6aa3cd29807f4547b549bf96",
+      "title": "Damaged road report at Ward 3 locality #17",
+      "category": "Damaged road",
+      "priority": "Medium",
+      "description": "Community civic issue regarding damaged road causing disruption to residents. Prompt resolution requested.",
+      "location": {
+        "landmark": "Near Pole #117",
+        "address": "Ward 3 Sector F",
+        "coordinates": [
+          73.86203231654983,
+          18.523094378694882
+        ]
+      },
+      "deadline": "2026-09-18T14:49:36.814034+05:30",
+      "requiredAction": "Inspect site, resolve Damaged road, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "",
+      "status": "IN PROGRESS",
+      "workerNotes": "",
+      "assignedAt": "2026-08-07T09:11:58.637Z",
+      "createdAt": "2026-08-07T09:11:58.637Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc936",
+      "taskId": "TSK-C936",
+      "issueId": "6aa3c5de76dd8149601cc936",
+      "workerId": "6aa3cd29807f4547b549bf96",
+      "title": "Water leakage report at Ward 2 locality #16",
+      "category": "Water leakage",
+      "priority": "High",
+      "description": "Community civic issue regarding water leakage causing disruption to residents. Prompt resolution requested.",
+      "location": {
+        "landmark": "Near Pole #116",
+        "address": "Ward 2 Sector E",
+        "coordinates": [
+          73.87146005705102,
+          18.521417312637926
+        ]
+      },
+      "deadline": "2026-09-18T14:49:36.814027+05:30",
+      "requiredAction": "Inspect site, resolve Water leakage, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "",
+      "status": "ASSIGNED",
+      "workerNotes": "",
+      "assignedAt": "2026-08-09T09:11:58.626Z",
+      "createdAt": "2026-08-09T09:11:58.626Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc90e",
+      "taskId": "TSK-C90E",
+      "issueId": "6aa3c5de76dd8149601cc90e",
+      "workerId": "6aa3cd29807f4547b549bf96",
+      "title": "Sanitation report at Ward 4 locality #13",
+      "category": "Sanitation",
+      "priority": "Medium",
+      "description": "Community civic issue regarding sanitation causing disruption to residents. Prompt resolution requested.",
+      "location": {
+        "landmark": "Near Pole #113",
+        "address": "Ward 4 Sector B",
+        "coordinates": [
+          73.86166614893018,
+          18.527071870031232
+        ]
+      },
+      "deadline": "2026-09-18T14:49:36.814019+05:30",
+      "requiredAction": "Inspect site, resolve Sanitation, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80",
+      "status": "VERIFIED",
+      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
+      "assignedAt": "2026-08-15T09:11:58.588Z",
+      "createdAt": "2026-08-15T09:11:58.588Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc8fe",
+      "taskId": "TSK-C8FE",
+      "issueId": "6aa3c5de76dd8149601cc8fe",
+      "workerId": "6aa3cd29807f4547b549bf96",
+      "title": "Water supply report at Ward 3 locality #12",
+      "category": "Water supply",
+      "priority": "High",
+      "description": "Community civic issue regarding water supply causing disruption to residents. Prompt resolution requested.",
+      "location": {
+        "landmark": "Near Pole #112",
+        "address": "Ward 3 Sector A",
+        "coordinates": [
+          73.87003781627932,
+          18.516060285925718
+        ]
+      },
+      "deadline": "2026-09-18T14:49:36.814012+05:30",
+      "requiredAction": "Inspect site, resolve Water supply, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?auto=format&fit=crop&w=800&q=80",
+      "status": "MONITORING",
+      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
+      "assignedAt": "2026-08-17T09:11:58.573Z",
+      "createdAt": "2026-08-17T09:11:58.573Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc8f0",
+      "taskId": "TSK-C8F0",
+      "issueId": "6aa3c5de76dd8149601cc8f0",
+      "workerId": "6aa3cd29807f4547b549bf96",
+      "title": "Streetlight failure report at Ward 2 locality #11",
+      "category": "Streetlight failure",
+      "priority": "Medium",
+      "description": "Community civic issue regarding streetlight failure causing disruption to residents. Prompt resolution requested.",
+      "location": {
+        "landmark": "Near Pole #111",
+        "address": "Ward 2 Sector F",
+        "coordinates": [
+          73.8442263430616,
+          18.526164798350923
+        ]
+      },
+      "deadline": "2026-09-18T14:49:36.814004+05:30",
+      "requiredAction": "Inspect site, resolve Streetlight failure, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80",
+      "status": "COMPLETED",
+      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
+      "assignedAt": "2026-08-19T09:11:58.564Z",
+      "createdAt": "2026-08-19T09:11:58.564Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc8c7",
+      "taskId": "TSK-C8C7",
+      "issueId": "6aa3c5de76dd8149601cc8c7",
+      "workerId": "6aa3cd29807f4547b549bf96",
+      "title": "Persistent stormwater drain overflow at Shivaji Chowk junction",
+      "category": "Drainage blockage",
+      "priority": "Medium",
+      "description": "Drain cleaned last week but got blocked again after heavy showers. Water is backing up into nearby grocery shops.",
+      "location": {
+        "landmark": "Near Shivaji Maharaj Statue",
+        "address": "Shivaji Chowk Main Cross",
+        "coordinates": [
+          73.8573,
+          18.5215
+        ]
+      },
+      "deadline": "2026-09-18T14:49:36.813996+05:30",
+      "requiredAction": "Inspect site, resolve Drainage blockage, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1584467735815-f778f274e296?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "",
+      "status": "REOPENED",
+      "workerNotes": "",
+      "assignedAt": "2026-09-02T09:11:58.538Z",
+      "createdAt": "2026-09-02T09:11:58.538Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc8b7",
+      "taskId": "TSK-C8B7",
+      "issueId": "6aa3c5de76dd8149601cc8b7",
+      "workerId": "6aa3cd29807f4547b549bf96",
+      "title": "Repaired road crater and surface asphalt sealing near Primary Health Center",
+      "category": "Damaged road",
+      "priority": "High",
+      "description": "Crater filled with compact stone ballast and bitumen seal coat. Traffic flow restored smoothly.",
+      "location": {
+        "landmark": "Primary Health Center Entrance",
+        "address": "Hospital Road",
+        "coordinates": [
+          73.8582,
+          18.5229
+        ]
+      },
+      "deadline": "2026-09-18T14:49:36.813989+05:30",
+      "requiredAction": "Inspect site, resolve Damaged road, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=800&q=80",
+      "status": "VERIFIED",
+      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
+      "assignedAt": "2026-08-28T09:11:58.528Z",
+      "createdAt": "2026-08-28T09:11:58.528Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc8ab",
+      "taskId": "TSK-C8AB",
+      "issueId": "6aa3c5de76dd8149601cc8ab",
+      "workerId": "6aa3cd29807f4547b549bf96",
+      "title": "Public community toilet flush water supply failure and soak pit overflow",
+      "category": "Sanitation",
+      "priority": "High",
+      "description": "Water motor pump burnt out. Soak pit overflowing into adjacent open ground. Urgent sanitation issue.",
+      "location": {
+        "landmark": "Behind Gram Panchayat Library",
+        "address": "Ward 4 Sanitation Block",
+        "coordinates": [
+          73.8542,
+          18.5211
+        ]
+      },
+      "deadline": "2026-09-18T14:49:36.813981+05:30",
+      "requiredAction": "Inspect site, resolve Sanitation, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80",
+      "status": "MONITORING",
+      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
+      "assignedAt": "2026-09-03T09:11:58.518Z",
+      "createdAt": "2026-09-03T09:11:58.518Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc89d",
+      "taskId": "TSK-C89D",
+      "issueId": "6aa3c5de76dd8149601cc89d",
+      "workerId": "6aa3cd29807f4547b549bf96",
+      "title": "Consecutive streetlight failure on 4 poles along Ambedkar Nagar Lane",
+      "category": "Streetlight failure",
+      "priority": "Medium",
+      "description": "Complete blackout on internal residential stretch for past 5 days. Women and elderly residents facing difficulty walking after 7 PM.",
+      "location": {
+        "landmark": "Near Community Hall",
+        "address": "Ambedkar Nagar Lane 2",
+        "coordinates": [
+          73.8597,
+          18.5167
+        ]
+      },
+      "deadline": "2026-09-18T14:49:36.813974+05:30",
+      "requiredAction": "Inspect site, resolve Streetlight failure, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "https://images.unsplash.com/photo-1509114397022-ed747cca3f65?auto=format&fit=crop&w=800&q=80",
+      "status": "COMPLETED",
+      "workerNotes": "Work completed according to Gram Panchayat technical standards.",
+      "assignedAt": "2026-09-05T09:11:58.511Z",
+      "createdAt": "2026-09-05T09:11:58.511Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc890",
+      "taskId": "TSK-C890",
+      "issueId": "6aa3c5de76dd8149601cc890",
+      "workerId": "6aa3cd29807f4547b549bf96",
+      "title": "Deep potholes and eroded asphalt along River Bridge Approach Road",
+      "category": "Damaged road",
+      "priority": "Medium",
+      "description": "Multiple 15cm deep potholes causing two-wheeler accidents, especially at night. Sugarcane carts struggling to navigate.",
+      "location": {
+        "landmark": "50 meters before Bhima River Bridge",
+        "address": "River Bridge Road",
+        "coordinates": [
+          73.8691,
+          18.5314
+        ]
+      },
+      "deadline": "2026-09-18T14:49:36.813967+05:30",
+      "requiredAction": "Inspect site, resolve Damaged road, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "",
+      "status": "IN PROGRESS",
+      "workerNotes": "",
+      "assignedAt": "2026-09-07T09:11:58.502Z",
+      "createdAt": "2026-09-07T09:11:58.502Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc874",
+      "taskId": "TSK-C874",
+      "issueId": "6aa3c5de76dd8149601cc874",
+      "workerId": "6aa3cd29807f4547b549bf96",
+      "title": "Severe garbage accumulation and foul odor around Weekly Bazaar Ground",
+      "category": "Waste accumulation",
+      "priority": "High",
+      "description": "Post Saturday market waste has remained uncollected for 4 days. Stray cattle and dogs are scattering decomposing vegetables into the road.",
+      "location": {
+        "landmark": "Weekly Market Vegetable Shed",
+        "address": "Bazaar Peth Road",
+        "coordinates": [
+          73.8569,
+          18.5206
+        ]
+      },
+      "deadline": "2026-09-18T14:49:36.813958+05:30",
+      "requiredAction": "Inspect site, resolve Waste accumulation, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "",
+      "status": "ASSIGNED",
+      "workerNotes": "",
+      "assignedAt": "2026-09-09T09:11:58.486Z",
+      "createdAt": "2026-09-09T09:11:58.486Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc865",
+      "taskId": "TSK-C865",
+      "issueId": "6aa3c5de76dd8149601cc865",
+      "workerId": "6aa3cd29807f4547b549bf96",
+      "title": "Major underground pipeline burst flooding main road near Water Tank Hill",
+      "category": "Water leakage",
+      "priority": "Medium",
+      "description": "Potable drinking water pipeline ruptured at the bend. Water is gushing onto the road and flooding residential yards. Pressure drop across Ward 3.",
+      "location": {
+        "landmark": "Near Gram Panchayat Water Reservoir",
+        "address": "Water Tank Hill Road, Ward 3",
+        "coordinates": [
+          73.8523,
+          18.5189
+        ]
+      },
+      "deadline": "2026-09-18T14:49:36.813932+05:30",
+      "requiredAction": "Inspect site, resolve Water leakage, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "",
+      "status": "IN PROGRESS",
+      "workerNotes": "",
+      "assignedAt": "2026-09-10T09:11:58.470Z",
+      "createdAt": "2026-09-10T09:11:58.470Z"
     }
   ]
 }

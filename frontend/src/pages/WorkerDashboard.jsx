@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
@@ -25,6 +25,7 @@ import {
   X,
   Check,
   RefreshCw,
+  ExternalLink,
 } from 'lucide-react';
 
 export default function WorkerDashboard() {
@@ -33,6 +34,7 @@ export default function WorkerDashboard() {
   const navigate = useNavigate();
 
   const [tasks, setTasks] = useState([]);
+  const [taskScope, setTaskScope] = useState('my'); // 'my' | 'all'
   const [stats, setStats] = useState({ myTasks: 0, pending: 0, inProgress: 0, completed: 0, overdue: 0 });
   const [loading, setLoading] = useState(true);
 
@@ -55,54 +57,73 @@ export default function WorkerDashboard() {
 
   const [submitting, setSubmitting] = useState(false);
 
-  const fetchTasks = async () => {
+  const fetchTasks = async (scope = taskScope) => {
     try {
       setLoading(true);
-      // Fetch worker tasks
-      const res = await api.get('/tasks/my').catch(async () => {
-        // Fallback to assigned issues if task API is empty
-        const fallbackRes = await api.get('/workers/assigned');
-        return {
-          data: {
-            tasks: (fallbackRes.data?.issues || []).map((i) => ({
-              _id: i._id,
-              taskId: `TSK-${i._id.slice(-4).toUpperCase()}`,
-              title: i.title,
-              category: i.category,
-              priority: i.priority?.level || 'Medium',
-              description: i.description,
-              location: i.location,
-              deadline: i.deadline || null,
-              status:
-                i.status === 'UNDER ACTION'
-                  ? 'IN PROGRESS'
-                  : i.status === 'ACTION COMPLETED'
-                  ? 'COMPLETED'
-                  : i.status === 'VERIFIED RESOLVED'
-                  ? 'VERIFIED'
-                  : i.status,
-              beforeImage: i.images?.[0]?.url || '',
-              afterImage: i.completionDetails?.images?.[0]?.url || '',
-              workerNotes: i.completionDetails?.notes || '',
-              assignedWorker: i.assignedWorker,
-            })),
-            stats: fallbackRes.data?.stats
-              ? {
-                  myTasks: fallbackRes.data.stats.total,
-                  pending: fallbackRes.data.stats.pending,
-                  inProgress: fallbackRes.data.stats.inProgress,
-                  completed: fallbackRes.data.stats.completed,
-                  overdue: 0,
-                }
-              : { myTasks: 0, pending: 0, inProgress: 0, completed: 0, overdue: 0 },
-          },
-        };
+      const queryParam = scope === 'all' ? '?scope=all' : '';
+
+      // Simultaneously query /tasks/my and /workers/assigned to ensure complete sync
+      const [myRes, assignedRes] = await Promise.all([
+        api.get(`/tasks/my${queryParam}`).catch(() => ({ data: { tasks: [], stats: {} } })),
+        api.get(`/workers/assigned${queryParam}`).catch(() => ({ data: { issues: [], tasks: [] } })),
+      ]);
+
+      const listA = myRes.data?.tasks || [];
+      const listB = (assignedRes.data?.issues || []).map((i) => ({
+        _id: i._id,
+        taskId: `TSK-${i._id.slice(-4).toUpperCase()}`,
+        issueId: i._id,
+        title: i.title,
+        category: i.category,
+        priority: i.priority?.level || 'Medium',
+        description: i.description,
+        location: i.location,
+        deadline: i.deadline || null,
+        status:
+          i.status === 'UNDER ACTION'
+            ? 'IN PROGRESS'
+            : i.status === 'ACTION COMPLETED'
+            ? 'COMPLETED'
+            : i.status === 'VERIFIED RESOLVED'
+            ? 'VERIFIED'
+            : i.status,
+        beforeImage: i.images?.[0]?.url || '',
+        afterImage: i.completionDetails?.images?.[0]?.url || '',
+        workerNotes: i.completionDetails?.notes || '',
+        assignedWorker: i.assignedWorker,
+      }));
+
+      // Combine and deduplicate by issueId or _id
+      const mergedMap = new Map();
+      listA.forEach((t) => {
+        const key = String(t.issueId || t._id);
+        mergedMap.set(key, t);
+      });
+      listB.forEach((t) => {
+        const key = String(t.issueId || t._id);
+        if (!mergedMap.has(key)) {
+          mergedMap.set(key, t);
+        }
       });
 
-      setTasks(res.data?.tasks || []);
-      setStats(
-        res.data?.stats || { myTasks: 0, pending: 0, inProgress: 0, completed: 0, overdue: 0 }
-      );
+      const mergedTasks = Array.from(mergedMap.values());
+      setTasks(mergedTasks);
+
+      const pending = mergedTasks.filter((t) => t.status === 'ASSIGNED').length;
+      const inProgress = mergedTasks.filter((t) => ['ACCEPTED', 'IN PROGRESS', 'UNDER ACTION'].includes(t.status)).length;
+      const completed = mergedTasks.filter((t) => ['COMPLETED', 'VERIFIED', 'ACTION COMPLETED', 'VERIFIED RESOLVED'].includes(t.status)).length;
+      const now = new Date();
+      const overdue = mergedTasks.filter(
+        (t) => t.deadline && new Date(t.deadline) < now && !['COMPLETED', 'VERIFIED', 'ACTION COMPLETED', 'VERIFIED RESOLVED'].includes(t.status)
+      ).length;
+
+      setStats({
+        myTasks: mergedTasks.length,
+        pending,
+        inProgress,
+        completed,
+        overdue,
+      });
     } catch (err) {
       console.error('Fetch worker tasks error:', err);
     } finally {
@@ -111,8 +132,8 @@ export default function WorkerDashboard() {
   };
 
   useEffect(() => {
-    fetchTasks();
-  }, []);
+    fetchTasks(taskScope);
+  }, [taskScope]);
 
   // Worker Action 1: Accept Task
   const handleAcceptTask = async (taskId) => {
@@ -351,18 +372,53 @@ export default function WorkerDashboard() {
 
       {/* SECTION: "My Assigned Tasks" */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-base font-extrabold text-slate-900 tracking-tight">
-            My Assigned Tasks
-          </h2>
-          <button
-            type="button"
-            onClick={fetchTasks}
-            className="text-xs text-emerald-700 font-bold hover:underline flex items-center space-x-1"
-          >
-            <RefreshCw className="w-3.5 h-3.5" />
-            <span>Refresh Tasks</span>
-          </button>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200/80 pb-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setTaskScope('my')}
+              className={`px-4 py-2 rounded-2xl text-xs font-bold transition flex items-center space-x-2 ${
+                taskScope === 'my'
+                  ? 'bg-emerald-800 text-white shadow-sm'
+                  : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+              }`}
+            >
+              <span>📋 My Work Orders</span>
+              {taskScope === 'my' && (
+                <span className="bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded-full font-mono font-bold">
+                  {tasks.length}
+                </span>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setTaskScope('all')}
+              className={`px-4 py-2 rounded-2xl text-xs font-bold transition flex items-center space-x-2 ${
+                taskScope === 'all'
+                  ? 'bg-emerald-800 text-white shadow-sm'
+                  : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+              }`}
+            >
+              <span>🌐 All Village Work Orders</span>
+              {taskScope === 'all' && (
+                <span className="bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded-full font-mono font-bold">
+                  {tasks.length}
+                </span>
+              )}
+            </button>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <button
+              type="button"
+              onClick={() => fetchTasks(taskScope)}
+              className="text-xs px-3.5 py-2 rounded-2xl border border-slate-200 bg-white text-emerald-800 font-bold hover:bg-emerald-50 flex items-center space-x-1.5 shadow-xs transition"
+            >
+              <RefreshCw className="w-3.5 h-3.5" />
+              <span>Refresh Tasks</span>
+            </button>
+          </div>
         </div>
 
         {loading ? (
@@ -371,10 +427,29 @@ export default function WorkerDashboard() {
             Loading assigned civic tasks...
           </div>
         ) : tasks.length === 0 ? (
-          <div className="p-16 text-center bg-white rounded-3xl border border-slate-200 text-slate-500 text-xs space-y-2">
-            <CheckCircle2 className="w-8 h-8 text-emerald-600 mx-auto" />
-            <p className="font-bold text-slate-700">No active tasks assigned to your account right now.</p>
-            <p className="text-slate-400">Panchayat admin will assign civic tasks when reported.</p>
+          <div className="p-16 text-center bg-white rounded-3xl border border-slate-200 text-slate-500 text-xs space-y-3">
+            <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
+            <div>
+              <p className="font-bold text-slate-800 text-sm">
+                {taskScope === 'my'
+                  ? 'No active tasks assigned specifically to your account.'
+                  : 'No active tasks found in the village system.'}
+              </p>
+              <p className="text-slate-400 mt-1">
+                {taskScope === 'my'
+                  ? 'Switch to "All Village Work Orders" to view tasks assigned to other specialists or wait for Panchayat admin dispatch.'
+                  : 'Panchayat admin will assign civic tasks when reported.'}
+              </p>
+            </div>
+            {taskScope === 'my' && (
+              <button
+                type="button"
+                onClick={() => setTaskScope('all')}
+                className="px-4 py-2 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs transition inline-flex items-center space-x-1.5 shadow-sm"
+              >
+                <span>🌐 View All Village Work Orders</span>
+              </button>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -422,6 +497,21 @@ export default function WorkerDashboard() {
 
                     <h3 className="font-bold text-slate-900 text-base">{task.title}</h3>
                     <p className="text-xs text-slate-500 line-clamp-2">{task.description}</p>
+
+                    <div className="flex flex-wrap items-center justify-between gap-2 pt-1 pb-0.5">
+                      <Link
+                        to={`/issues/${task.issueId || task._id}`}
+                        className="inline-flex items-center space-x-1.5 text-xs font-bold text-emerald-700 hover:text-emerald-900 transition underline underline-offset-2"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                        <span>View Full Issue & GPS Map</span>
+                      </Link>
+                      {(task.workerId?.name || task.assignedWorker?.name) && (
+                        <span className="text-[11px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
+                          Lead: <strong className="text-slate-700">{task.workerId?.name || task.assignedWorker?.name}</strong>
+                        </span>
+                      )}
+                    </div>
 
                     {/* Location & Deadline */}
                     <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 text-xs space-y-1 text-slate-600">

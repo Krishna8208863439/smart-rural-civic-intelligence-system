@@ -206,11 +206,42 @@ exports.getMyTasks = async (req, res) => {
     const workerId = req.user.id;
     const now = new Date();
 
-    const tasks = await Task.find({ workerId })
+    let tasks = await Task.find({ workerId })
       .populate('assignedBy', 'name email')
       .populate('issueId', 'title category priority status images location')
       .sort({ createdAt: -1 })
       .lean();
+
+    // Also include any assigned issues from Issue collection if not already present
+    try {
+      const existingIssueIds = new Set(tasks.map((t) => (t.issueId?._id || t.issueId || t._id)?.toString()));
+      const assignedIssues = await Issue.find({ assignedWorker: workerId }).lean();
+      for (const iss of assignedIssues) {
+        const issIdStr = iss._id.toString();
+        if (!existingIssueIds.has(issIdStr)) {
+          tasks.unshift({
+            _id: iss._id,
+            taskId: `TSK-${issIdStr.slice(-4).toUpperCase()}`,
+            issueId: iss,
+            workerId,
+            title: iss.title,
+            category: iss.category,
+            priority: iss.priority?.level || 'Medium',
+            description: iss.description,
+            location: iss.location,
+            deadline: iss.deadline || new Date(Date.now() + 48 * 3600 * 1000),
+            status: iss.status === 'UNDER ACTION' ? 'IN PROGRESS' : iss.status === 'ACTION COMPLETED' ? 'COMPLETED' : iss.status === 'VERIFIED RESOLVED' ? 'VERIFIED' : 'ASSIGNED',
+            beforeImage: iss.images?.[0]?.url || '',
+            afterImage: iss.completionDetails?.images?.[0]?.url || '',
+            workerNotes: iss.completionDetails?.notes || '',
+            createdAt: iss.createdAt,
+          });
+          existingIssueIds.add(issIdStr);
+        }
+      }
+    } catch (crossErr) {
+      console.warn('Cross-check assigned issues note:', crossErr.message);
+    }
 
     const pending = tasks.filter((t) => t.status === 'ASSIGNED').length;
     const inProgress = tasks.filter((t) => ['ACCEPTED', 'IN PROGRESS'].includes(t.status)).length;

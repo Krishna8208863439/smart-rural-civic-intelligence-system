@@ -3,6 +3,7 @@ const User = require('../models/User');
 const Evidence = require('../models/Evidence');
 const IssueHistory = require('../models/IssueHistory');
 const Notification = require('../models/Notification');
+const Task = require('../models/Task');
 const PriorityService = require('../services/PriorityService');
 const EvidenceReliabilityService = require('../services/EvidenceReliabilityService');
 const RecurrenceEngine = require('../services/RecurrenceEngine');
@@ -586,6 +587,29 @@ exports.assignWorker = async (req, res) => {
         notes: notes || '',
       },
     });
+
+    // Ensure Task record is created or updated for worker task queue
+    try {
+      await Task.findOneAndUpdate(
+        { issueId: issue._id },
+        {
+          workerId,
+          issueId: issue._id,
+          title: issue.title,
+          category: issue.category,
+          priority: issue.priority?.level || 'Medium',
+          description: issue.description,
+          location: issue.location,
+          status: 'ASSIGNED',
+          assignedBy: req.user.id,
+          assignedAt: new Date(),
+          beforeImage: issue.images?.[0]?.url || '',
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+      );
+    } catch (taskErr) {
+      console.warn('Task upsert note:', taskErr.message);
+    }
 
     // Notify Worker
     await Notification.create({

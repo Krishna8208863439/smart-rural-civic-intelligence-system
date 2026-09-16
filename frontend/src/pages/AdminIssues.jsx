@@ -102,6 +102,8 @@ export default function AdminIssues() {
     if (!assignModalIssue || !selectedWorker) return;
     try {
       await api.put(`/admin/assign-worker/${assignModalIssue._id}`, { workerId: selectedWorker });
+      const wName = workers.find((w) => w._id === selectedWorker)?.name || 'Field Specialist';
+      alert(`✓ Task dispatched to ${wName}! The worker will see this in their field queue.`);
       setAssignModalIssue(null);
       setSelectedWorker('');
       await fetchIssues();

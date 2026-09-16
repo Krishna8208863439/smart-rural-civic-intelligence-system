@@ -588,6 +588,8 @@ export default function IssueDetails() {
     if (!selectedWorker) return;
     try {
       await api.put(`/admin/assign-worker/${id}`, { workerId: selectedWorker });
+      const wName = workers.find((w) => w._id === selectedWorker)?.name || 'Field Specialist';
+      alert(`✓ Task dispatched to ${wName}! The worker will see this in their field queue.`);
       await fetchIssueData();
     } catch (err) {
       alert(err.response?.data?.message || 'Worker assignment failed');

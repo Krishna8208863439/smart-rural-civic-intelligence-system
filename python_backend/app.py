@@ -136,18 +136,52 @@ def format_issue_as_task(iss):
 
 def sync_tasks_with_issues():
     db.setdefault('tasks', [])
-    existing_issue_ids = set()
+    task_by_issue = {}
     for t in db['tasks']:
         if t.get('issueId'):
-            existing_issue_ids.add(str(t.get('issueId')))
-        existing_issue_ids.add(str(t.get('_id')))
+            task_by_issue[str(t['issueId'])] = t
+        if t.get('_id'):
+            task_by_issue[str(t['_id'])] = t
 
     for iss in db.get('issues', []):
-        w_id = iss.get('assignedWorker')
-        if w_id and str(iss.get('_id')) not in existing_issue_ids:
-            task_repr = format_issue_as_task(iss)
-            db['tasks'].append(task_repr)
-            existing_issue_ids.add(str(iss.get('_id')))
+        iss_id = str(iss.get('_id', ''))
+        if not iss_id:
+            continue
+        w_raw = iss.get('assignedWorker')
+        if isinstance(w_raw, dict):
+            w_id = str(w_raw.get('_id', ''))
+        else:
+            w_id = str(w_raw or '')
+
+        existing_task = task_by_issue.get(iss_id)
+
+        if w_id and w_id != 'None':
+            st = iss.get('status', 'ASSIGNED')
+            task_st = (
+                'IN PROGRESS' if st == 'UNDER ACTION'
+                else 'COMPLETED' if st == 'ACTION COMPLETED'
+                else 'VERIFIED' if st == 'VERIFIED RESOLVED'
+                else st
+            )
+            comp = iss.get('completionDetails', {}) or {}
+            comp_images = comp.get('images', []) or []
+            after_img = comp_images[0].get('url') if (comp_images and isinstance(comp_images[0], dict)) else (comp_images[0] if comp_images else '')
+
+            if existing_task:
+                existing_task['workerId'] = w_id
+                existing_task['status'] = task_st
+                existing_task['title'] = iss.get('title', existing_task.get('title', 'Civic Field Work Order'))
+                existing_task['description'] = iss.get('description', existing_task.get('description', ''))
+                existing_task['category'] = iss.get('category', existing_task.get('category', 'General'))
+                if after_img and not existing_task.get('afterImage'):
+                    existing_task['afterImage'] = after_img
+                if comp.get('notes') and not existing_task.get('workerNotes'):
+                    existing_task['workerNotes'] = comp.get('notes')
+            else:
+                task_repr = format_issue_as_task(iss)
+                if task_repr:
+                    db['tasks'].insert(0, task_repr)
+                    task_by_issue[iss_id] = task_repr
 
 def add_history(issue_id, event_type, previous_state, new_state, comment, user_name="KD (Field Worker Lead)", user_role="worker"):
     hist_id = hashlib.md5(f"hist_{issue_id}_{event_type}_{time.time()}".encode('utf-8')).hexdigest()[:24]
@@ -1129,19 +1163,26 @@ def assign_worker(issue_id):
     if not issue:
         return jsonify({"success": False, "message": "Issue not found"}), 404
     data = request.get_json(silent=True) or request.form.to_dict() or {}
-    worker_id = data.get('workerId')
+    raw_worker_id = data.get('workerId')
     user = get_current_user() or next((u for u in db['users'] if u.get('role') == 'admin'), db['users'][0])
 
-    if worker_id:
+    if raw_worker_id:
+        # Resolve worker user from ID, workerId code (GRAM-WKR-xxx), or email
+        worker_user = next((
+            u for u in db['users']
+            if str(u.get('_id')) == str(raw_worker_id)
+            or str(u.get('workerId') or '').lower() == str(raw_worker_id).lower()
+            or str(u.get('email') or '').lower() == str(raw_worker_id).lower()
+        ), None)
+        worker_id = str(worker_user.get('_id')) if worker_user else str(raw_worker_id)
+        worker_name = worker_user.get('name', 'KD (Field Worker Lead)') if worker_user else 'Field Worker'
+
         previous_state = issue.get('status', 'NEW')
-        issue['assignedWorker'] = str(worker_id)
+        issue['assignedWorker'] = worker_id
         issue['assignedAt'] = utc_now_iso()
         if issue.get('status') in ['NEW', 'VALIDATED']:
             issue['status'] = 'ASSIGNED'
         issue['updatedAt'] = utc_now_iso()
-
-        worker_user = next((u for u in db['users'] if str(u.get('_id')) == str(worker_id)), None)
-        worker_name = worker_user.get('name', 'KD (Field Worker Lead)') if worker_user else 'Field Worker'
 
         add_history(issue_id, 'WORKER_ASSIGNED', previous_state, issue['status'], f"Dispatched to {worker_name}.", user_name=user.get('name', 'Krishna (Gram Sevak Admin)'), user_role="admin")
 
@@ -1149,15 +1190,34 @@ def assign_worker(issue_id):
         db.setdefault('tasks', [])
         existing_task = next((t for t in db['tasks'] if str(t.get('issueId')) == str(issue_id) or str(t.get('_id')) == str(issue_id)), None)
         if existing_task:
-            existing_task['workerId'] = str(worker_id)
+            existing_task['workerId'] = worker_id
             existing_task['status'] = 'ASSIGNED'
             existing_task['assignedAt'] = utc_now_iso()
+            existing_task['title'] = issue.get('title', existing_task.get('title'))
+            existing_task['description'] = issue.get('description', existing_task.get('description'))
+            existing_task['category'] = issue.get('category', existing_task.get('category'))
         else:
-            db['tasks'].insert(0, format_issue_as_task(issue))
+            new_task = format_issue_as_task(issue)
+            if new_task:
+                db['tasks'].insert(0, new_task)
+
+        # Notify Worker in in-app notifications
+        db.setdefault('notifications', []).append({
+            "_id": hashlib.md5(f"notif_w_{issue_id}_{time.time()}".encode('utf-8')).hexdigest()[:24],
+            "userId": worker_id,
+            "roleTarget": "worker",
+            "type": "WORKER_ASSIGNED",
+            "title": f"New Task Assigned: {issue.get('title', 'Civic Issue')}",
+            "message": f"You have been assigned to resolve {issue.get('category', 'civic breakdown')} at {issue.get('location', {}).get('landmark') or 'Chandoli'}.",
+            "issueId": str(issue_id),
+            "read": False,
+            "createdAt": utc_now_iso()
+        })
 
         save_data()
+        return jsonify({"success": True, "message": f"Worker {worker_name} assigned successfully", "issue": populate_issue(issue)})
 
-    return jsonify({"success": True, "message": "Worker assigned successfully", "issue": populate_issue(issue)})
+    return jsonify({"success": False, "message": "Worker ID is required"}), 400
 
 @app.put('/api/issues/<issue_id>/admin-verify')
 def admin_verify_resolution(issue_id):
@@ -1607,20 +1667,55 @@ def get_my_tasks_endpoint():
     u_wkr_id = str(user.get('workerId') or '')
     u_email = str(user.get('email') or '').lower()
 
-    tasks = [
-        dict(t) for t in db['tasks']
-        if str(t.get('workerId')) == u_id
-        or (u_wkr_id and str(t.get('workerId')) == u_wkr_id)
-        or (u_email and str(t.get('workerId')).lower() == u_email)
-        or (isinstance(t.get('workerId'), dict) and (
-            str(t.get('workerId', {}).get('_id')) == u_id or
-            str(t.get('workerId', {}).get('email', '')).lower() == u_email
-        ))
-    ]
+    scope = (request.args.get('scope') or request.args.get('filter') or '').lower()
 
-    # Safety fallback: If worker has 0 assigned tasks, return active village work orders
-    # so no worker in Gram Panchayat Chandoli ever sees an empty dashboard!
-    if not tasks and db.get('tasks'):
+    matched_tasks = []
+    seen_ids = set()
+
+    for t in db['tasks']:
+        w_val = t.get('workerId')
+        w_id = str(w_val.get('_id', '')) if isinstance(w_val, dict) else str(w_val or '')
+        w_email = str(w_val.get('email', '')).lower() if isinstance(w_val, dict) else ''
+
+        matches = (
+            scope in ['all', 'village'] or
+            w_id == u_id or
+            (u_wkr_id and w_id.lower() == u_wkr_id.lower()) or
+            (u_email and w_id.lower() == u_email) or
+            (u_email and w_email == u_email)
+        )
+        if matches:
+            t_copy = dict(t)
+            t_key = str(t_copy.get('issueId') or t_copy.get('_id'))
+            seen_ids.add(t_key)
+            seen_ids.add(str(t_copy.get('_id')))
+            matched_tasks.append(t_copy)
+
+    # Cross-check directly from db['issues'] to ensure no assigned issue is ever missed
+    for iss in db.get('issues', []):
+        iss_id = str(iss.get('_id', ''))
+        aw = iss.get('assignedWorker')
+        if not aw or aw == 'None':
+            continue
+        aw_id = str(aw.get('_id', '')) if isinstance(aw, dict) else str(aw)
+        aw_email = str(aw.get('email', '')).lower() if isinstance(aw, dict) else ''
+
+        matches = (
+            scope in ['all', 'village'] or
+            aw_id == u_id or
+            (u_wkr_id and aw_id.lower() == u_wkr_id.lower()) or
+            (u_email and aw_id.lower() == u_email) or
+            (u_email and aw_email == u_email)
+        )
+        if matches and iss_id not in seen_ids:
+            task_repr = format_issue_as_task(iss)
+            if task_repr:
+                seen_ids.add(iss_id)
+                matched_tasks.insert(0, task_repr)
+
+    # Fallback to all tasks if worker genuinely has none assigned yet
+    tasks = matched_tasks
+    if not tasks and db.get('tasks') and scope != 'strict':
         tasks = [dict(t) for t in db['tasks']]
 
     pending = sum(1 for t in tasks if t.get('status') == 'ASSIGNED')
@@ -1639,6 +1734,7 @@ def get_my_tasks_endpoint():
 
     return jsonify({
         "success": True,
+        "worker": sanitize_user(user),
         "stats": {
             "myTasks": len(tasks),
             "pending": pending,
@@ -1946,19 +2042,28 @@ def get_worker_tasks():
     u_wkr_id = str(user.get('workerId') or '')
     u_email = str(user.get('email') or '').lower()
 
-    issues = [
-        populate_issue(i) for i in db['issues']
-        if str(i.get('assignedWorker')) == u_id
-        or (u_wkr_id and str(i.get('assignedWorker')) == u_wkr_id)
-        or (u_email and str(i.get('assignedWorker')).lower() == u_email)
-        or (isinstance(i.get('assignedWorker'), dict) and (
-            str(i.get('assignedWorker', {}).get('_id')) == u_id or
-            str(i.get('assignedWorker', {}).get('email', '')).lower() == u_email
-        ))
-    ]
+    scope = (request.args.get('scope') or request.args.get('filter') or '').lower()
+    requested_worker_id = request.args.get('workerId')
+
+    if requested_worker_id == 'all' or scope in ['all', 'village']:
+        issues = [
+            populate_issue(i) for i in db['issues']
+            if i.get('assignedWorker') and i.get('assignedWorker') != 'None'
+        ]
+    else:
+        issues = [
+            populate_issue(i) for i in db['issues']
+            if str(i.get('assignedWorker')) == u_id
+            or (u_wkr_id and str(i.get('assignedWorker')) == u_wkr_id)
+            or (u_email and str(i.get('assignedWorker')).lower() == u_email)
+            or (isinstance(i.get('assignedWorker'), dict) and (
+                str(i.get('assignedWorker', {}).get('_id')) == u_id or
+                str(i.get('assignedWorker', {}).get('email', '')).lower() == u_email
+            ))
+        ]
 
     # If no issues specifically assigned to this worker, fallback to village active issues so dashboard is never empty
-    if not issues:
+    if not issues and scope != 'strict':
         issues = [populate_issue(i) for i in db['issues'] if i.get('status') in ['ASSIGNED', 'UNDER ACTION', 'ACTION COMPLETED', 'REOPENED', 'NEW', 'VALIDATED']]
 
     pending = sum(1 for i in issues if i.get('status') in ['ASSIGNED', 'NEW', 'VALIDATED'])
