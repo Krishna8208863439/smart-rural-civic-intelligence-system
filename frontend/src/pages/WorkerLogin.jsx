@@ -136,37 +136,46 @@ export default function WorkerLogin() {
           {/* Quick Demo Credentials Box for convenient testing */}
           <div className="pt-3 border-t border-slate-100">
             <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200/70 text-[11px] space-y-2">
-              <span className="font-bold text-slate-700 block">Default Field Worker Demo Account:</span>
-              <div className="grid grid-cols-2 gap-1 text-[11px] text-slate-600 font-mono">
-                <div>ID: <strong className="text-emerald-800">GRAM-WKR-001</strong></div>
-                <div>Pass: <strong className="text-emerald-800">worker123</strong></div>
-                <div>Email: <strong className="text-slate-700">kd@gmail.com</strong></div>
-                <div>Mobile: <strong className="text-slate-700">9823055555</strong></div>
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-slate-700">Verified Worker Accounts:</span>
+                <span className="text-[10px] text-emerald-700 font-bold">1-Click Login</span>
               </div>
-              <div className="grid grid-cols-3 gap-1.5 pt-1">
+
+              {/* Rohan Account */}
+              <div className="p-2 bg-white rounded-xl border border-emerald-200/80 shadow-xs space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-800">Rohan Patil (Field Specialist)</span>
+                  <span className="font-mono text-[10px] bg-emerald-50 text-emerald-800 font-bold px-1.5 py-0.5 rounded">GRAM-WKR-005</span>
+                </div>
+                <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono">
+                  <span>rohan@gmail.com</span>
+                  <span className="text-emerald-800 font-bold">Pass: Sgi@5555</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleQuickFill('rohan@gmail.com', 'Sgi@5555')}
+                  className="w-full mt-1 py-1 px-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-[10px] font-bold transition text-center"
+                >
+                  ⚡ Fill Rohan Credentials (rohan@gmail.com / Sgi@5555)
+                </button>
+              </div>
+
+              {/* KD Account */}
+              <div className="p-2 bg-white rounded-xl border border-slate-200 shadow-xs space-y-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-slate-800">KD (Field Lead)</span>
+                  <span className="font-mono text-[10px] bg-slate-100 text-slate-700 font-bold px-1.5 py-0.5 rounded">GRAM-WKR-001</span>
+                </div>
+                <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono">
+                  <span>kd@gmail.com</span>
+                  <span className="text-emerald-800 font-bold">Pass: worker123</span>
+                </div>
                 <button
                   type="button"
                   onClick={() => handleQuickFill('kd@gmail.com', 'worker123')}
-                  className="py-1 px-2 rounded-xl bg-white hover:bg-emerald-50 border border-slate-200 text-emerald-800 text-[10px] font-bold transition text-center truncate"
-                  title="Autofill Email"
+                  className="w-full mt-1 py-1 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold transition text-center"
                 >
-                  Fill Email
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleQuickFill('GRAM-WKR-001', 'worker123')}
-                  className="py-1 px-2 rounded-xl bg-white hover:bg-emerald-50 border border-slate-200 text-emerald-800 text-[10px] font-bold transition text-center truncate"
-                  title="Autofill Worker ID"
-                >
-                  Fill Worker ID
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleQuickFill('9823055555', 'worker123')}
-                  className="py-1 px-2 rounded-xl bg-white hover:bg-emerald-50 border border-slate-200 text-emerald-800 text-[10px] font-bold transition text-center truncate"
-                  title="Autofill Mobile Number"
-                >
-                  Fill Mobile
+                  Fill KD Credentials (kd@gmail.com)
                 </button>
               </div>
             </div>

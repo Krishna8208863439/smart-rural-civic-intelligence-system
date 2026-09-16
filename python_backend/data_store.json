@@ -251,6 +251,25 @@
       "mustChangePassword": true,
       "createdAt": "2026-09-16T07:36:05.933739",
       "lastLogin": "2026-09-16T13:10:36.929+05:30"
+    },
+    {
+      "_id": "6aa3cd29807f4547b549bf99",
+      "name": "Rohan Patil (Field Specialist)",
+      "email": "rohan@gmail.com",
+      "passwordHash": "Sgi@5555",
+      "role": "worker",
+      "village": "Gram Panchayat Chandoli",
+      "language": "mr",
+      "phone": "+91 98230 88888",
+      "isActive": true,
+      "workerId": "GRAM-WKR-005",
+      "workerRole": "Sanitation & Road Maintenance Lead",
+      "specialization": "Sanitation & Road Maintenance",
+      "assignedArea": "Chandoli",
+      "mustChangePassword": false,
+      "createdAt": "2026-09-11T09:43:05.039Z",
+      "updatedAt": "2026-09-11T10:06:35.782Z",
+      "lastLogin": "2026-09-16T13:35:35.630+05:30"
     }
   ],
   "issues": [
@@ -640,7 +659,7 @@
         "timing": "16 Sep 2026, 09:29 AM (IST)",
         "detectedAt": "2026-09-08T09:11:58.494Z"
       },
-      "status": "NEW",
+      "status": "ASSIGNED",
       "priority": {
         "score": 56,
         "level": "Medium",
@@ -654,7 +673,7 @@
         }
       },
       "createdBy": "6aa3c5dd76dd8149601cc840",
-      "assignedWorker": null,
+      "assignedWorker": "6aa3cd29807f4547b549bf99",
       "assignedAt": null,
       "reliabilityScore": 82,
       "reliabilityLevel": "Very High",
@@ -1533,7 +1552,7 @@
         "timing": "16 Sep 2026, 09:29 AM (IST)",
         "detectedAt": "2026-09-09T09:11:58.548Z"
       },
-      "status": "VALIDATED",
+      "status": "UNDER ACTION",
       "priority": {
         "score": 63,
         "level": "High",
@@ -1547,7 +1566,7 @@
         }
       },
       "createdBy": "6aa3c5de76dd8149601cc84c",
-      "assignedWorker": null,
+      "assignedWorker": "6aa3cd29807f4547b549bf99",
       "assignedAt": null,
       "reliabilityScore": 76,
       "reliabilityLevel": "High",
@@ -1661,7 +1680,14 @@
       "createdAt": "2026-09-09T09:11:58.548Z",
       "updatedAt": "2026-09-09T09:11:58.548Z",
       "progressNotes": [],
-      "__v": 0
+      "__v": 0,
+      "statusHistory": [
+        {
+          "status": "UNDER ACTION",
+          "timestamp": "2026-09-16T13:32:29.557+05:30",
+          "comment": "Work in progress by Rohan"
+        }
+      ]
     },
     {
       "_id": "6aa3c5de76dd8149601cc8e3",
@@ -1692,7 +1718,7 @@
         "timing": "16 Sep 2026, 09:29 AM (IST)",
         "detectedAt": "2026-09-10T09:11:58.558Z"
       },
-      "status": "NEW",
+      "status": "UNDER ACTION",
       "priority": {
         "score": 34,
         "level": "Medium",
@@ -1706,7 +1732,7 @@
         }
       },
       "createdBy": "6aa3c5de76dd8149601cc84e",
-      "assignedWorker": null,
+      "assignedWorker": "6aa3cd29807f4547b549bf99",
       "assignedAt": null,
       "reliabilityScore": 78,
       "reliabilityLevel": "High",
@@ -1821,7 +1847,14 @@
       "createdAt": "2026-09-10T09:11:58.558Z",
       "updatedAt": "2026-09-10T09:11:58.558Z",
       "progressNotes": [],
-      "__v": 0
+      "__v": 0,
+      "statusHistory": [
+        {
+          "status": "UNDER ACTION",
+          "timestamp": "2026-09-16T13:32:29.557+05:30",
+          "comment": "Work in progress by Rohan"
+        }
+      ]
     },
     {
       "_id": "6aa3c5de76dd8149601cc8f0",
@@ -2298,7 +2331,7 @@
         "timing": "16 Sep 2026, 09:29 AM (IST)",
         "detectedAt": "2026-08-13T09:11:58.607Z"
       },
-      "status": "NEW",
+      "status": "ASSIGNED",
       "priority": {
         "score": 42,
         "level": "Medium",
@@ -2312,7 +2345,7 @@
         }
       },
       "createdBy": "6aa3c5de76dd8149601cc844",
-      "assignedWorker": null,
+      "assignedWorker": "6aa3cd29807f4547b549bf99",
       "assignedAt": null,
       "reliabilityScore": 78,
       "reliabilityLevel": "High",
@@ -2458,7 +2491,7 @@
         "timing": "16 Sep 2026, 09:29 AM (IST)",
         "detectedAt": "2026-08-11T09:11:58.617Z"
       },
-      "status": "VALIDATED",
+      "status": "ACTION COMPLETED",
       "priority": {
         "score": 61,
         "level": "High",
@@ -2472,7 +2505,7 @@
         }
       },
       "createdBy": "6aa3c5de76dd8149601cc846",
-      "assignedWorker": null,
+      "assignedWorker": "6aa3cd29807f4547b549bf99",
       "assignedAt": null,
       "reliabilityScore": 80,
       "reliabilityLevel": "High",
@@ -2557,9 +2590,13 @@
       },
       "voiceTranscript": "",
       "completionDetails": {
-        "notes": "",
-        "images": [],
-        "completedAt": null
+        "notes": "Drainage blockage cleared, debris removed, water flow fully restored by Rohan Patil.",
+        "completedAt": "2026-09-16T13:32:29.557+05:30",
+        "images": [
+          {
+            "url": "https://images.unsplash.com/photo-1584467735815-f778f274e296?w=800"
+          }
+        ]
       },
       "adminVerification": {
         "verifiedBy": null,
@@ -3366,7 +3403,7 @@
         "timing": "16 Sep 2026, 09:29 AM (IST)",
         "detectedAt": "2026-07-30T09:11:58.670Z"
       },
-      "status": "NEW",
+      "status": "UNDER ACTION",
       "priority": {
         "score": 59,
         "level": "Medium",
@@ -3380,7 +3417,7 @@
         }
       },
       "createdBy": "6aa3c5dd76dd8149601cc83e",
-      "assignedWorker": null,
+      "assignedWorker": "6aa3cd29807f4547b549bf99",
       "assignedAt": null,
       "reliabilityScore": 80,
       "reliabilityLevel": "High",
@@ -3495,7 +3532,14 @@
       "createdAt": "2026-07-30T09:11:58.670Z",
       "updatedAt": "2026-07-30T09:11:58.670Z",
       "progressNotes": [],
-      "__v": 0
+      "__v": 0,
+      "statusHistory": [
+        {
+          "status": "UNDER ACTION",
+          "timestamp": "2026-09-16T13:32:29.557+05:30",
+          "comment": "Work in progress by Rohan"
+        }
+      ]
     },
     {
       "_id": "6aa3c5de76dd8149601cc98b",
@@ -3526,7 +3570,7 @@
         "timing": "16 Sep 2026, 09:29 AM (IST)",
         "detectedAt": "2026-07-28T09:11:58.680Z"
       },
-      "status": "VALIDATED",
+      "status": "VERIFIED RESOLVED",
       "priority": {
         "score": 49,
         "level": "Medium",
@@ -3540,7 +3584,7 @@
         }
       },
       "createdBy": "6aa3c5dd76dd8149601cc840",
-      "assignedWorker": null,
+      "assignedWorker": "6aa3cd29807f4547b549bf99",
       "assignedAt": null,
       "reliabilityScore": 76,
       "reliabilityLevel": "High",
@@ -5371,7 +5415,7 @@
         "accuracy": 4,
         "detectedAt": "2026-09-16T08:48:00.000Z"
       },
-      "status": "VALIDATED",
+      "status": "ASSIGNED",
       "priority": {
         "score": 35,
         "level": "Medium",
@@ -5385,7 +5429,7 @@
         }
       },
       "createdBy": "6aa3ce858d7b359c6c7ad3bb",
-      "assignedWorker": null,
+      "assignedWorker": "6aa3cd29807f4547b549bf99",
       "assignedAt": null,
       "reliabilityScore": 82,
       "reliabilityLevel": "Very High",
@@ -8821,6 +8865,214 @@
       "assignedAt": "2026-09-11T09:39:39.836Z",
       "createdAt": "2026-09-11T09:22:04.043Z",
       "startedAt": "2026-09-16T13:05:40.840+05:30"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc883",
+      "taskId": "TSK-C883",
+      "issueId": "6aa3c5de76dd8149601cc883",
+      "workerId": "6aa3cd29807f4547b549bf99",
+      "title": "Drainage culvert clogged with silt and plastic waste in front of ZP Primary School",
+      "category": "Drainage blockage",
+      "priority": "Medium",
+      "description": "Drain is overflowing with dark stagnant wastewater right at school entrance gate. Mosquito breeding hazard for students.",
+      "location": {
+        "landmark": "Opposite Zilla Parishad Primary School Gate",
+        "address": "School Road, Ward 2",
+        "coordinates": [
+          73.8614,
+          18.5247
+        ]
+      },
+      "deadline": "2026-09-18T13:31:54.428467+05:30",
+      "requiredAction": "Inspect site, resolve Drainage blockage, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f8?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "",
+      "status": "ASSIGNED",
+      "workerNotes": "",
+      "assignedAt": "2026-09-08T09:11:58.494Z",
+      "createdAt": "2026-09-08T09:11:58.494Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc8d6",
+      "taskId": "TSK-C8D6",
+      "issueId": "6aa3c5de76dd8149601cc8d6",
+      "workerId": "6aa3cd29807f4547b549bf99",
+      "title": "Drinking water distribution valve jammed affecting Gaothan East sector",
+      "category": "Water supply",
+      "priority": "High",
+      "description": "No tap water supply in Gaothan East for 36 hours. Sluice valve handle broken during operation.",
+      "location": {
+        "landmark": "Near Maruti Temple Well",
+        "address": "Gaothan East Main Pipe",
+        "coordinates": [
+          73.8631,
+          18.5255
+        ]
+      },
+      "deadline": "2026-09-18T13:31:54.428495+05:30",
+      "requiredAction": "Inspect site, resolve Water supply, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "",
+      "status": "IN PROGRESS",
+      "workerNotes": "",
+      "assignedAt": "2026-09-09T09:11:58.548Z",
+      "createdAt": "2026-09-09T09:11:58.548Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc8e3",
+      "taskId": "TSK-C8E3",
+      "issueId": "6aa3c5de76dd8149601cc8e3",
+      "workerId": "6aa3cd29807f4547b549bf99",
+      "title": "Illegal construction debris and plastic dumping on open ground",
+      "category": "Waste accumulation",
+      "priority": "Medium",
+      "description": "Truckload of brick rubble and cement sacks dumped along village periphery road.",
+      "location": {
+        "landmark": "Adjacent to Crematorium Wall",
+        "address": "Ring Road East",
+        "coordinates": [
+          73.8655,
+          18.5192
+        ]
+      },
+      "deadline": "2026-09-18T13:31:54.428503+05:30",
+      "requiredAction": "Inspect site, resolve Waste accumulation, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1605600659908-0ef719419d41?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "",
+      "status": "IN PROGRESS",
+      "workerNotes": "",
+      "assignedAt": "2026-09-10T09:11:58.558Z",
+      "createdAt": "2026-09-10T09:11:58.558Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc91c",
+      "taskId": "TSK-C91C",
+      "issueId": "6aa3c5de76dd8149601cc91c",
+      "workerId": "6aa3cd29807f4547b549bf99",
+      "title": "Waste accumulation report at Ward 5 locality #14",
+      "category": "Waste accumulation",
+      "priority": "Medium",
+      "description": "Community civic issue regarding waste accumulation causing disruption to residents. Prompt resolution requested.",
+      "location": {
+        "landmark": "Near Pole #114",
+        "address": "Ward 5 Sector C",
+        "coordinates": [
+          73.85542564659978,
+          18.51021973373818
+        ]
+      },
+      "deadline": "2026-09-18T13:31:54.428511+05:30",
+      "requiredAction": "Inspect site, resolve Waste accumulation, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "",
+      "status": "ASSIGNED",
+      "workerNotes": "",
+      "assignedAt": "2026-08-13T09:11:58.607Z",
+      "createdAt": "2026-08-13T09:11:58.607Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc929",
+      "taskId": "TSK-C929",
+      "issueId": "6aa3c5de76dd8149601cc929",
+      "workerId": "6aa3cd29807f4547b549bf99",
+      "title": "Drainage blockage report at Ward 1 locality #15",
+      "category": "Drainage blockage",
+      "priority": "High",
+      "description": "Community civic issue regarding drainage blockage causing disruption to residents. Prompt resolution requested.",
+      "location": {
+        "landmark": "Near Pole #115",
+        "address": "Ward 1 Sector D",
+        "coordinates": [
+          73.85341239772792,
+          18.52982876058341
+        ]
+      },
+      "deadline": "2026-09-18T13:31:54.428519+05:30",
+      "requiredAction": "Inspect site, resolve Drainage blockage, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f8?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "https://images.unsplash.com/photo-1584467735815-f778f274e296?w=800",
+      "status": "COMPLETED",
+      "workerNotes": "Drainage blockage cleared, silt and debris removed, water flow fully restored by Rohan Patil.",
+      "assignedAt": "2026-08-11T09:11:58.617Z",
+      "createdAt": "2026-08-11T09:11:58.617Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc97e",
+      "taskId": "TSK-C97E",
+      "issueId": "6aa3c5de76dd8149601cc97e",
+      "workerId": "6aa3cd29807f4547b549bf99",
+      "title": "Waste accumulation report at Ward 2 locality #21",
+      "category": "Waste accumulation",
+      "priority": "Medium",
+      "description": "Community civic issue regarding waste accumulation causing disruption to residents. Prompt resolution requested.",
+      "location": {
+        "landmark": "Near Pole #121",
+        "address": "Ward 2 Sector D",
+        "coordinates": [
+          73.8609312322939,
+          18.52667852295116
+        ]
+      },
+      "deadline": "2026-09-18T13:31:54.428528+05:30",
+      "requiredAction": "Inspect site, resolve Waste accumulation, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "",
+      "status": "IN PROGRESS",
+      "workerNotes": "",
+      "assignedAt": "2026-07-30T09:11:58.670Z",
+      "createdAt": "2026-07-30T09:11:58.670Z"
+    },
+    {
+      "_id": "6aa3c5de76dd8149601cc98b",
+      "taskId": "TSK-C98B",
+      "issueId": "6aa3c5de76dd8149601cc98b",
+      "workerId": "6aa3cd29807f4547b549bf99",
+      "title": "Drainage blockage report at Ward 3 locality #22",
+      "category": "Drainage blockage",
+      "priority": "Medium",
+      "description": "Community civic issue regarding drainage blockage causing disruption to residents. Prompt resolution requested.",
+      "location": {
+        "landmark": "Near Pole #122",
+        "address": "Ward 3 Sector E",
+        "coordinates": [
+          73.86962397244794,
+          18.53037454441036
+        ]
+      },
+      "deadline": "2026-09-18T13:31:54.428534+05:30",
+      "requiredAction": "Inspect site, resolve Drainage blockage, upload after photos, and mark completed.",
+      "beforeImage": "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f8?auto=format&fit=crop&w=800&q=80",
+      "afterImage": "",
+      "status": "VERIFIED",
+      "workerNotes": "",
+      "assignedAt": "2026-07-28T09:11:58.680Z",
+      "createdAt": "2026-07-28T09:11:58.680Z"
+    },
+    {
+      "_id": "6aa3cec78d7b359c6c7ad3d5",
+      "taskId": "TSK-D3D5",
+      "issueId": "6aa3cec78d7b359c6c7ad3d5",
+      "workerId": "6aa3cd29807f4547b549bf99",
+      "title": "Severe Drainage Blockage with Overflowing Water",
+      "category": "Drainage blockage",
+      "priority": "Medium",
+      "description": "Visual analysis indicates heavy accumulation of silt, organic debris, and plastic waste causing severe obstruction in the village drainage culvert. Stagnant dirty water is overflowing onto the street, posing an immediate public hygiene risk.",
+      "location": {
+        "landmark": "Live GPS Pin [16.73180, 73.90790]",
+        "address": "Live GPS Pinned Location (16.73180\u00b0N, 73.90790\u00b0E)",
+        "coordinates": [
+          73.9079,
+          16.7318
+        ]
+      },
+      "deadline": "2026-09-18T13:31:54.428550+05:30",
+      "requiredAction": "Inspect site, resolve Drainage blockage, upload after photos, and mark completed.",
+      "beforeImage": "/uploads/images-1789120199023-591232832.webp",
+      "afterImage": "",
+      "status": "ASSIGNED",
+      "workerNotes": "",
+      "assignedAt": "2026-09-11T09:49:59.063Z",
+      "createdAt": "2026-09-11T09:49:59.063Z"
     }
   ]
 }

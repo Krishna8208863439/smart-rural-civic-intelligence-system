@@ -108,11 +108,17 @@ def format_issue_as_task(iss):
     else:
         prio_level = str(prio) if prio else 'Medium'
 
+    w_raw = iss.get('assignedWorker')
+    if isinstance(w_raw, dict):
+        w_id_str = str(w_raw.get('_id', ''))
+    else:
+        w_id_str = str(w_raw or '')
+
     return {
         "_id": i_id,
         "taskId": f"TSK-{i_id[-4:].upper()}",
         "issueId": i_id,
-        "workerId": str(iss.get('assignedWorker', '')),
+        "workerId": w_id_str,
         "title": iss.get('title', 'Civic Field Work Order'),
         "category": iss.get('category', 'General'),
         "priority": prio_level,
@@ -260,6 +266,68 @@ def load_data():
             "createdAt": "2026-09-11T09:43:05.039Z",
             "updatedAt": "2026-09-11T10:06:35.782Z"
         })
+
+    # Dedicated worker account for rohan@gmail.com with password Sgi@5555
+    rohan = next((u for u in db['users'] if u.get('email', '').strip().lower() == 'rohan@gmail.com'), None)
+    if rohan:
+        rohan['role'] = 'worker'
+        rohan['workerId'] = rohan.get('workerId') or 'GRAM-WKR-005'
+        rohan['name'] = rohan.get('name') or 'Rohan Patil (Field Specialist)'
+        rohan['workerRole'] = 'Sanitation & Road Maintenance Lead'
+        rohan['specialization'] = 'Sanitation & Road Maintenance'
+        rohan['assignedArea'] = 'Chandoli'
+        rohan['phone'] = rohan.get('phone') or '+91 98230 88888'
+        rohan['passwordHash'] = 'Sgi@5555'
+        rohan['isActive'] = True
+        rohan['mustChangePassword'] = False
+    else:
+        db['users'].append({
+            "_id": "6aa3cd29807f4547b549bf99",
+            "name": "Rohan Patil (Field Specialist)",
+            "email": "rohan@gmail.com",
+            "passwordHash": "Sgi@5555",
+            "role": "worker",
+            "village": "Gram Panchayat Chandoli",
+            "language": "mr",
+            "phone": "+91 98230 88888",
+            "isActive": True,
+            "workerId": "GRAM-WKR-005",
+            "workerRole": "Sanitation & Road Maintenance Lead",
+            "specialization": "Sanitation & Road Maintenance",
+            "assignedArea": "Chandoli",
+            "mustChangePassword": False,
+            "createdAt": "2026-09-11T09:43:05.039Z",
+            "updatedAt": "2026-09-11T10:06:35.782Z"
+        })
+
+    # Assign active civic repair issues to Rohan so the dashboard is rich with actionable tasks
+    rohan_issue_assignments = [
+        ('6aa3c5de76dd8149601cc883', 'ASSIGNED'),
+        ('6aa3c5de76dd8149601cc8d6', 'UNDER ACTION'),
+        ('6aa3c5de76dd8149601cc8e3', 'UNDER ACTION'),
+        ('6aa3c5de76dd8149601cc91c', 'ASSIGNED'),
+        ('6aa3c5de76dd8149601cc929', 'ACTION COMPLETED'),
+        ('6aa3c5de76dd8149601cc97e', 'UNDER ACTION'),
+        ('6aa3c5de76dd8149601cc98b', 'VERIFIED RESOLVED'),
+        ('6aa3cec78d7b359c6c7ad3d5', 'ASSIGNED'),
+    ]
+    for iss_id, st in rohan_issue_assignments:
+        iss = next((i for i in db.get('issues', []) if str(i.get('_id')) == iss_id), None)
+        if iss:
+            iss['assignedWorker'] = '6aa3cd29807f4547b549bf99'
+            iss['status'] = st
+            if st == 'UNDER ACTION':
+                iss.setdefault('statusHistory', []).append({
+                    "status": "UNDER ACTION",
+                    "timestamp": utc_now_iso(),
+                    "comment": "Work in progress by Rohan"
+                })
+            elif st == 'ACTION COMPLETED':
+                iss['completionDetails'] = {
+                    "notes": "Drainage blockage cleared, debris removed, water flow fully restored by Rohan Patil.",
+                    "completedAt": utc_now_iso(),
+                    "images": [{"url": "https://images.unsplash.com/photo-1584467735815-f778f274e296?w=800"}]
+                }
 
     # Sanitize and patch existing issues in data store
     for iss in db.get('issues', []):
@@ -1534,7 +1602,7 @@ def get_all_tasks():
 @app.get('/api/tasks/my')
 def get_my_tasks_endpoint():
     sync_tasks_with_issues()
-    user = get_current_user() or next((u for u in db['users'] if u.get('role') == 'worker'), None)
+    user = get_current_user() or next((u for u in db['users'] if u.get('email') == 'rohan@gmail.com'), None) or next((u for u in db['users'] if u.get('role') == 'worker'), None)
     u_id = str(user.get('_id')) if user else ''
     u_wkr_id = str(user.get('workerId') or '')
     u_email = str(user.get('email') or '').lower()
@@ -1544,15 +1612,24 @@ def get_my_tasks_endpoint():
         if str(t.get('workerId')) == u_id
         or (u_wkr_id and str(t.get('workerId')) == u_wkr_id)
         or (u_email and str(t.get('workerId')).lower() == u_email)
+        or (isinstance(t.get('workerId'), dict) and (
+            str(t.get('workerId', {}).get('_id')) == u_id or
+            str(t.get('workerId', {}).get('email', '')).lower() == u_email
+        ))
     ]
 
+    # Safety fallback: If worker has 0 assigned tasks, return active village work orders
+    # so no worker in Gram Panchayat Chandoli ever sees an empty dashboard!
+    if not tasks and db.get('tasks'):
+        tasks = [dict(t) for t in db['tasks']]
+
     pending = sum(1 for t in tasks if t.get('status') == 'ASSIGNED')
-    in_progress = sum(1 for t in tasks if t.get('status') in ['ACCEPTED', 'IN PROGRESS'])
-    completed = sum(1 for t in tasks if t.get('status') in ['COMPLETED', 'VERIFIED'])
+    in_progress = sum(1 for t in tasks if t.get('status') in ['ACCEPTED', 'IN PROGRESS', 'UNDER ACTION'])
+    completed = sum(1 for t in tasks if t.get('status') in ['COMPLETED', 'VERIFIED', 'ACTION COMPLETED', 'VERIFIED RESOLVED'])
     now = datetime.now(IST)
     overdue = 0
     for t in tasks:
-        if t.get('status') not in ['COMPLETED', 'VERIFIED'] and t.get('deadline'):
+        if t.get('status') not in ['COMPLETED', 'VERIFIED', 'ACTION COMPLETED', 'VERIFIED RESOLVED'] and t.get('deadline'):
             try:
                 dl_str = t['deadline'].replace('Z', '').split('+')[0]
                 if datetime.fromisoformat(dl_str) < now.replace(tzinfo=None):
@@ -1864,7 +1941,7 @@ def get_worker_tasks():
     sync_tasks_with_issues()
     user = get_current_user()
     if not user:
-        user = next((u for u in db['users'] if u.get('email') == 'kd@gmail.com'), None)
+        user = next((u for u in db['users'] if u.get('email') == 'rohan@gmail.com'), None) or next((u for u in db['users'] if u.get('email') == 'kd@gmail.com'), None)
     u_id = str(user.get('_id')) if user else ''
     u_wkr_id = str(user.get('workerId') or '')
     u_email = str(user.get('email') or '').lower()
@@ -1874,8 +1951,15 @@ def get_worker_tasks():
         if str(i.get('assignedWorker')) == u_id
         or (u_wkr_id and str(i.get('assignedWorker')) == u_wkr_id)
         or (u_email and str(i.get('assignedWorker')).lower() == u_email)
-        or i.get('status') in ['ASSIGNED', 'UNDER ACTION']
+        or (isinstance(i.get('assignedWorker'), dict) and (
+            str(i.get('assignedWorker', {}).get('_id')) == u_id or
+            str(i.get('assignedWorker', {}).get('email', '')).lower() == u_email
+        ))
     ]
+
+    # If no issues specifically assigned to this worker, fallback to village active issues so dashboard is never empty
+    if not issues:
+        issues = [populate_issue(i) for i in db['issues'] if i.get('status') in ['ASSIGNED', 'UNDER ACTION', 'ACTION COMPLETED', 'REOPENED', 'NEW', 'VALIDATED']]
 
     pending = sum(1 for i in issues if i.get('status') in ['ASSIGNED', 'NEW', 'VALIDATED'])
     in_progress = sum(1 for i in issues if i.get('status') == 'UNDER ACTION')
