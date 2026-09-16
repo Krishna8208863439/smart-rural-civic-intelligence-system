@@ -9,8 +9,10 @@ import re
 from datetime import datetime, timedelta, timezone
 from flask import Flask, request, jsonify, send_from_directory, send_file
 
+IST = timezone(timedelta(hours=5, minutes=30))
+
 def utc_now_iso():
-    return datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + 'Z'
+    return datetime.now(IST).strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + '+05:30'
 
 
 # Initialize Flask

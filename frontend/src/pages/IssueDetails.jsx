@@ -8,7 +8,7 @@ import PriorityBadge from '../components/PriorityBadge';
 import ReliabilityBadge from '../components/ReliabilityBadge';
 import { getAiWorkerRecommendation } from '../utils/aiWorkerMatcher';
 import { translateData, translateCategory, translateReliability, translatePriority, translateAuditType } from '../utils/translateData';
-import { formatDate } from '../utils/formatDate';
+import { formatDate, formatShortTime } from '../utils/formatDate';
 import { getAccurateLivePosition, reverseGeocodeCoords, formatDetectionTime } from '../utils/geolocation';
 import {
 
@@ -37,6 +37,7 @@ import {
   ExternalLink,
   Save,
   RefreshCw,
+  Search,
 } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
@@ -170,6 +171,8 @@ export default function IssueDetails() {
   const [isPinAdjustMode, setIsPinAdjustMode] = useState(false);
   const [savingLocation, setSavingLocation] = useState(false);
   const [saveLocationSuccess, setSaveLocationSuccess] = useState('');
+  const [searchLocationQuery, setSearchLocationQuery] = useState('');
+  const [searchingLocation, setSearchingLocation] = useState(false);
   const [mapCenter, setMapCenter] = useState(null);
   const [mapLayer, setMapLayer] = useState(DEFAULT_MAP_LAYER);
   const watchIdRef = useRef(null);
@@ -250,6 +253,55 @@ export default function IssueDetails() {
       handleStopLiveTracking();
     } else {
       handleStartLiveTracking();
+    }
+  };
+
+  const handleSearchLocation = async (e) => {
+    if (e) e.preventDefault();
+    const query = searchLocationQuery.trim();
+    if (!query) return;
+
+    try {
+      setSearchingLocation(true);
+      setLiveError('');
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          query
+        )}&countrycodes=in&limit=5`,
+        {
+          headers: {
+            Accept: 'application/json',
+            'User-Agent': 'SmartRuralCivicIntelligence/2.0',
+          },
+        }
+      );
+      if (res.ok) {
+        const results = await res.json();
+        if (results && results.length > 0) {
+          const first = results[0];
+          const lat = parseFloat(first.lat);
+          const lng = parseFloat(first.lon);
+          const newCoords = [lat, lng];
+          const timingStr = formatDetectionTime(new Date()).display;
+
+          setCustomPinCoords(newCoords);
+          setMapCenter(newCoords);
+          setLiveTiming(timingStr);
+          setLiveAddress(first.display_name);
+          setLiveAccuracy(8);
+          setLiveSource('Accurate Locality Search');
+
+          // Automatically save the accurate searched location
+          await handleSaveLivePin(newCoords, first.display_name, first.display_name.split(',')[0], timingStr, 8);
+        } else {
+          setLiveError(`No results found for "${query}". Try adding district or taluka name (e.g. "${query}, Maharashtra").`);
+        }
+      }
+    } catch (err) {
+      console.warn('Search location error:', err);
+      setLiveError('Search failed. Please drag the pin on the map or check internet connection.');
+    } finally {
+      setSearchingLocation(false);
     }
   };
 
@@ -773,6 +825,27 @@ export default function IssueDetails() {
                   )}
                 </div>
               </div>
+
+              {/* Instant Village / Town / City Search Bar for 100% Accurate Pin Placement */}
+              <form onSubmit={handleSearchLocation} className="flex items-center gap-2 pt-1">
+                <div className="relative flex-1">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={searchLocationQuery}
+                    onChange={(e) => setSearchLocationQuery(e.target.value)}
+                    placeholder="Search your village, town, or road (e.g. Chandoli, Devrai, Pune, Kolhapur, Sangli)..."
+                    className="w-full pl-9 pr-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 shadow-xs"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={searchingLocation || !searchLocationQuery.trim()}
+                  className="px-3.5 py-2 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 active:bg-black text-white shadow-xs transition cursor-pointer disabled:opacity-50 shrink-0"
+                >
+                  {searchingLocation ? 'Searching...' : '🔍 Pin Village'}
+                </button>
+              </form>
 
               {/* Action Toolbar: Detect Live GPS Pin, Open in Google Maps, Adjust Pin */}
               <div className="flex flex-wrap items-center gap-2 pt-1">
@@ -1462,12 +1535,7 @@ export default function IssueDetails() {
                       </div>
 
                       <span className="text-slate-400 font-mono text-[11px]">
-                        {new Date(event.timestamp).toLocaleString([], {
-                          month: 'short',
-                          day: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
+                        {formatShortTime(event.timestamp || event.createdAt)}
                       </span>
                     </div>
 
