@@ -5043,7 +5043,10 @@
         "address": "Live GPS Pinned Location (16.73180\u00b0N, 73.90790\u00b0E)",
         "landmark": "Live GPS Pin [16.73180, 73.90790]",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 1"
+        "ward": "Ward 1",
+        "timing": "16 Sep 2026, 08:45 AM (IST)",
+        "accuracy": 4,
+        "detectedAt": "2026-09-16T08:45:00.000Z"
       },
       "status": "REOPENED",
       "priority": {
@@ -5205,7 +5208,10 @@
         "address": "Live GPS Pinned Location (16.73180\u00b0N, 73.90790\u00b0E)",
         "landmark": "Live GPS Pin [16.73180, 73.90790]",
         "village": "Gram Panchayat Chandoli",
-        "ward": "Ward 1"
+        "ward": "Ward 1",
+        "timing": "16 Sep 2026, 08:48 AM (IST)",
+        "accuracy": 4,
+        "detectedAt": "2026-09-16T08:48:00.000Z"
       },
       "status": "VALIDATED",
       "priority": {

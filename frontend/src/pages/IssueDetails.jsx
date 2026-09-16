@@ -9,7 +9,7 @@ import ReliabilityBadge from '../components/ReliabilityBadge';
 import { getAiWorkerRecommendation } from '../utils/aiWorkerMatcher';
 import { translateData, translateCategory, translateReliability, translatePriority, translateAuditType } from '../utils/translateData';
 import { formatDate } from '../utils/formatDate';
-import { getAccurateLivePosition, reverseGeocodeCoords } from '../utils/geolocation';
+import { getAccurateLivePosition, reverseGeocodeCoords, formatDetectionTime } from '../utils/geolocation';
 import {
 
   MapPin,
@@ -199,17 +199,19 @@ export default function IssueDetails() {
         onStatusChange: (statusMsg) => setDetectionStatus(statusMsg),
         defaultCoords: (issue?.location?.coordinates && Array.isArray(issue.location.coordinates))
           ? [issue.location.coordinates[1], issue.location.coordinates[0]]
-          : [16.74064, 74.38409]
+          : [16.73180, 73.90790]
       });
 
-      setLiveUserCoords([result.lat, result.lng]);
-      setLiveAccuracy(result.accuracy);
-      setLiveTiming(result.timing.time);
-      setLiveSource(result.source);
-      if (result.addressData?.address) {
-        setLiveAddress(result.addressData.address);
+      if (result) {
+        setLiveUserCoords([result.lat, result.lng]);
+        setLiveAccuracy(result.accuracy);
+        setLiveTiming(result.timing.display || result.timing.dateTime);
+        setLiveSource(result.source);
+        if (result.addressData?.address) {
+          setLiveAddress(result.addressData.address);
+        }
+        setMapCenter([result.lat, result.lng]);
       }
-      setMapCenter([result.lat, result.lng]);
     } catch (err) {
       console.warn('Live location error:', err);
       setLiveError('Live GPS search timed out. You can click "🎯 Adjust Pin on Map" to pinpoint your exact spot on the satellite map.');
@@ -227,7 +229,7 @@ export default function IssueDetails() {
           const acc = Math.round(pos.coords.accuracy);
           setLiveUserCoords([lat, lng]);
           setLiveAccuracy(acc);
-          setLiveTiming(new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }));
+          setLiveTiming(formatDetectionTime(new Date()).display);
         },
         (err) => console.warn('Geolocation watch error:', err),
         { enableHighAccuracy: true, maximumAge: 3000, timeout: 15000 }
@@ -251,14 +253,49 @@ export default function IssueDetails() {
     }
   };
 
-  const handleDetectLivePin = () => {
-    handleStartLiveTracking();
+  const handleDetectLivePin = async () => {
+    setLiveError('');
+    setDetectingLive(true);
+    setDetectionStatus('Connecting to high-precision live GPS & Wi-Fi triangulation...');
+
+    try {
+      const result = await getAccurateLivePosition({
+        onStatusChange: (statusMsg) => setDetectionStatus(statusMsg),
+        defaultCoords: (issue?.location?.coordinates && Array.isArray(issue.location.coordinates))
+          ? [issue.location.coordinates[1], issue.location.coordinates[0]]
+          : [16.73180, 73.90790]
+      });
+
+      if (!result) return;
+
+      const newCoords = [result.lat, result.lng];
+      setLiveUserCoords(newCoords);
+      setLiveAccuracy(result.accuracy);
+      const timeStr = result.timing.display || result.timing.dateTime;
+      setLiveTiming(timeStr);
+      setLiveSource(result.source);
+
+      const newAddress = result.addressData?.address || `Live Pinned Location (${result.lat.toFixed(5)}°N, ${result.lng.toFixed(5)}°E)`;
+      const newLandmark = result.addressData?.landmark || `Live GPS Pin [${result.lat.toFixed(5)}, ${result.lng.toFixed(5)}]`;
+      setLiveAddress(newAddress);
+      setMapCenter(newCoords);
+
+      // Automatically save and record the accurate live pin & acquisition timing
+      await handleSaveLivePin(newCoords, newAddress, newLandmark, timeStr, result.accuracy);
+    } catch (err) {
+      console.warn('Live detect pin error:', err);
+      setLiveError('Live GPS acquisition timed out. You can click "🎯 Adjust Pin on Map" to drop the pin manually on your exact spot.');
+    } finally {
+      setDetectingLive(false);
+      setDetectionStatus('');
+    }
   };
 
   const handlePinAdjust = async (newCoords) => {
     setCustomPinCoords(newCoords);
     setMapCenter(newCoords);
-    setLiveTiming(new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }));
+    const timeStr = formatDetectionTime(new Date()).display;
+    setLiveTiming(timeStr);
     try {
       const rev = await reverseGeocodeCoords(newCoords[0], newCoords[1]);
       if (rev?.address) {
@@ -275,11 +312,16 @@ export default function IssueDetails() {
     };
   }, []);
 
-  const handleSaveLivePin = async (targetCoords) => {
+  const handleSaveLivePin = async (targetCoords, overrideAddress, overrideLandmark, overrideTiming, overrideAccuracy) => {
     const lat = targetCoords ? targetCoords[0] : (customPinCoords ? customPinCoords[0] : liveUserCoords ? liveUserCoords[0] : null);
     const lng = targetCoords ? targetCoords[1] : (customPinCoords ? customPinCoords[1] : liveUserCoords ? liveUserCoords[1] : null);
 
     if (!lat || !lng) return;
+
+    const nowTiming = overrideTiming || liveTiming || formatDetectionTime(new Date()).display;
+    const addr = overrideAddress || liveAddress || undefined;
+    const lmark = overrideLandmark || (addr ? addr.split(',')[0] : undefined);
+    const acc = overrideAccuracy || liveAccuracy || 4;
 
     try {
       setSavingLocation(true);
@@ -287,14 +329,20 @@ export default function IssueDetails() {
       const res = await api.put(`/issues/${id}/location`, {
         latitude: lat,
         longitude: lng,
-        address: liveAddress || undefined,
-        landmark: liveAddress ? liveAddress.split(',')[0] : undefined,
+        address: addr,
+        landmark: lmark,
+        timing: nowTiming,
+        accuracy: acc,
+        detectedAt: new Date().toISOString()
       });
-      setIssue(res.data.issue);
+      if (res.data?.issue) {
+        setIssue(res.data.issue);
+      }
       setCustomPinCoords(null);
       setIsPinAdjustMode(false);
-      setSaveLocationSuccess('✓ Accurate live pin & timing saved successfully to Gram Panchayat records!');
-      setTimeout(() => setSaveLocationSuccess(''), 5000);
+      setLiveTiming(nowTiming);
+      setSaveLocationSuccess(`✓ Accurate live pin [${lat.toFixed(5)}°N, ${lng.toFixed(5)}°E] & Timing (${nowTiming}) saved successfully!`);
+      setTimeout(() => setSaveLocationSuccess(''), 6000);
       await fetchIssueData();
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to update live pin location');
@@ -706,10 +754,15 @@ export default function IssueDetails() {
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                     <span>Accurate Live Pin: {mapPos[0].toFixed(5)}°N, {mapPos[1].toFixed(5)}°E</span>
                   </div>
-                  {issue.updatedAt && (
+                  <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-[11px] font-bold shadow-xs">
+                    <Clock className="w-3.5 h-3.5 text-blue-600" />
+                    <span>
+                      Timing: {liveTiming || issue.location?.timing || (issue.updatedAt ? new Date(issue.updatedAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }))} (IST)
+                    </span>
+                  </div>
+                  {(liveAccuracy || issue.location?.accuracy) && (
                     <div className="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-600 text-[11px] font-medium">
-                      <Clock className="w-3 h-3 text-slate-400" />
-                      <span>Pin Updated: {formatDate(issue.updatedAt)}</span>
+                      <span>Precision: ±{liveAccuracy || issue.location?.accuracy || 4}m</span>
                     </div>
                   )}
                 </div>
@@ -723,9 +776,10 @@ export default function IssueDetails() {
                   onClick={handleDetectLivePin}
                   disabled={detectingLive}
                   className="inline-flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white shadow-xs transition cursor-pointer disabled:opacity-60"
+                  title="Auto-detect current live GPS and lock timing"
                 >
                   <Navigation className={`w-3.5 h-3.5 ${detectingLive ? 'animate-spin' : ''}`} />
-                  <span>{detectingLive ? (detectionStatus || 'Detecting Live Pin...') : '📍 Detect / Add Live Pin'}</span>
+                  <span>{detectingLive ? (detectionStatus || 'Detecting Live Pin...') : '📍 Auto-Detect & Set Live Pin'}</span>
                 </button>
 
                 {/* 2. Toggle Fine-Tune / Adjust Pin Mode */}
@@ -737,9 +791,10 @@ export default function IssueDetails() {
                       ? 'bg-amber-500 text-white border-amber-600'
                       : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200'
                   }`}
+                  title="Drag or click map to reposition accurate pin"
                 >
                   <Crosshair className="w-3.5 h-3.5" />
-                  <span>{isPinAdjustMode ? '✓ Pin Mode Active (Click Map)' : '🎯 Adjust Pin on Map'}</span>
+                  <span>{isPinAdjustMode ? '✓ Pin Mode Active (Drag or Click Map)' : '🎯 Adjust / Drag Pin on Map'}</span>
                 </button>
 
                 {/* Center buttons */}
@@ -940,15 +995,35 @@ export default function IssueDetails() {
                     onPinAdjust={handlePinAdjust}
                   />
 
-                  {/* 1. Problem Incident Pin */}
-                  <Marker position={mapPos} icon={incidentPinIcon}>
+                  {/* 1. Problem Incident Pin (Draggable when Adjust Mode is active) */}
+                  <Marker
+                    position={customPinCoords || mapPos}
+                    icon={incidentPinIcon}
+                    draggable={isPinAdjustMode}
+                    eventHandlers={{
+                      dragend: (e) => {
+                        const marker = e.target;
+                        const pos = marker.getLatLng();
+                        handlePinAdjust([pos.lat, pos.lng]);
+                      },
+                    }}
+                  >
                     <Popup>
-                      <div className="p-1 text-xs">
+                      <div className="p-1.5 text-xs space-y-1">
                         <div className="font-bold text-slate-900">{issue.title}</div>
-                        <div className="text-slate-600 text-[11px] mt-0.5">{issue.location?.landmark || issue.location?.address}</div>
-                        <div className="text-emerald-700 font-mono text-[10px] mt-1 font-semibold">
-                          📍 {mapPos[0].toFixed(5)}°N, {mapPos[1].toFixed(5)}°E
+                        <div className="text-slate-600 text-[11px]">{issue.location?.landmark || issue.location?.address}</div>
+                        <div className="text-emerald-700 font-mono text-[10px] font-semibold">
+                          📍 {(customPinCoords || mapPos)[0].toFixed(5)}°N, {(customPinCoords || mapPos)[1].toFixed(5)}°E
                         </div>
+                        <div className="text-blue-700 text-[10px] font-medium flex items-center space-x-1">
+                          <Clock className="w-3 h-3 text-blue-500 inline shrink-0" />
+                          <span>Recorded: {liveTiming || issue.location?.timing || (issue.updatedAt ? new Date(issue.updatedAt).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }))} (IST)</span>
+                        </div>
+                        {isPinAdjustMode && (
+                          <div className="text-[10px] text-amber-600 font-semibold italic">
+                            🎯 Pin is draggable! Drag to any road or building.
+                          </div>
+                        )}
                       </div>
                     </Popup>
                   </Marker>

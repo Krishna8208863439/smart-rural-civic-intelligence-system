@@ -640,7 +640,10 @@ def create_issue():
             "type": "Point",
             "coordinates": [lng, lat],
             "landmark": landmark,
-            "address": address
+            "address": address,
+            "timing": data.get('timing') or (datetime.now().strftime('%d %b %Y, %I:%M %p') + ' (IST)'),
+            "accuracy": float(data.get('accuracy', 4)),
+            "detectedAt": data.get('detectedAt') or utc_now_iso()
         },
         "priority": {
             "level": data.get('priority', 'High'),
@@ -703,12 +706,17 @@ def update_issue_location(issue_id):
             issue['location']['address'] = data.get('address')
         if data.get('landmark'):
             issue['location']['landmark'] = data.get('landmark')
+        issue['location']['timing'] = data.get('timing') or (datetime.now().strftime('%d %b %Y, %I:%M %p') + ' (IST)')
+        if data.get('accuracy'):
+            issue['location']['accuracy'] = float(data.get('accuracy'))
+        issue['location']['detectedAt'] = data.get('detectedAt') or utc_now_iso()
         
         now_ts = utc_now_iso()
         issue['updatedAt'] = now_ts
 
         user = get_current_user() or next((u for u in db['users'] if u.get('role') == 'admin'), db['users'][0])
         hist_id = hashlib.md5(f"loc_{issue_id}_{time.time()}".encode('utf-8')).hexdigest()[:24]
+        timing_str = issue['location'].get('timing', '')
         db['issueHistories'].insert(0, {
             "_id": hist_id,
             "issueId": str(issue_id),
@@ -718,7 +726,7 @@ def update_issue_location(issue_id):
             "userId": str(user.get('_id')),
             "userName": user.get('name', 'Citizen'),
             "userRole": user.get('role', 'citizen'),
-            "comment": f"Accurate live location updated to {lat:.5f}°N, {lng:.5f}°E ({issue['location'].get('address', 'Pinned Spot')}).",
+            "comment": f"Accurate live location updated to {lat:.5f}°N, {lng:.5f}°E at {timing_str} ({issue['location'].get('address', 'Pinned Spot')}).",
             "timestamp": now_ts,
             "createdAt": now_ts
         })

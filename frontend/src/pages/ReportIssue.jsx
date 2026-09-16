@@ -408,9 +408,8 @@ export default function ReportIssue() {
       const latStr = result.lat.toFixed(5);
       const lngStr = result.lng.toFixed(5);
       setLatitude(latStr);
-      setLongitude(lngStr);
       setGpsAccuracy(result.accuracy);
-      setGpsTiming(result.timing.time);
+      setGpsTiming(result.timing.display || result.timing.dateTime);
       setGpsSource(result.source);
 
       if (result.addressData?.address) {
@@ -571,6 +570,9 @@ export default function ReportIssue() {
       formData.append('landmark', landmark || address);
       formData.append('address', address || landmark || 'Gram Panchayat Area');
       formData.append('ward', ward || 'Ward 1');
+      formData.append('timing', gpsTiming || new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) + ' (IST)');
+      formData.append('accuracy', gpsAccuracy || 4);
+      formData.append('detectedAt', new Date().toISOString());
       formData.append('voiceTranscript', description);
 
       files.forEach((file) => {

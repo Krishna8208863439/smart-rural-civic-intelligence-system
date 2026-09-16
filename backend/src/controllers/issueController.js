@@ -896,7 +896,7 @@ exports.aiDetectIssue = async (req, res) => {
 // @access  Private
 exports.updateIssueLocation = async (req, res) => {
   try {
-    const { latitude, longitude, address, landmark } = req.body;
+    const { latitude, longitude, address, landmark, timing, accuracy, detectedAt } = req.body;
     const lat = parseFloat(latitude);
     const lng = parseFloat(longitude);
 
@@ -912,9 +912,13 @@ exports.updateIssueLocation = async (req, res) => {
     issue.location.coordinates = [lng, lat];
     if (address) issue.location.address = address;
     if (landmark) issue.location.landmark = landmark;
+    if (timing) issue.location.timing = timing;
+    if (accuracy) issue.location.accuracy = accuracy;
+    if (detectedAt) issue.location.detectedAt = detectedAt;
 
     await issue.save();
 
+    const timingInfo = timing ? ` at ${timing}` : '';
     await IssueHistory.create({
       issueId: issue._id,
       eventType: 'LOCATION_UPDATED',
@@ -923,8 +927,8 @@ exports.updateIssueLocation = async (req, res) => {
       userId: req.user.id,
       userName: req.user.name,
       userRole: req.user.role,
-      comment: `Accurate live GPS pin updated to [${lat.toFixed(5)}°N, ${lng.toFixed(5)}°E] by ${req.user.name}.`,
-      metadata: { latitude: lat, longitude: lng },
+      comment: `Accurate live GPS pin updated to [${lat.toFixed(5)}°N, ${lng.toFixed(5)}°E]${timingInfo} by ${req.user.name}.`,
+      metadata: { latitude: lat, longitude: lng, timing, accuracy },
     });
 
     const populatedIssue = await Issue.findById(issue._id)
