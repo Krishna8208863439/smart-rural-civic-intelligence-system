@@ -1,7 +1,20 @@
 import axios from 'axios';
 
+// Dynamically resolve base URL:
+// In production or cloud deployments (like PythonAnywhere), ALWAYS use relative '/api'
+// so all requests hit the same origin that served the frontend without CORS or localhost issues.
+const getBaseUrl = () => {
+  if (typeof window !== 'undefined') {
+    const host = window.location.hostname;
+    if (host && !host.includes('localhost') && host !== '127.0.0.1') {
+      return '/api';
+    }
+  }
+  return '/api';
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
+  baseURL: getBaseUrl(),
   timeout: 30000,
 });
 
