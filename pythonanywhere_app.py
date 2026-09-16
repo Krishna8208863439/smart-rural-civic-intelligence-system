@@ -1,18 +1,19 @@
+import sys
 import os
-from flask import Flask, send_from_directory
 
-# Automatically locate the compiled frontend dist directory
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DIST_DIR = os.path.join(BASE_DIR, 'frontend', 'dist')
+# Ensure python_backend is prioritized on sys.path
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+PYTHON_BACKEND_DIR = os.path.join(CURRENT_DIR, 'python_backend')
 
-app = Flask(__name__, static_folder=DIST_DIR)
+if PYTHON_BACKEND_DIR not in sys.path:
+    sys.path.insert(0, PYTHON_BACKEND_DIR)
+if CURRENT_DIR not in sys.path:
+    sys.path.insert(0, CURRENT_DIR)
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def serve(path):
-    if path != "" and os.path.exists(os.path.join(DIST_DIR, path)):
-        return send_from_directory(DIST_DIR, path)
-    return send_from_directory(DIST_DIR, 'index.html')
+# Import the production Flask application with full REST API and frontend SPA static serving
+from app import app as application
+app = application
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)

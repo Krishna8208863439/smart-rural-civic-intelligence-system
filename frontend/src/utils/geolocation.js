@@ -249,9 +249,16 @@ export const getAccurateLivePosition = async (options = {}) => {
     };
   };
 
-  // If browser geolocation is completely absent
-  if (!navigator.geolocation) {
-    reportStatus('Browser geolocation not supported. Using Network positioning...');
+  // In modern browsers, navigator.geolocation is strictly blocked on insecure HTTP origins
+  const isSecure = (typeof window !== 'undefined') && (
+    window.isSecureContext ||
+    window.location.protocol === 'https:' ||
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1'
+  );
+
+  if (!navigator.geolocation || !isSecure) {
+    reportStatus('Resolving location via Network IP positioning...');
     const ipPos = await getIpGeolocationFallback();
     if (ipPos) {
       return await finalizeResult(ipPos.lat, ipPos.lng, ipPos.accuracy, ipPos.source);

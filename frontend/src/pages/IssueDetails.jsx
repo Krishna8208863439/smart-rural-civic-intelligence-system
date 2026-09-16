@@ -159,7 +159,7 @@ export default function IssueDetails() {
 
   const [liveUserCoords, setLiveUserCoords] = useState(null); // [lat, lng]
   const [liveAccuracy, setLiveAccuracy] = useState(null); // meters
-  const [liveTiming, setLiveTiming] = useState('');
+  const [liveTiming, setLiveTiming] = useState(() => formatDetectionTime(new Date()).display);
   const [liveAddress, setLiveAddress] = useState('');
   const [liveSource, setLiveSource] = useState('');
   const [detectionStatus, setDetectionStatus] = useState('');
@@ -359,6 +359,12 @@ export default function IssueDetails() {
         api.get(`/issues/${id}/validations`).catch(() => null),
       ]);
       setIssue(res.data.issue);
+      if (res.data.issue?.location?.timing) {
+        setLiveTiming(res.data.issue.location.timing);
+      }
+      if (res.data.issue?.location?.accuracy) {
+        setLiveAccuracy(res.data.issue.location.accuracy);
+      }
       setHistory(res.data.history || []);
       setEvidence(res.data.evidence || []);
       setNewStatus(res.data.issue.status);
@@ -817,6 +823,21 @@ export default function IssueDetails() {
               </div>
 
               {/* Status & Feedback Alerts */}
+              {typeof window !== 'undefined' && window.location.protocol === 'http:' && window.location.hostname.includes('pythonanywhere.com') && (
+                <div className="p-2.5 rounded-xl bg-sky-50 border border-sky-200 text-sky-900 text-xs font-medium flex items-center justify-between gap-2 shadow-xs">
+                  <div className="flex items-center space-x-2">
+                    <ShieldCheck className="w-4 h-4 text-sky-600 shrink-0" />
+                    <span>Browsers require HTTPS for live device GPS. Switch to secure HTTPS mode for maximum GPS accuracy:</span>
+                  </div>
+                  <a
+                    href={window.location.href.replace('http:', 'https:')}
+                    className="px-2.5 py-1 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-lg transition shrink-0"
+                  >
+                    🔒 Switch to HTTPS
+                  </a>
+                </div>
+              )}
+
               {liveError && (
                 <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-medium flex items-center space-x-2">
                   <AlertTriangle className="w-4 h-4 shrink-0 text-amber-600" />
