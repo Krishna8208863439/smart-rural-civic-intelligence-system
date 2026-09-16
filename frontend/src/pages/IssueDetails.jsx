@@ -241,23 +241,6 @@ export default function IssueDetails() {
     }
   }, []);
 
-  const handleQuickVillageSelect = async (name, lat, lng) => {
-    const newCoords = [lat, lng];
-    const timingStr = `${liveTickingDate}, ${liveTickingClock} (IST)`;
-    setCustomPinCoords(newCoords);
-    setMapCenter(newCoords);
-    setLiveTiming(timingStr);
-    setLiveAccuracy(5);
-    setLiveSource(`Direct Village Pin (${name})`);
-    try {
-      const rev = await reverseGeocodeCoords(lat, lng);
-      const addr = rev?.address || `${name}, Maharashtra, India`;
-      setLiveAddress(addr);
-      await handleSaveLivePin(newCoords, addr, name, timingStr, 5);
-    } catch (e) {
-      await handleSaveLivePin(newCoords, `${name}, Maharashtra, India`, name, timingStr, 5);
-    }
-  };
 
   const handleManualCoordsSubmit = async (e) => {
     if (e) e.preventDefault();
@@ -977,55 +960,12 @@ export default function IssueDetails() {
                 </button>
               </form>
 
-              {/* Quick Village Pills for Instant 1-Click Pin Placement */}
-              <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-600">
-                <span className="font-semibold text-slate-500 text-[11px]">Quick Pin:</span>
-                <button
-                  type="button"
-                  onClick={() => handleQuickVillageSelect('Gram Panchayat Chandoli', 16.73180, 73.90790)}
-                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition"
-                >
-                  📍 Chandoli
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleQuickVillageSelect('Devrai Manvad', 16.73250, 73.90920)}
-                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition"
-                >
-                  📍 Devrai
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleQuickVillageSelect('Sangli City', 16.85240, 74.58150)}
-                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition"
-                >
-                  📍 Sangli
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleQuickVillageSelect('Kolhapur Central', 16.70500, 74.24330)}
-                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition"
-                >
-                  📍 Kolhapur
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleQuickVillageSelect('Satara', 17.68050, 73.99300)}
-                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition"
-                >
-                  📍 Satara
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleQuickVillageSelect('Pune Central', 18.52040, 73.85670)}
-                  className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition"
-                >
-                  📍 Pune
-                </button>
+              {/* Enter Lat/Lng Toggle */}
+              <div className="flex justify-end text-xs">
                 <button
                   type="button"
                   onClick={() => setShowManualCoords(!showManualCoords)}
-                  className="ml-auto text-[11px] text-blue-600 hover:text-blue-800 font-bold underline"
+                  className="text-[11px] text-blue-600 hover:text-blue-800 font-bold underline cursor-pointer"
                 >
                   {showManualCoords ? 'Hide Lat/Lng' : '⚙️ Enter Lat/Lng'}
                 </button>

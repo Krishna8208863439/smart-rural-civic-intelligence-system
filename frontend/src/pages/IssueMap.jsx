@@ -246,20 +246,6 @@ export default function IssueMap() {
     }
   };
 
-  // Quick village selector
-  const handleQuickVillage = async (name, lat, lng) => {
-    const coords = [lat, lng];
-    setLiveUserCoords(coords);
-    setMapCenter(coords);
-    setLiveAccuracy(5);
-    setLiveSource(`Village Hub (${name})`);
-    try {
-      const rev = await reverseGeocodeCoords(lat, lng);
-      setLiveAddress(rev?.address || `${name}, Maharashtra, India`);
-    } catch (e) {
-      setLiveAddress(`${name}, Maharashtra, India`);
-    }
-  };
 
   // Search Village or Landmark via OpenStreetMap Nominatim
   const handleSearchSubmit = async (e) => {
@@ -390,7 +376,7 @@ export default function IssueMap() {
         </div>
       </div>
 
-      {/* Village Search Bar & Quick Village Buttons */}
+      {/* Village Search Bar */}
       <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-soft space-y-3">
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
           <form onSubmit={handleSearchSubmit} className="relative flex-1 flex items-center gap-2">
@@ -427,52 +413,6 @@ export default function IssueMap() {
           </div>
         </div>
 
-        {/* Quick Village Pills */}
-        <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-600">
-          <span className="font-semibold text-slate-500 text-[11px]">Quick Village Teleport:</span>
-          <button
-            type="button"
-            onClick={() => handleQuickVillage('Chandoli', 16.73180, 73.90790)}
-            className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition"
-          >
-            📍 Chandoli
-          </button>
-          <button
-            type="button"
-            onClick={() => handleQuickVillage('Devrai', 16.73250, 73.90920)}
-            className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition"
-          >
-            📍 Devrai
-          </button>
-          <button
-            type="button"
-            onClick={() => handleQuickVillage('Sangli', 16.85240, 74.58150)}
-            className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition"
-          >
-            📍 Sangli
-          </button>
-          <button
-            type="button"
-            onClick={() => handleQuickVillage('Kolhapur', 16.70500, 74.24330)}
-            className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition"
-          >
-            📍 Kolhapur
-          </button>
-          <button
-            type="button"
-            onClick={() => handleQuickVillage('Satara', 17.68050, 73.99300)}
-            className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition"
-          >
-            📍 Satara
-          </button>
-          <button
-            type="button"
-            onClick={() => handleQuickVillage('Pune', 18.52040, 73.85670)}
-            className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition"
-          >
-            📍 Pune
-          </button>
-        </div>
 
         {/* Live Location Readout / Hint */}
         {liveUserCoords && (
