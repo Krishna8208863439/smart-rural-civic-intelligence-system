@@ -535,10 +535,8 @@ export default function ReportIssue() {
     return () => clearInterval(timer);
   }, []);
 
-  // Auto-detect GPS on component mount
-  useEffect(() => {
-    handleDetectGPS();
-  }, []);
+  // Note: Geolocation is triggered when user clicks 'Detect Live GPS Location' to avoid forcing ISP location on desktop
+  // useEffect(() => { handleDetectGPS(); }, []);
 
   // AI Detection Engine
   const runAiDetection = async (fileObj, sampleType, textOverride) => {
@@ -1008,6 +1006,20 @@ export default function ReportIssue() {
                     <span>Locked at {gpsTiming}</span>
                   </span>
                 )}
+              </div>
+            )}
+
+            {/* ISP / Desktop Location Advisory Notice */}
+            {gpsSource && (gpsSource.includes('IP') || gpsSource.includes('Restricted') || (gpsAccuracy && gpsAccuracy > 1000)) && (
+              <div className="mt-2.5 p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start space-x-2">
+                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                <div className="space-y-0.5">
+                  <span className="font-bold">Computer / Broadband Network Tower Detected:</span>
+                  <p className="text-[11px] text-amber-800">
+                    PCs and laptops do not have satellite GPS and detect your internet provider's tower.
+                    To set your exact village: Type your village name above and click <strong>"🔍 Pin Address"</strong>, or <strong>drag the green pin</strong> on the map below.
+                  </p>
+                </div>
               </div>
             )}
 

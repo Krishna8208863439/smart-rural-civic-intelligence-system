@@ -124,12 +124,42 @@ export const reverseGeocodeCoords = async (lat, lng) => {
   };
 };
 
+const LOCAL_VILLAGE_DICTIONARY = {
+  chandoli: { lat: 16.73180, lng: 73.90790, name: 'Chandoli, Gram Panchayat Chandoli, Maharashtra, India' },
+  devrai: { lat: 16.73250, lng: 73.90920, name: 'Devrai, Gram Panchayat Chandoli, Maharashtra, India' },
+  shirala: { lat: 17.08013, lng: 74.02686, name: 'Shirala, Sangli District, Maharashtra, India' },
+  sangli: { lat: 16.85240, lng: 74.58150, name: 'Sangli, Maharashtra, India' },
+  kolhapur: { lat: 16.70500, lng: 74.24330, name: 'Kolhapur, Maharashtra, India' },
+  satara: { lat: 17.68050, lng: 73.99300, name: 'Satara, Maharashtra, India' },
+  karad: { lat: 17.28850, lng: 74.18440, name: 'Karad, Satara District, Maharashtra, India' },
+  islampur: { lat: 17.05000, lng: 74.26670, name: 'Urun-Islampur, Sangli District, Maharashtra, India' },
+  panhala: { lat: 16.81260, lng: 74.11270, name: 'Panhala, Kolhapur District, Maharashtra, India' },
+  hatkanangale: { lat: 16.74538, lng: 74.42701, name: 'Hatkanangale, Kolhapur District, Maharashtra, India' },
+  ichalkaranji: { lat: 16.69220, lng: 74.46080, name: 'Ichalkaranji, Kolhapur District, Maharashtra, India' },
+  pune: { lat: 18.52040, lng: 73.85670, name: 'Pune, Maharashtra, India' },
+};
+
 /**
- * Forward geocode address or village name to coordinates via OpenStreetMap Nominatim
+ * Forward geocode address or village name to coordinates via local dictionary + OpenStreetMap Nominatim
  */
 export const forwardGeocodeAddress = async (query) => {
   if (!query || !query.trim()) return null;
   const clean = query.trim();
+  const lowerClean = clean.toLowerCase();
+
+  // 1. Instant match against regional village directory
+  for (const [key, val] of Object.entries(LOCAL_VILLAGE_DICTIONARY)) {
+    if (lowerClean.includes(key) || key.includes(lowerClean)) {
+      return {
+        lat: val.lat,
+        lng: val.lng,
+        displayName: val.name,
+        accuracy: 10,
+      };
+    }
+  }
+
+  // 2. OpenStreetMap Nominatim queries
   const queriesToTry = [
     clean.toLowerCase().includes('maharashtra') ? clean : `${clean}, Maharashtra, India`,
     clean,
