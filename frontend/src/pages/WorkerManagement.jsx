@@ -100,11 +100,19 @@ export default function WorkerManagement() {
     workerRole: 'Field Worker',
     status: 'Active',
   });
+  const [isCustomArea, setIsCustomArea] = useState(false);
+  const [customAreaName, setCustomAreaName] = useState('');
   const [generatedPassword, setGeneratedPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [formError, setFormError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [copiedState, setCopiedState] = useState(false);
+
+  // Dynamic available areas
+  const defaultAreas = ['Chandoli', 'Ward 1', 'Ward 2', 'Ward 3', 'Ward 4'];
+  const allAreas = Array.from(
+    new Set([...defaultAreas, ...workers.map((w) => w.assignedArea).filter(Boolean)])
+  );
 
   // Form states for Assign Task
   const [taskForm, setTaskForm] = useState({
@@ -203,6 +211,8 @@ export default function WorkerManagement() {
       workerRole: 'Field Worker',
       status: 'Active',
     });
+    setIsCustomArea(false);
+    setCustomAreaName('');
     setGeneratedPassword(pwd);
     setFormError('');
     setShowAddWorkerModal(true);
@@ -229,10 +239,17 @@ export default function WorkerManagement() {
       return;
     }
 
+    const finalArea = isCustomArea ? customAreaName.trim() : workerForm.assignedArea;
+    if (!finalArea) {
+      setFormError('Please select or type an assigned area name.');
+      return;
+    }
+
     try {
       setSubmitting(true);
       const res = await api.post('/workers', {
         ...workerForm,
+        assignedArea: finalArea,
         phone: cleanPhone,
       });
 
@@ -530,11 +547,11 @@ Login URL: ${window.location.origin}/worker/login`;
               className="w-full px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 bg-slate-50 focus:outline-none"
             >
               <option value="All">All Areas</option>
-              <option value="Chandoli">Chandoli</option>
-              <option value="Ward 1">Ward 1</option>
-              <option value="Ward 2">Ward 2</option>
-              <option value="Ward 3">Ward 3</option>
-              <option value="Ward 4">Ward 4</option>
+              {allAreas.map((area) => (
+                <option key={area} value={area}>
+                  {area}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -1100,18 +1117,64 @@ Login URL: ${window.location.origin}/worker/login`;
               {/* Field 7, 8 & 9: Area, Role & Status */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">Assigned Area</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block font-bold text-slate-700">Assigned Area</label>
+                    {isCustomArea && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsCustomArea(false);
+                          setWorkerForm({ ...workerForm, assignedArea: 'Chandoli' });
+                          setCustomAreaName('');
+                        }}
+                        className="text-[10px] font-bold text-emerald-700 hover:underline"
+                      >
+                        ← Choose Existing
+                      </button>
+                    )}
+                  </div>
                   <select
-                    value={workerForm.assignedArea}
-                    onChange={(e) => setWorkerForm({ ...workerForm, assignedArea: e.target.value })}
-                    className="w-full px-3 py-2 rounded-2xl border border-slate-200 bg-white"
+                    value={isCustomArea ? 'OTHER' : workerForm.assignedArea}
+                    onChange={(e) => {
+                      if (e.target.value === 'OTHER') {
+                        setIsCustomArea(true);
+                        setCustomAreaName('');
+                        setWorkerForm({ ...workerForm, assignedArea: '' });
+                      } else {
+                        setIsCustomArea(false);
+                        setCustomAreaName('');
+                        setWorkerForm({ ...workerForm, assignedArea: e.target.value });
+                      }
+                    }}
+                    className="w-full px-3 py-2 rounded-2xl border border-slate-200 bg-white font-medium text-slate-800"
                   >
-                    <option value="Chandoli">Chandoli</option>
-                    <option value="Ward 1">Ward 1</option>
-                    <option value="Ward 2">Ward 2</option>
-                    <option value="Ward 3">Ward 3</option>
-                    <option value="Ward 4">Ward 4</option>
+                    {allAreas.map((area) => (
+                      <option key={area} value={area}>
+                        {area}
+                      </option>
+                    ))}
+                    <option value="OTHER">➕ Other (Create New Area...)</option>
                   </select>
+
+                  {isCustomArea && (
+                    <div className="mt-2 space-y-1">
+                      <input
+                        type="text"
+                        value={customAreaName}
+                        onChange={(e) => {
+                          setCustomAreaName(e.target.value);
+                          setWorkerForm({ ...workerForm, assignedArea: e.target.value });
+                        }}
+                        placeholder="Enter other / new area name (e.g. Ward 5, Shivaji Chowk)..."
+                        required
+                        autoFocus
+                        className="w-full px-3 py-2 rounded-2xl border-2 border-emerald-500 bg-emerald-50/20 text-slate-800 text-xs font-semibold focus:outline-none placeholder:text-slate-400"
+                      />
+                      <p className="text-[10px] text-emerald-700 font-semibold">
+                        ✓ New area will be created and saved to system
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -1418,26 +1481,6 @@ Login URL: ${window.location.origin}/worker/login`;
                 </div>
               </div>
 
-              {/* Photo Preview if linked */}
-              {taskForm.beforeImage && (
-                <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex items-center space-x-3">
-                  <div className="w-14 h-14 rounded-xl overflow-hidden border border-slate-300 shrink-0">
-                    <img
-                      src={taskForm.beforeImage}
-                      alt="Before"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div>
-                    <span className="text-[11px] font-bold text-slate-800 block">
-                      Linked Issue Photographic Reference
-                    </span>
-                    <span className="text-[10px] text-slate-400">
-                      Forwarded to field specialist work order
-                    </span>
-                  </div>
-                </div>
-              )}
 
               {/* Buttons */}
               <div className="pt-4 flex items-center justify-end space-x-2 border-t border-slate-100">

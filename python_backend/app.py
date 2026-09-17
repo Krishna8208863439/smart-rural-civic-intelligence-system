@@ -2043,8 +2043,21 @@ def update_task_progress_route(task_id):
     data = request.get_json(silent=True) or request.form.to_dict() or {}
     note = data.get('note') or data.get('comment') or 'Progress update recorded.'
     image = data.get('image') or data.get('imageUrl') or ''
-    now_iso = utc_now_iso()
 
+    # Check for file uploads in progress updates
+    if request.files:
+        for fkey in ['image', 'images', 'file', 'photo']:
+            if fkey in request.files:
+                f = request.files.get(fkey)
+                if f and getattr(f, 'filename', None):
+                    clean_name = re.sub(r'[^a-zA-Z0-9_.-]', '_', f.filename)
+                    fname = f"{int(time.time())}_{clean_name}"
+                    fpath = os.path.join(UPLOADS_DIR, fname)
+                    f.save(fpath)
+                    image = f"/uploads/{fname}"
+                    break
+
+    now_iso = utc_now_iso()
     progress_entry = {"note": note, "image": image, "timestamp": now_iso}
 
     target_issue_id = None
@@ -2101,7 +2114,60 @@ def complete_field_task(task_id):
 
     data = request.get_json(silent=True) or request.form.to_dict() or {}
     notes = data.get('notes') or data.get('workerNotes') or data.get('note') or 'Field repairs completed successfully.'
-    after_image = data.get('afterImage') or data.get('imageUrl') or 'https://images.unsplash.com/photo-1584467735815-f778f274e296?w=800'
+
+    # 1. Process files uploaded in multipart/form-data
+    uploaded_images = []
+    if request.files:
+        for f_key in ['images', 'image', 'file', 'files', 'photos', 'proof', 'afterImage']:
+            if f_key in request.files:
+                file_list = request.files.getlist(f_key)
+                for f in file_list:
+                    if f and getattr(f, 'filename', None):
+                        clean_name = re.sub(r'[^a-zA-Z0-9_.-]', '_', f.filename)
+                        fname = f"{int(time.time())}_{clean_name}"
+                        fpath = os.path.join(UPLOADS_DIR, fname)
+                        f.save(fpath)
+                        uploaded_images.append(f"/uploads/{fname}")
+
+    # 2. Process base64 image strings if provided
+    raw_candidates = [
+        data.get('afterImage'),
+        data.get('sampleImageUrl'),
+        data.get('imageUrl'),
+        data.get('image'),
+        data.get('proofImage')
+    ]
+    for raw in raw_candidates:
+        if raw and isinstance(raw, str) and raw.startswith('data:image'):
+            try:
+                header, encoded = raw.split(',', 1)
+                ext = 'jpg'
+                if 'png' in header: ext = 'png'
+                elif 'webp' in header: ext = 'webp'
+                fname = f"{int(time.time())}_proof_{len(uploaded_images)}.{ext}"
+                fpath = os.path.join(UPLOADS_DIR, fname)
+                with open(fpath, 'wb') as fh:
+                    fh.write(base64.b64decode(encoded))
+                uploaded_images.append(f"/uploads/{fname}")
+                break
+            except Exception as ex:
+                print("Error saving base64 image:", ex)
+
+    # 3. Check regular URL (non-base64) if no file uploaded
+    if not uploaded_images:
+        for raw in raw_candidates:
+            if raw and isinstance(raw, str) and (raw.startswith('http://') or raw.startswith('https://') or raw.startswith('/uploads/')):
+                uploaded_images.append(raw)
+                break
+
+    # 4. Fallback only if no photo was uploaded or provided at all
+    if uploaded_images:
+        after_image = uploaded_images[0]
+        images_payload = [{"url": u} for u in uploaded_images]
+    else:
+        after_image = 'https://images.unsplash.com/photo-1584467735815-f778f274e296?w=800'
+        images_payload = [{"url": after_image}]
+
     lat = data.get('latitude')
     lng = data.get('longitude')
     now_iso = utc_now_iso()
@@ -2110,7 +2176,7 @@ def complete_field_task(task_id):
         "completedAt": now_iso,
         "completed_at": now_iso,
         "notes": notes,
-        "images": [{"url": after_image}],
+        "images": images_payload,
         "coordinates": [float(lng), float(lat)] if (lat and lng) else [74.2433, 16.9602]
     }
 
@@ -2121,10 +2187,13 @@ def complete_field_task(task_id):
         item['completed_at'] = now_iso
         item['workerNotes'] = notes
         item['afterImage'] = after_image
+        item['completionDetails'] = completion_payload
         target_issue_id = item.get('issueId')
         res_task = item
     else:
         target_issue_id = item['_id']
+        item['completionDetails'] = completion_payload
+        item['afterImage'] = after_image
         res_task = format_issue_as_task(item)
 
     if target_issue_id:
@@ -2133,9 +2202,21 @@ def complete_field_task(task_id):
             prev = iss.get('status', 'UNDER ACTION')
             iss['status'] = 'ACTION COMPLETED'
             iss['completionDetails'] = completion_payload
+            iss['afterImage'] = after_image
             iss['resolvedAt'] = now_iso
             iss['updatedAt'] = now_iso
             add_history(iss['_id'], 'WORK_COMPLETED', prev, 'ACTION COMPLETED', f"Field work completed by {worker_name}. Notes: {notes}", user_name=worker_name, user_role="worker")
+            # Evidence recording
+            ev_id = hashlib.md5(f"ev_{iss['_id']}_{time.time()}".encode('utf-8')).hexdigest()[:24]
+            db.setdefault('evidences', []).append({
+                "_id": ev_id,
+                "issueId": str(iss['_id']),
+                "sourceUser": u_id,
+                "evidenceType": "worker_completion",
+                "media": images_payload,
+                "reliabilityScore": 95,
+                "createdAt": now_iso
+            })
             db.setdefault('notifications', []).append({
                 "_id": hashlib.md5(f"notif_{iss['_id']}_{time.time()}".encode('utf-8')).hexdigest()[:24],
                 "id": hashlib.md5(f"notif_{iss['_id']}_{time.time()}".encode('utf-8')).hexdigest()[:24],

@@ -182,14 +182,14 @@
       "workerId": "GRAM-WKR-001",
       "workerRole": "Sanitation & Field Lead",
       "assignedArea": "Chandoli",
-      "lastLogin": "2026-09-17T11:59:31.936+05:30",
+      "lastLogin": "2026-09-17T18:47:51.419+05:30",
       "mustChangePassword": false
     },
     {
       "_id": "6aa3ce858d7b359c6c7ad3bb",
       "name": "Pranav",
       "email": "pranav@gmail.com",
-      "passwordHash": "$2a$10$S248cFdY/rrTKjeq4EIWWew8DhY9NowIIELT2h3Ij2umylB5T.OvG",
+      "passwordHash": "Sgi@5555",
       "role": "citizen",
       "village": "Gram Panchayat Chandoli",
       "language": "en",
@@ -253,7 +253,7 @@
       "mustChangePassword": false,
       "createdAt": "2026-09-11T09:43:05.039Z",
       "updatedAt": "2026-09-11T10:06:35.782Z",
-      "lastLogin": "2026-09-17T11:48:21.905+05:30"
+      "lastLogin": "2026-09-17T18:48:34.765+05:30"
     },
     {
       "_id": "71e53ee06c521ffeff884e87",
@@ -374,6 +374,93 @@
     }
   ],
   "issues": [
+    {
+      "_id": "7d5d3acf3e601e991d0a8065",
+      "title": "water",
+      "description": "hi",
+      "category": "Waste accumulation",
+      "status": "VERIFIED RESOLVED",
+      "createdBy": "6aa3ce858d7b359c6c7ad3bb",
+      "assignedWorker": "6aa3cd29807f4547b549bf99",
+      "location": {
+        "type": "Point",
+        "coordinates": [
+          74.28295,
+          16.47062
+        ],
+        "landmark": "Mhakave",
+        "address": "Mhakave, \u0915\u093e\u0917\u0932, Kolhapur District, Maharashtra, 416235, India",
+        "timing": "17 Sept 2026, 06:14:10 pm (IST)",
+        "accuracy": 15.0,
+        "detectedAt": "2026-09-17T12:45:03.347Z"
+      },
+      "priority": {
+        "level": "High",
+        "score": 78
+      },
+      "reliabilityScore": 88,
+      "reliabilityLevel": "High",
+      "recurrenceLevel": "Medium",
+      "images": [
+        {
+          "url": "/uploads/1789649103_images (1).jpg"
+        }
+      ],
+      "corroborationCount": 0,
+      "communityValidationStats": {
+        "confirms": 0,
+        "stillExists": 0,
+        "resolved": 0
+      },
+      "upvotes": 0,
+      "downvotes": 0,
+      "createdAt": "2026-09-17T18:15:03.389+05:30",
+      "updatedAt": "2026-09-17T13:20:57.192135",
+      "assigned_worker_id": "6aa3cd29807f4547b549bf99",
+      "assignedWorkerCode": "GRAM-WKR-005",
+      "assignedAt": "2026-09-17T18:34:09.334+05:30",
+      "assigned_at": "2026-09-17T18:34:09.334+05:30",
+      "assignedBy": "6aa3c76afb133c6389a695e0",
+      "assigned_by": "6aa3c76afb133c6389a695e0",
+      "completionDetails": {
+        "completedAt": "2026-09-17T18:50:03.801+05:30",
+        "completed_at": "2026-09-17T18:50:03.801+05:30",
+        "notes": "complete",
+        "images": [
+          {
+            "url": "/uploads/1789651203_WhatsApp_Image_2026-08-12_at_7.13.56_PM.jpeg"
+          },
+          {
+            "url": "/uploads/1789651203_WhatsApp_Image_2026-08-12_at_7.13.56_PM.jpeg"
+          },
+          {
+            "url": "/uploads/1789651203_WhatsApp_Image_2026-08-12_at_7.13.56_PM.jpeg"
+          },
+          {
+            "url": "/uploads/1789651203_proof_3.jpg"
+          }
+        ],
+        "coordinates": [
+          74.2433,
+          16.9602
+        ]
+      },
+      "resolvedAt": "2026-09-17T18:50:03.801+05:30",
+      "afterImage": "/uploads/1789651203_WhatsApp_Image_2026-08-12_at_7.13.56_PM.jpeg",
+      "verifiedAt": "2026-09-17T13:20:57.191978",
+      "adminVerification": {
+        "verifiedBy": "6aa3c76afb133c6389a695e0",
+        "verifiedAt": "2026-09-17T13:20:57.192214",
+        "notes": "Panchayat Administration verified field work and approved resolution proof.",
+        "forwardedToCitizen": true
+      },
+      "citizenFeedback": {
+        "rating": 5,
+        "satisfied": true,
+        "comment": "solve",
+        "submittedAt": "2026-09-17T13:22:36.692843"
+      }
+    },
     {
       "_id": "61c06601ac4a4033217f513f",
       "title": "Broken Street Light in Chandoli Central Square",
@@ -6477,9 +6564,130 @@
       "createdAt": "2026-09-11T09:49:59.077Z",
       "updatedAt": "2026-09-11T09:49:59.077Z",
       "__v": 0
+    },
+    {
+      "_id": "3880331db3c85be918393ec4",
+      "issueId": "7d5d3acf3e601e991d0a8065",
+      "sourceUser": "6aa3cd29807f4547b549bf99",
+      "evidenceType": "worker_completion",
+      "media": [
+        {
+          "url": "/uploads/1789651114_my_actual_fix_photo.jpg"
+        }
+      ],
+      "reliabilityScore": 95,
+      "createdAt": "2026-09-17T18:48:34.787+05:30"
+    },
+    {
+      "_id": "755760d57757fc56742c7caf",
+      "issueId": "7d5d3acf3e601e991d0a8065",
+      "sourceUser": "6aa3cd29807f4547b549bf99",
+      "evidenceType": "worker_completion",
+      "media": [
+        {
+          "url": "/uploads/1789651203_WhatsApp_Image_2026-08-12_at_7.13.56_PM.jpeg"
+        },
+        {
+          "url": "/uploads/1789651203_WhatsApp_Image_2026-08-12_at_7.13.56_PM.jpeg"
+        },
+        {
+          "url": "/uploads/1789651203_WhatsApp_Image_2026-08-12_at_7.13.56_PM.jpeg"
+        },
+        {
+          "url": "/uploads/1789651203_proof_3.jpg"
+        }
+      ],
+      "reliabilityScore": 95,
+      "createdAt": "2026-09-17T18:50:03.801+05:30"
     }
   ],
   "issueHistories": [
+    {
+      "_id": "bbe3e0baadfae5193995a9a9",
+      "issueId": "7d5d3acf3e601e991d0a8065",
+      "eventType": "ADMIN_VERIFIED",
+      "previousState": "ACTION COMPLETED",
+      "newState": "VERIFIED RESOLVED",
+      "userId": "6aa3c76afb133c6389a695e0",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "comment": "Resolution verified and published to citizen. Admin Notes: \"Panchayat Administration verified field work and approved resolution proof.\"",
+      "timestamp": "2026-09-17T13:20:57.192348",
+      "createdAt": "2026-09-17T13:20:57.192483"
+    },
+    {
+      "_id": "642e142a4a67bb89f8f83a3b",
+      "issueId": "7d5d3acf3e601e991d0a8065",
+      "eventType": "WORK_COMPLETED",
+      "previousState": "ACTION COMPLETED",
+      "newState": "ACTION COMPLETED",
+      "userName": "Rohan Patil (Field Specialist)",
+      "userRole": "worker",
+      "comment": "Field work completed by Rohan Patil (Field Specialist). Notes: complete",
+      "timestamp": "2026-09-17T18:50:03.801+05:30",
+      "createdAt": "2026-09-17T18:50:03.801+05:30"
+    },
+    {
+      "_id": "6c20de4ca07d58f001e77c1e",
+      "issueId": "7d5d3acf3e601e991d0a8065",
+      "eventType": "WORK_COMPLETED",
+      "previousState": "ACTION COMPLETED",
+      "newState": "ACTION COMPLETED",
+      "userName": "Rohan Patil (Field Specialist)",
+      "userRole": "worker",
+      "comment": "Field work completed by Rohan Patil (Field Specialist). Notes: Drainage completely cleared and pipe replaced on-site.",
+      "timestamp": "2026-09-17T18:48:34.787+05:30",
+      "createdAt": "2026-09-17T18:48:34.787+05:30"
+    },
+    {
+      "_id": "b5379813b428674c288c8f0a",
+      "issueId": "7d5d3acf3e601e991d0a8065",
+      "eventType": "WORK_COMPLETED",
+      "previousState": "ACTION COMPLETED",
+      "newState": "ACTION COMPLETED",
+      "userName": "Rohan Patil (Field Specialist)",
+      "userRole": "worker",
+      "comment": "Field work completed by Rohan Patil (Field Specialist). Notes: Civic problem solved to standard.",
+      "timestamp": "2026-09-17T18:41:19.363+05:30",
+      "createdAt": "2026-09-17T18:41:19.363+05:30"
+    },
+    {
+      "_id": "2d00ab812e7df20165742e7f",
+      "issueId": "7d5d3acf3e601e991d0a8065",
+      "eventType": "WORK_COMPLETED",
+      "previousState": "NEW",
+      "newState": "ACTION COMPLETED",
+      "userName": "Rohan Patil (Field Specialist)",
+      "userRole": "worker",
+      "comment": "Field work completed by Rohan Patil (Field Specialist). Notes: Civic problem solved to standard.",
+      "timestamp": "2026-09-17T18:37:21.240+05:30",
+      "createdAt": "2026-09-17T18:37:21.240+05:30"
+    },
+    {
+      "_id": "b85e62eb58a898bc447eb261",
+      "issueId": "7d5d3acf3e601e991d0a8065",
+      "eventType": "WORKER_ASSIGNED",
+      "previousState": "NEW",
+      "newState": "NEW",
+      "userName": "Krishna (Gram Sevak Admin)",
+      "userRole": "admin",
+      "comment": "Assigned for field verification and resolution",
+      "timestamp": "2026-09-17T18:34:09.335+05:30",
+      "createdAt": "2026-09-17T18:34:09.335+05:30"
+    },
+    {
+      "_id": "46c2ade5872d00eb4a62a1a5",
+      "issueId": "7d5d3acf3e601e991d0a8065",
+      "eventType": "CREATED",
+      "previousState": "",
+      "newState": "NEW",
+      "userId": "6aa3ce858d7b359c6c7ad3bb",
+      "userName": "Pranav",
+      "userRole": "citizen",
+      "comment": "Issue reported in Waste accumulation category.",
+      "timestamp": "2026-09-17T18:15:03.389+05:30",
+      "createdAt": "2026-09-17T18:15:03.389+05:30"
+    },
     {
       "_id": "c60a6edd32e90dac57f4bbb9",
       "issueId": "61c06601ac4a4033217f513f",
@@ -10008,9 +10216,128 @@
       "is_read": false,
       "createdAt": "2026-09-17T11:48:21.978+05:30",
       "created_at": "2026-09-17T11:48:21.978+05:30"
+    },
+    {
+      "_id": "b646ea6ad8427f78e1a15f3d",
+      "id": "a9e726eb2272d3f27ff71536",
+      "userId": "6aa3cd29807f4547b549bf99",
+      "worker_id": "6aa3cd29807f4547b549bf99",
+      "roleTarget": "worker",
+      "type": "WORKER_ASSIGNED",
+      "title": "New Task Assigned: water",
+      "message": "You have been assigned to resolve Waste accumulation at Mhakave. Reason: Assigned for field verification and resolution",
+      "issueId": "7d5d3acf3e601e991d0a8065",
+      "taskId": "TSK-8065",
+      "task_id": "7d5d3acf3e601e991d0a8065",
+      "read": false,
+      "is_read": false,
+      "createdAt": "2026-09-17T18:34:09.334+05:30",
+      "created_at": "2026-09-17T18:34:09.334+05:30"
+    },
+    {
+      "_id": "d345a9be043fc0aabd1b06f0",
+      "id": "479fe151dd42bc3454f36322",
+      "title": "Work Completed: water",
+      "message": "Worker Rohan Patil (Field Specialist) submitted completion proof for #8065. Ready for Gram Panchayat verification.",
+      "roleTarget": "admin",
+      "read": false,
+      "is_read": false,
+      "createdAt": "2026-09-17T18:37:21.239+05:30",
+      "created_at": "2026-09-17T18:37:21.239+05:30"
+    },
+    {
+      "_id": "e96e49162e91de607c641e16",
+      "id": "8b157b547ab12dfb1725c9f5",
+      "title": "Work Completed: water",
+      "message": "Worker Rohan Patil (Field Specialist) submitted completion proof for #8065. Ready for Gram Panchayat verification.",
+      "roleTarget": "admin",
+      "read": false,
+      "is_read": false,
+      "createdAt": "2026-09-17T18:41:19.362+05:30",
+      "created_at": "2026-09-17T18:41:19.362+05:30"
+    },
+    {
+      "_id": "5c4558f84c0b57cac24f0118",
+      "id": "8d85d95c48df357edb425435",
+      "title": "Work Completed: water",
+      "message": "Worker Rohan Patil (Field Specialist) submitted completion proof for #8065. Ready for Gram Panchayat verification.",
+      "roleTarget": "admin",
+      "read": false,
+      "is_read": false,
+      "createdAt": "2026-09-17T18:48:34.787+05:30",
+      "created_at": "2026-09-17T18:48:34.787+05:30"
+    },
+    {
+      "_id": "dd0bcfd07b3d1cf8d9a27cba",
+      "id": "2633354ab57a9d09ed85396a",
+      "title": "Work Completed: water",
+      "message": "Worker Rohan Patil (Field Specialist) submitted completion proof for #8065. Ready for Gram Panchayat verification.",
+      "roleTarget": "admin",
+      "read": false,
+      "is_read": false,
+      "createdAt": "2026-09-17T18:50:03.801+05:30",
+      "created_at": "2026-09-17T18:50:03.801+05:30"
     }
   ],
   "tasks": [
+    {
+      "id": "7d5d3acf3e601e991d0a8065",
+      "_id": "7d5d3acf3e601e991d0a8065",
+      "taskId": "TSK-8065",
+      "issueId": "7d5d3acf3e601e991d0a8065",
+      "workerId": "6aa3cd29807f4547b549bf99",
+      "assigned_worker_id": "6aa3cd29807f4547b549bf99",
+      "title": "water",
+      "category": "Waste accumulation",
+      "priority": "High",
+      "description": "hi",
+      "location": {
+        "landmark": "Mhakave",
+        "address": "Mhakave, \u0915\u093e\u0917\u0932, Kolhapur District, Maharashtra, 416235, India",
+        "coordinates": [
+          74.28295,
+          16.47062
+        ]
+      },
+      "deadline": "2026-09-19T18:34:09.335649+05:30",
+      "due_date": "2026-09-19T18:34:09.335649+05:30",
+      "requiredAction": "Inspect site, resolve Waste accumulation, upload after photos, and mark completed.",
+      "beforeImage": "/uploads/1789649103_images (1).jpg",
+      "afterImage": "/uploads/1789651203_WhatsApp_Image_2026-08-12_at_7.13.56_PM.jpeg",
+      "status": "VERIFIED",
+      "workerNotes": "complete",
+      "assignedAt": "2026-09-17T18:34:09.334+05:30",
+      "assigned_at": "2026-09-17T18:34:09.334+05:30",
+      "createdAt": "2026-09-17T18:15:03.389+05:30",
+      "created_at": "2026-09-17T18:15:03.389+05:30",
+      "assignedBy": "6aa3c76afb133c6389a695e0",
+      "assigned_by": "6aa3c76afb133c6389a695e0",
+      "completedAt": "2026-09-17T18:50:03.801+05:30",
+      "completed_at": "2026-09-17T18:50:03.801+05:30",
+      "completionDetails": {
+        "completedAt": "2026-09-17T18:50:03.801+05:30",
+        "completed_at": "2026-09-17T18:50:03.801+05:30",
+        "notes": "complete",
+        "images": [
+          {
+            "url": "/uploads/1789651203_WhatsApp_Image_2026-08-12_at_7.13.56_PM.jpeg"
+          },
+          {
+            "url": "/uploads/1789651203_WhatsApp_Image_2026-08-12_at_7.13.56_PM.jpeg"
+          },
+          {
+            "url": "/uploads/1789651203_WhatsApp_Image_2026-08-12_at_7.13.56_PM.jpeg"
+          },
+          {
+            "url": "/uploads/1789651203_proof_3.jpg"
+          }
+        ],
+        "coordinates": [
+          74.2433,
+          16.9602
+        ]
+      }
+    },
     {
       "id": "61c06601ac4a4033217f513f",
       "_id": "61c06601ac4a4033217f513f",

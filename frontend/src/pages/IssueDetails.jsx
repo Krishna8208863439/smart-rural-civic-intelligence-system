@@ -645,11 +645,42 @@ export default function IssueDetails() {
   const handleCompleteWork = async (e) => {
     e?.preventDefault();
     try {
+      if (completionFiles.length === 0 && !samplePreviewUrl) {
+        alert(
+          i18n.language === 'mr'
+            ? 'कृपया पुरावा फोटो निवडा'
+            : i18n.language === 'hi'
+            ? 'कृपया समाधान प्रमाण फोटो चुनें'
+            : 'Please select a problem solved proof image before submitting.'
+        );
+        return;
+      }
+
       const formData = new FormData();
       formData.append('notes', completionNotes || 'Civic problem solved to standard.');
-      completionFiles.forEach((f) => formData.append('images', f));
-      if (samplePreviewUrl && completionFiles.length === 0) {
+      completionFiles.forEach((f) => {
+        formData.append('images', f);
+        formData.append('image', f);
+        formData.append('afterImage', f);
+      });
+
+      // Also attach base64 representation of the user-selected image
+      if (completionFiles.length > 0) {
+        try {
+          const b64 = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(completionFiles[0]);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+          });
+          if (b64) {
+            formData.append('sampleImageUrl', b64);
+            formData.append('proofImage', b64);
+          }
+        } catch (_) {}
+      } else if (samplePreviewUrl) {
         formData.append('sampleImageUrl', samplePreviewUrl);
+        formData.append('afterImage', samplePreviewUrl);
       }
 
       await api.post(`/workers/issues/${id}/completion-evidence`, formData, {
@@ -2266,19 +2297,14 @@ export default function IssueDetails() {
             </div>
           )}
 
-          {/* Worker Workflow Panel (if role === 'worker' or role === 'admin') */}
-          {(role === 'worker' || role === 'admin') && (
+          {/* Worker Workflow Panel (Only displayed for Worker login, not Admin login) */}
+          {role === 'worker' && (
             <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-soft space-y-4">
               <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-900 flex items-center space-x-1.5">
                   <Wrench className="w-3.5 h-3.5 text-indigo-600" />
                   <span>👷 Worker Execution Panel</span>
                 </h3>
-                {role === 'admin' && (
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 font-bold border border-purple-200">
-                    Supervisor Mode
-                  </span>
-                )}
               </div>
 
               {issue.status === 'ASSIGNED' && (
