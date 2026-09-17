@@ -21,7 +21,8 @@ export default function WorkerLogin() {
     setLoading(true);
     try {
       const user = await login(identifier.trim(), password.trim());
-      if (user.role === 'worker' || user.role === 'admin') {
+      const userRole = (user?.role || '').toLowerCase();
+      if (userRole === 'worker' || userRole === 'admin' || userRole === 'field_worker') {
         navigate('/worker');
       } else {
         navigate('/citizen');
@@ -34,11 +35,6 @@ export default function WorkerLogin() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleQuickFill = (id, pwd) => {
-    setIdentifier(id);
-    setPassword(pwd);
   };
 
   return (
@@ -132,54 +128,6 @@ export default function WorkerLogin() {
               <span>{loading ? 'Verifying Field Credentials...' : 'Sign In to Field Portal'}</span>
             </button>
           </form>
-
-          {/* Quick Demo Credentials Box for convenient testing */}
-          <div className="pt-3 border-t border-slate-100">
-            <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200/70 text-[11px] space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-bold text-slate-700">Verified Worker Accounts:</span>
-                <span className="text-[10px] text-emerald-700 font-bold">1-Click Login</span>
-              </div>
-
-              {/* Rohan Account */}
-              <div className="p-2 bg-white rounded-xl border border-emerald-200/80 shadow-xs space-y-1">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-slate-800">Rohan Patil (Field Specialist)</span>
-                  <span className="font-mono text-[10px] bg-emerald-50 text-emerald-800 font-bold px-1.5 py-0.5 rounded">GRAM-WKR-005</span>
-                </div>
-                <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono">
-                  <span>rohan@gmail.com</span>
-                  <span className="text-emerald-800 font-bold">Pass: Sgi@5555</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleQuickFill('rohan@gmail.com', 'Sgi@5555')}
-                  className="w-full mt-1 py-1 px-2 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-[10px] font-bold transition text-center"
-                >
-                  ⚡ Fill Rohan Credentials (rohan@gmail.com / Sgi@5555)
-                </button>
-              </div>
-
-              {/* KD Account */}
-              <div className="p-2 bg-white rounded-xl border border-slate-200 shadow-xs space-y-1">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-slate-800">KD (Field Lead)</span>
-                  <span className="font-mono text-[10px] bg-slate-100 text-slate-700 font-bold px-1.5 py-0.5 rounded">GRAM-WKR-001</span>
-                </div>
-                <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono">
-                  <span>kd@gmail.com</span>
-                  <span className="text-emerald-800 font-bold">Pass: worker123</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleQuickFill('kd@gmail.com', 'worker123')}
-                  className="w-full mt-1 py-1 px-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] font-bold transition text-center"
-                >
-                  Fill KD Credentials (kd@gmail.com)
-                </button>
-              </div>
-            </div>
-          </div>
 
           <div className="text-center text-xs text-slate-500 pt-1">
             <span>Are you a citizen or admin? </span>

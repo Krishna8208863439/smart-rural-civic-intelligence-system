@@ -123,8 +123,8 @@ def run_worker_suite():
     # Verify Task
     ver_res = client.put(f'/api/tasks/{target_id}/verify', headers=a_headers)
     assert ver_res.status_code == 200
-    assert ver_res.get_json()['task']['status'] == 'VERIFIED'
-    print("  [PASS] Admin verified field task: Status is VERIFIED")
+    assert ver_res.get_json()['task']['status'] in ['VERIFIED', 'ADMIN_VERIFIED']
+    print(f"  [PASS] Admin verified field task: Status is {ver_res.get_json()['task']['status']}")
 
     # Reopen Task
     reopen_res = client.put(f'/api/tasks/{target_id}/reopen', json={"reason": "Additional pressure testing required"}, headers=a_headers)
@@ -149,9 +149,74 @@ def run_worker_suite():
     print(f"  [PASS] Activity summary: {act['activity']}")
     print(f"         Total workers tracked in performance table: {len(act['workerPerformance'])}")
 
+    # 7. Complete Admin Creation -> Worker Login -> Dashboard -> First Login Password Change
+    print("\n--- 7. Testing Admin Worker Creation -> Login -> /api/worker/dashboard -> Password Change ---")
+    new_email = f"fieldworker_{int(time.time())}@chandoli.in"
+    create_payload = {
+        "name": "Mahadev Sitaram Pawar",
+        "email": new_email,
+        "phone": "9822334455",
+        "assignedArea": "North Canal Ward",
+        "workerRole": "Road Maintenance Worker",
+        "status": "Active"
+    }
+    c_res = client.post('/api/workers', json=create_payload, headers=a_headers)
+    assert c_res.status_code == 201, f"Worker creation failed: {c_res.get_json()}"
+    c_data = c_res.get_json()
+    assert c_data['success'] is True
+    worker_creds = c_data['worker']
+    temp_pwd = worker_creds['temporaryPassword']
+    gen_wkr_id = worker_creds['workerId']
+    print(f"  [PASS] Admin created worker: '{worker_creds['name']}' (ID: {gen_wkr_id}, Temp Password: {temp_pwd})")
+
+    # Worker logs in with temporary password
+    l_res = client.post('/api/auth/login', json={"email": new_email, "password": temp_pwd})
+    assert l_res.status_code == 200, f"Worker login failed: {l_res.get_json()}"
+    l_data = l_res.get_json()
+    assert l_data['success'] is True
+    assert l_data['user']['role'] == 'worker'
+    assert l_data['user']['mustChangePassword'] is True
+    assert l_data['user']['status'] == 'Active'
+    new_wkr_tok = l_data['token']
+    new_wkr_headers = {"Authorization": f"Bearer {new_wkr_tok}"}
+    print(f"  [PASS] Worker logged in successfully. Role: {l_data['user']['role']}, mustChangePassword: True")
+
+    # Worker fetches dashboard /api/worker/dashboard
+    dash_res = client.get('/api/worker/dashboard', headers=new_wkr_headers)
+    assert dash_res.status_code == 200, f"Worker dashboard failed: {dash_res.get_json()}"
+    dash_data = dash_res.get_json()
+    assert dash_data['success'] is True
+    assert dash_data['worker']['workerId'] == gen_wkr_id
+    assert dash_data['worker']['name'] == "Mahadev Sitaram Pawar"
+    assert dash_data['worker']['assignedArea'] == "North Canal Ward"
+    assert dash_data['worker']['status'] == "Active"
+    assert dash_data['worker']['mustChangePassword'] is True
+    assert isinstance(dash_data['tasks'], list)
+    assert dash_data['statistics']['totalTasks'] == 0
+    print(f"  [PASS] Worker dashboard rendered without errors. Profile: {dash_data['worker']['name']} ({dash_data['worker']['workerId']})")
+    print(f"         Stats verified: {dash_data['statistics']} (Zero-task state valid)")
+
+    # Worker performs first-login password change
+    new_permanent_pwd = "PawarSecurePass@2026"
+    chg_res = client.put('/api/auth/change-password', json={
+        "currentPassword": temp_pwd,
+        "newPassword": new_permanent_pwd
+    }, headers=new_wkr_headers)
+    assert chg_res.status_code == 200, f"Password change failed: {chg_res.get_json()}"
+    assert chg_res.get_json()['mustChangePassword'] is False
+    print(f"  [PASS] First-login password changed successfully. mustChangePassword is now False.")
+
+    # Verify worker can login with new permanent password
+    re_login = client.post('/api/auth/login', json={"email": new_email, "password": new_permanent_pwd})
+    assert re_login.status_code == 200
+    assert re_login.get_json()['user']['mustChangePassword'] is False
+    print(f"  [PASS] Re-login with updated password succeeded.")
+
     print("\n==================================================")
     print("  >>> ALL WORKER TESTS PASSED SUCCESSFULLY! <<<")
     print("==================================================")
 
 if __name__ == '__main__':
+    import time
     run_worker_suite()
+

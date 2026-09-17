@@ -10,6 +10,7 @@ router.post('/reset-password', resetPassword);
 router.get('/me', protect, getMe);
 router.put('/language', protect, updateLanguage);
 router.put('/update-password', protect, updatePassword);
+router.put('/change-password', protect, updatePassword);
 
 module.exports = router;
 

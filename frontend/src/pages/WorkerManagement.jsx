@@ -783,8 +783,8 @@ Login URL: ${window.location.origin}/worker/login`;
                       </td>
                     </tr>
                   ) : (
-                    workerPerformance.map((wp) => (
-                      <tr key={wp.workerId} className="hover:bg-slate-50 transition">
+                    workerPerformance.map((wp, idx) => (
+                      <tr key={wp._id || `${wp.workerId || 'w'}-${idx}`} className="hover:bg-slate-50 transition">
                         <td className="py-2.5 pr-2 font-bold text-slate-900">
                           <div>{wp.name}</div>
                           <div className="text-[10px] text-slate-400 font-mono">{wp.workerId}</div>

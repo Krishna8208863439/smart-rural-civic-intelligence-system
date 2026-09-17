@@ -677,3 +677,129 @@ exports.getWorkerMonitoringActivity = async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error retrieving monitoring data' });
   }
 };
+
+// @desc    Get complete Worker Dashboard payload (profile, statistics, assigned tasks)
+// @route   GET /api/worker/dashboard or GET /api/workers/dashboard
+// @access  Private (Worker, Admin)
+exports.getWorkerDashboard = async (req, res) => {
+  try {
+    const worker = await User.findById(req.user.id).select('-passwordHash');
+    if (!worker) {
+      return res.status(404).json({ success: false, message: 'Worker account not found.' });
+    }
+
+    const workerIdStr = worker._id.toString();
+    const wId = worker.workerId || '';
+
+    // Fetch personal tasks from Task model
+    let tasks = await Task.find({
+      $or: [{ workerId: worker._id }, { workerId: workerIdStr }],
+    })
+      .populate('issueId', 'title category priority status images location description deadline completionDetails')
+      .populate('assignedBy', 'name email')
+      .sort({ createdAt: -1 })
+      .lean();
+
+    // Also include any issues assigned directly to worker
+    try {
+      const existingTaskIssueIds = new Set(
+        tasks.map((t) => (t.issueId?._id || t.issueId || t._id)?.toString())
+      );
+      const queryOr = [{ assignedWorker: worker._id }, { assignedWorker: workerIdStr }];
+      if (wId) queryOr.push({ assignedWorker: wId });
+      if (worker.email) queryOr.push({ assignedWorker: worker.email.toLowerCase() });
+
+      const directIssues = await Issue.find({ $or: queryOr }).lean();
+      for (const iss of directIssues) {
+        const issIdStr = iss._id.toString();
+        if (!existingTaskIssueIds.has(issIdStr)) {
+          tasks.unshift({
+            _id: iss._id,
+            taskId: `TSK-${issIdStr.slice(-4).toUpperCase()}`,
+            issueId: iss,
+            title: iss.title,
+            category: iss.category,
+            priority: typeof iss.priority === 'object' ? iss.priority?.level : (iss.priority || 'Medium'),
+            description: iss.description,
+            location: iss.location,
+            deadline: iss.deadline || null,
+            status:
+              iss.status === 'UNDER ACTION'
+                ? 'IN PROGRESS'
+                : iss.status === 'ACTION COMPLETED'
+                ? 'COMPLETED'
+                : iss.status === 'VERIFIED RESOLVED'
+                ? 'VERIFIED'
+                : iss.status,
+            beforeImage: iss.images?.[0]?.url || '',
+            afterImage: iss.completionDetails?.images?.[0]?.url || '',
+            workerNotes: iss.completionDetails?.notes || '',
+            createdAt: iss.createdAt,
+          });
+          existingTaskIssueIds.add(issIdStr);
+        }
+      }
+    } catch (directErr) {
+      console.warn('Direct issues load error in dashboard:', directErr.message);
+    }
+
+    // Format tasks cleanly
+    const formattedTasks = tasks.map((t) => {
+      const issue = t.issueId || {};
+      const tId = t._id ? t._id.toString() : '';
+      return {
+        _id: tId,
+        id: tId,
+        taskId: t.taskId || (tId ? `TSK-${tId.slice(-4).toUpperCase()}` : 'TSK-0000'),
+        issueId: issue._id ? issue._id.toString() : (t.issueId ? t.issueId.toString() : tId),
+        title: t.title || issue.title || 'Civic Repair Work Order',
+        category: t.category || issue.category || 'General',
+        priority: typeof t.priority === 'object' ? t.priority?.level : (t.priority || issue.priority?.level || 'Medium'),
+        description: t.description || issue.description || '',
+        location: t.location || issue.location || { address: worker.assignedArea || 'Chandoli' },
+        assignedDate: t.createdAt || issue.assignedAt || new Date().toISOString(),
+        dueDate: t.deadline || issue.deadline || null,
+        deadline: t.deadline || issue.deadline || null,
+        status: t.status || 'ASSIGNED',
+        beforeImage: t.beforeImage || issue.images?.[0]?.url || '',
+        afterImage: t.afterImage || issue.completionDetails?.images?.[0]?.url || '',
+        workerNotes: t.workerNotes || issue.completionDetails?.notes || '',
+      };
+    });
+
+    const totalTasks = formattedTasks.length;
+    const pendingTasks = formattedTasks.filter((t) => ['ASSIGNED', 'NEW', 'VALIDATED'].includes(t.status)).length;
+    const inProgressTasks = formattedTasks.filter((t) => ['ACCEPTED', 'IN PROGRESS', 'UNDER ACTION'].includes(t.status)).length;
+    const completedTasks = formattedTasks.filter((t) => ['COMPLETED', 'VERIFIED', 'ACTION COMPLETED', 'VERIFIED RESOLVED'].includes(t.status)).length;
+
+    res.status(200).json({
+      success: true,
+      worker: {
+        id: worker._id,
+        _id: worker._id,
+        workerId: worker.workerId || 'GRAM-WKR-001',
+        name: worker.name,
+        email: worker.email,
+        mobile: worker.phone || '',
+        phone: worker.phone || '',
+        assignedArea: worker.assignedArea || 'Chandoli',
+        role: worker.workerRole || worker.specialization || 'Field Worker',
+        workerRole: worker.workerRole || worker.specialization || 'Field Worker',
+        status: worker.isActive ? 'Active' : 'Inactive',
+        isActive: !!worker.isActive,
+        mustChangePassword: !!worker.mustChangePassword,
+      },
+      tasks: formattedTasks,
+      statistics: {
+        totalTasks,
+        pendingTasks,
+        inProgressTasks,
+        completedTasks,
+      },
+    });
+  } catch (error) {
+    console.error('getWorkerDashboard error:', error);
+    res.status(500).json({ success: false, message: 'Server error loading worker dashboard' });
+  }
+};
+

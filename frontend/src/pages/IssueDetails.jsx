@@ -569,16 +569,29 @@ export default function IssueDetails() {
     }
   };
 
-  // Admin Status Update
+  // Admin Status Update & Audit Log
   const handleStatusChange = async (e) => {
     e.preventDefault();
     try {
       setStatusUpdating(true);
-      await api.put(`/issues/${id}/status`, {
+      const workerToAssign =
+        selectedWorker ||
+        (typeof issue?.assignedWorker === 'object' ? issue?.assignedWorker?._id : issue?.assignedWorker) ||
+        aiWorkerMatch?.worker?._id;
+
+      const payload = {
         status: newStatus,
         comment: statusComment,
-      });
+        reason: statusComment || `Status updated to ${newStatus}`,
+      };
+      if (workerToAssign) {
+        payload.worker_id = workerToAssign;
+        payload.workerId = workerToAssign;
+      }
+
+      await api.put(`/issues/${id}/status`, payload);
       setStatusComment('');
+      alert(`✓ Status updated to ${newStatus} and audit log recorded successfully.`);
       await fetchIssueData();
     } catch (err) {
       alert(err.response?.data?.message || 'Status update failed');
@@ -600,9 +613,14 @@ export default function IssueDetails() {
     }
 
     try {
-      await api.put(`/admin/assign-worker/${id}`, { workerId: workerToAssign });
+      await api.put(`/admin/assign-worker/${id}`, {
+        worker_id: workerToAssign,
+        workerId: workerToAssign,
+        status: newStatus || 'ASSIGNED',
+        reason: statusComment || 'Assigned for field verification and resolution'
+      });
       const wName = workers.find((w) => w._id === workerToAssign)?.name || 'Field Specialist';
-      alert(`✓ Task dispatched to ${wName}! The worker will see this in their field queue.`);
+      alert(`✓ Worker assigned successfully! Task dispatched to ${wName}.`);
       await fetchIssueData();
     } catch (err) {
       alert(err.response?.data?.message || 'Worker assignment failed');
@@ -2185,6 +2203,30 @@ export default function IssueDetails() {
                     <span>Assign Worker</span>
                   </button>
                 </div>
+
+                {/* Assigned Worker Info Card */}
+                {issue.assignedWorker && (
+                  <div className="p-3.5 rounded-2xl bg-emerald-50/90 border border-emerald-300/80 shadow-2xs space-y-1 mt-2">
+                    <div className="flex items-center justify-between text-xs font-black text-emerald-950">
+                      <div className="flex items-center space-x-1.5">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        <span>Worker:</span>
+                        <span className="text-emerald-900 font-extrabold">
+                          {typeof issue.assignedWorker === 'object'
+                            ? issue.assignedWorker.name
+                            : (workers.find((w) => w._id === issue.assignedWorker)?.name || 'KD (Field Worker Lead)')}
+                        </span>
+                      </div>
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white font-extrabold text-[10px]">
+                        {issue.status || 'ASSIGNED'}
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-emerald-900 flex flex-wrap gap-x-3 gap-y-0.5 pt-0.5 font-medium">
+                      <span>📍 Assigned Area: <strong className="font-bold text-emerald-950">{typeof issue.assignedWorker === 'object' ? (issue.assignedWorker.assignedArea || 'Chandoli') : 'Chandoli'}</strong></span>
+                      <span>⏰ Assigned At: <strong className="font-bold text-emerald-950">{issue.assignedAt ? new Date(issue.assignedAt).toLocaleString([], { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Recently'}</strong></span>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Status Override */}

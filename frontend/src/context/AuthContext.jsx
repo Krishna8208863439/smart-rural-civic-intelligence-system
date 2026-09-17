@@ -90,18 +90,35 @@ export const AuthProvider = ({ children }) => {
     return await login(email, password);
   };
 
+  const updateUserData = (updates) => {
+    setUser((prev) => {
+      const nextUser = { ...(prev || {}), ...updates };
+      localStorage.setItem('srci_user', JSON.stringify(nextUser));
+      return nextUser;
+    });
+  };
+
+  const normalizeRole = (r) => {
+    if (!r) return 'guest';
+    const lower = String(r).toLowerCase().trim();
+    if (lower === 'worker' || lower === 'field_worker' || lower.includes('worker')) return 'worker';
+    if (lower === 'admin' || lower.includes('admin')) return 'admin';
+    return lower;
+  };
+
   return (
     <AuthContext.Provider
       value={{
         user,
         token,
-        role: user?.role || 'guest',
+        role: normalizeRole(user?.role),
         loading,
         login,
         register,
         logout,
         switchLanguage,
         demoLogin,
+        updateUserData,
       }}
     >
       {children}

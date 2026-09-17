@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-const generateToken = (id) => {
+const generateToken = (id, role = 'citizen', workerId = null) => {
   return jwt.sign(
-    { id },
+    { id, role, workerId },
     process.env.JWT_SECRET || 'srci_jwt_secret_production_ready_rural_intelligence_2025',
     { expiresIn: '30d' }
   );
@@ -142,24 +142,29 @@ exports.login = async (req, res) => {
       await user.save({ validateBeforeSave: false });
     }
 
-    const token = generateToken(user._id);
+    const normalizedRole = user.role === 'worker' ? 'worker' : user.role;
+    const token = generateToken(user._id, normalizedRole, user.workerId);
 
     res.status(200).json({
       success: true,
       token,
       user: {
         id: user._id,
+        _id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role,
+        mobile: user.phone || '',
+        phone: user.phone || '',
+        role: normalizedRole,
         village: user.village,
         language: user.language,
-        phone: user.phone,
         specialization: user.specialization,
         workerId: user.workerId || null,
         assignedArea: user.assignedArea || 'Chandoli',
-        workerRole: user.workerRole || 'Field Worker',
-        mustChangePassword: user.mustChangePassword || false,
+        workerRole: user.workerRole || user.specialization || 'Field Worker',
+        status: user.isActive ? 'Active' : 'Inactive',
+        isActive: !!user.isActive,
+        mustChangePassword: !!user.mustChangePassword,
         lastLogin: user.lastLogin || null,
       },
     });
@@ -181,21 +186,26 @@ exports.getMe = async (req, res) => {
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
+    const normalizedRole = user.role === 'worker' ? 'worker' : user.role;
     res.status(200).json({
       success: true,
       user: {
         id: user._id,
+        _id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role,
+        mobile: user.phone || '',
+        phone: user.phone || '',
+        role: normalizedRole,
         village: user.village,
         language: user.language,
-        phone: user.phone,
         specialization: user.specialization,
         workerId: user.workerId || null,
         assignedArea: user.assignedArea || 'Chandoli',
-        workerRole: user.workerRole || 'Field Worker',
-        mustChangePassword: user.mustChangePassword || false,
+        workerRole: user.workerRole || user.specialization || 'Field Worker',
+        status: user.isActive ? 'Active' : 'Inactive',
+        isActive: !!user.isActive,
+        mustChangePassword: !!user.mustChangePassword,
         lastLogin: user.lastLogin || null,
       },
     });
