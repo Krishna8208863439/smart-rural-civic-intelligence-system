@@ -182,7 +182,7 @@
       "workerId": "GRAM-WKR-001",
       "workerRole": "Sanitation & Field Lead",
       "assignedArea": "Chandoli",
-      "lastLogin": "2026-09-17T11:48:21.885+05:30",
+      "lastLogin": "2026-09-17T11:59:31.936+05:30",
       "mustChangePassword": false
     },
     {
@@ -354,6 +354,23 @@
       "createdAt": "2026-09-17T06:17:51.590924",
       "lastLogin": "2026-09-17T11:47:51.638+05:30",
       "updatedAt": "2026-09-17T11:47:51.622+05:30"
+    },
+    {
+      "_id": "4347f52bcac37783c8682d74",
+      "name": "Eknath Shinde",
+      "email": "pa_worker_1789626571@gramsetu.in",
+      "phone": "9823011223",
+      "workerId": "GRAM-WKR-011",
+      "passwordHash": "Eknath@Secure2026",
+      "role": "worker",
+      "workerRole": "Sanitation Supervisor",
+      "specialization": "Sanitation Supervisor",
+      "assignedArea": "Sector 5 - Koyna",
+      "isActive": true,
+      "mustChangePassword": false,
+      "createdAt": "2026-09-17T06:29:31.864433",
+      "lastLogin": "2026-09-17T11:59:31.919+05:30",
+      "updatedAt": "2026-09-17T11:59:31.898+05:30"
     }
   ],
   "issues": [
@@ -10018,7 +10035,7 @@
       "requiredAction": "Inspect site, resolve Street lighting, upload after photos, and mark completed.",
       "beforeImage": "/assets/hero-card-mockup-lWDlMTb5.jpg",
       "afterImage": "https://images.unsplash.com/photo-1541888946425-d0fbb18086f6?w=800",
-      "status": "ADMIN_VERIFIED",
+      "status": "VERIFIED",
       "workerNotes": "Street light high-mast cabling rewired and new 120W LED fixture operational. Verified luminescence with lux meter.",
       "assignedAt": "2026-09-17T11:48:21.829+05:30",
       "assigned_at": "2026-09-17T11:48:21.829+05:30",
