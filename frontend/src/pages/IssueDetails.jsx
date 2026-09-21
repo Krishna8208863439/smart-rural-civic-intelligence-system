@@ -2087,63 +2087,8 @@ export default function IssueDetails() {
             }
 
             if (role === 'worker') {
-              // WORKER VIEW: Community validation is a citizen feature. Workers view validation report, but do NOT vote.
-              if (totalValidations === 0 && confirmsCount === 0) {
-                return (
-                  <div className="bg-white p-6 rounded-3xl border border-amber-200/80 bg-amber-50/20 shadow-soft space-y-3">
-                    <div className="border-b border-amber-100 pb-2 flex items-center justify-between">
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-amber-950 flex items-center space-x-1.5">
-                        <Users className="w-4 h-4 text-amber-700" />
-                        <span>Community Validation Status</span>
-                      </h3>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
-                        Awaiting Citizen Validation
-                      </span>
-                    </div>
-
-                    <div className="p-4 rounded-2xl bg-white/80 border border-amber-200/60 text-center space-y-1.5">
-                      <Clock className="w-6 h-6 text-amber-600 mx-auto" />
-                      <div className="text-xs font-bold text-slate-800">Awaiting Citizen Ground Corroboration</div>
-                      <p className="text-[11px] text-slate-600 max-w-xs mx-auto leading-relaxed">
-                        Local citizens have not submitted community validation votes yet. Once a citizen fills the community validation form to corroborate this problem, the field work order will unlock below.
-                      </p>
-                    </div>
-                  </div>
-                );
-              }
-
-              return (
-                <div className="bg-white p-6 rounded-3xl border border-emerald-500/30 shadow-soft space-y-3">
-                  <div className="border-b border-slate-100 pb-2 flex items-center justify-between">
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-950 flex items-center space-x-1.5">
-                      <Users className="w-4 h-4 text-emerald-700" />
-                      <span>Community Validation Verified</span>
-                    </h3>
-                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-                      ✓ {confirmsCount || totalValidations} Citizen Confirm{(confirmsCount || totalValidations) > 1 ? 's' : ''} Received
-                    </span>
-                  </div>
-
-                  <p className="text-xs text-slate-600">
-                    This civic problem has been corroborated by local residents. Work order is validated for field execution.
-                  </p>
-
-                  <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                    <div className="p-2.5 rounded-2xl bg-teal-50/80 border border-teal-200 shadow-xs">
-                      <div className="text-base font-extrabold text-teal-800">{confirmsCount}</div>
-                      <div className="text-[10px] font-bold text-teal-700">👍 Confirmed</div>
-                    </div>
-                    <div className="p-2.5 rounded-2xl bg-rose-50/80 border border-rose-200 shadow-xs">
-                      <div className="text-base font-extrabold text-rose-800">{stillExistsCount}</div>
-                      <div className="text-[10px] font-bold text-rose-700">❌ Still Exists</div>
-                    </div>
-                    <div className="p-2.5 rounded-2xl bg-emerald-50/80 border border-emerald-200 shadow-xs">
-                      <div className="text-base font-extrabold text-emerald-800">{resolvedCount}</div>
-                      <div className="text-[10px] font-bold text-emerald-700">🟢 Resolved</div>
-                    </div>
-                  </div>
-                </div>
-              );
+              // Community validation is not shown in worker view
+              return null;
             }
 
             // CITIZEN VIEW: Interactive voting form (Only shown to Citizens/Public)
@@ -2413,37 +2358,6 @@ export default function IssueDetails() {
 
           {/* Worker Workflow Panel (Only displayed for Worker login, not Admin login, and only AFTER citizen fills validation form) */}
           {role === 'worker' && (() => {
-            const confirmsCount = issue.communityValidationStats?.confirms || 0;
-            const stillExistsCount = issue.communityValidationStats?.stillExists || 0;
-            const resolvedCount = issue.communityValidationStats?.resolved || 0;
-            const totalValidations = confirmsCount + stillExistsCount + resolvedCount;
-            const hasCitizenValidated = confirmsCount > 0 || totalValidations > 0 || (validations && validations.length > 0) || (issue.corroborationCount > 0) || ['UNDER ACTION', 'IN PROGRESS', 'ACTION COMPLETED', 'COMPLETED', 'VERIFIED RESOLVED'].includes(issue.status);
-
-            if (!hasCitizenValidated) {
-              return (
-                <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-soft space-y-3">
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center space-x-1.5">
-                      <Wrench className="w-3.5 h-3.5 text-slate-400" />
-                      <span>👷 Worker Execution Panel</span>
-                    </h3>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
-                      Locked
-                    </span>
-                  </div>
-                  <div className="p-5 rounded-2xl bg-slate-50 border border-dashed border-slate-200 text-center space-y-2">
-                    <div className="w-10 h-10 rounded-2xl bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center mx-auto">
-                      <Clock className="w-5 h-5" />
-                    </div>
-                    <div className="text-xs font-bold text-slate-800">Field Execution Locked: Awaiting Citizen Validation</div>
-                    <p className="text-[11px] text-slate-500 max-w-sm mx-auto leading-relaxed">
-                      This field work order is awaiting Citizen Community Validation. Once a citizen fills the validation form and corroborates the issue, this panel will unlock to allow on-site execution and proof submission.
-                    </p>
-                  </div>
-                </div>
-              );
-            }
-
             return (
               <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-soft space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-100 pb-2">

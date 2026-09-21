@@ -830,15 +830,6 @@ export default function WorkerDashboard() {
                         <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700">
                           {task.category}
                         </span>
-                        {task.confirms > 0 ? (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-teal-50 text-teal-800 border border-teal-200">
-                            👍 {task.confirms} Citizen Confirms
-                          </span>
-                        ) : (
-                          <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
-                            ⏳ Awaiting Citizen Validation
-                          </span>
-                        )}
                       </div>
                       <StatusBadge status={task.status} />
                     </div>
@@ -914,21 +905,14 @@ export default function WorkerDashboard() {
                   {/* Task Action Buttons (Step 8 Requirement) */}
                   <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
                     {isAssigned && (
-                      task.confirms > 0 ? (
-                        <button
-                          type="button"
-                          onClick={() => handleAcceptTask(safeId)}
-                          className="w-full py-2.5 rounded-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs transition flex items-center justify-center space-x-1.5"
-                        >
-                          <Check className="w-4 h-4" />
-                          <span>Accept Task & Begin Work</span>
-                        </button>
-                      ) : (
-                        <div className="w-full py-2.5 px-3 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800 text-xs font-semibold flex items-center justify-center space-x-1.5 text-center">
-                          <Clock className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-                          <span>Awaiting Citizen Validation before Work Begins</span>
-                        </div>
-                      )
+                      <button
+                        type="button"
+                        onClick={() => handleAcceptTask(safeId)}
+                        className="w-full py-2.5 rounded-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-xs shadow-xs transition flex items-center justify-center space-x-1.5"
+                      >
+                        <Check className="w-4 h-4" />
+                        <span>Accept Task & Begin Work</span>
+                      </button>
                     )}
 
                     {isAccepted && (
