@@ -159,18 +159,6 @@ export default function AdminDashboard() {
           >
             {t('adminDashboard.manageAllIssues')}
           </Link>
-          <Link
-            to="/preventive-management"
-            className="px-4 py-2 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-semibold text-xs shadow-xs transition"
-          >
-            {t('adminDashboard.preventiveActions')}
-          </Link>
-          <Link
-            to="/memory"
-            className="px-4 py-2 rounded-full bg-violet-50 hover:bg-violet-100 border border-violet-200 text-violet-800 font-semibold text-xs transition"
-          >
-            {t('adminDashboard.digitalMemory')}
-          </Link>
         </div>
       </div>
 

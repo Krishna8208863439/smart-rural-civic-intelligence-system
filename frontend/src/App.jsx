@@ -12,8 +12,6 @@ import Home from './pages/Home';
 import CitizenDashboard from './pages/CitizenDashboard';
 import ReportIssue from './pages/ReportIssue';
 import IssueDetails from './pages/IssueDetails';
-import VillageMemory from './pages/VillageMemory';
-import PreventiveManagement from './pages/PreventiveManagement';
 import CommunityValidationPage from './pages/CommunityValidationPage';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminIssues from './pages/AdminIssues';
@@ -95,14 +93,7 @@ function AppRoutes() {
               }
             />
             <Route path="/map" element={<Navigate to="/issues" replace />} />
-            <Route
-              path="/memory"
-              element={
-                <ProtectedRoute>
-                  <VillageMemory />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/memory" element={<Navigate to="/" replace />} />
             <Route
               path="/community-validation"
               element={
@@ -137,14 +128,7 @@ function AppRoutes() {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/preventive-management"
-              element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <PreventiveManagement />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/preventive-management" element={<Navigate to="/admin" replace />} />
 
             {/* Worker Routes */}
             <Route

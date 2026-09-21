@@ -83,7 +83,6 @@ export default function WorkerManagement() {
   // Modals
   const [showAddWorkerModal, setShowAddWorkerModal] = useState(false);
   const [createdCredentialsModal, setCreatedCredentialsModal] = useState(null);
-  const [showAssignTaskModal, setShowAssignTaskModal] = useState(false);
   const [inspectTaskModal, setInspectTaskModal] = useState(null);
   const [viewWorkerModal, setViewWorkerModal] = useState(null);
   const [editWorkerModal, setEditWorkerModal] = useState(null);
@@ -114,19 +113,6 @@ export default function WorkerManagement() {
     new Set([...defaultAreas, ...workers.map((w) => w.assignedArea).filter(Boolean)])
   );
 
-  // Form states for Assign Task
-  const [taskForm, setTaskForm] = useState({
-    workerId: '',
-    issueId: '',
-    title: '',
-    category: 'Drainage blockage',
-    priority: 'High',
-    description: '',
-    location: 'Chandoli Main Road',
-    deadline: '',
-    requiredAction: 'Inspect the drainage blockage, clear the obstruction, upload before/after photos, and update resolution status.',
-    beforeImage: '',
-  });
 
   // Fetch all worker data and monitoring metrics
   const fetchAllData = async () => {
@@ -291,45 +277,6 @@ export default function WorkerManagement() {
     }
   };
 
-  // Open Assign Task modal
-  const openAssignTask = (worker = null, issue = null) => {
-    setTaskForm({
-      workerId: worker?._id || (workers[0]?._id || ''),
-      issueId: issue?._id || '',
-      title: issue ? issue.title : 'Drainage blockage inspection near Chandoli Main Road',
-      category: issue ? issue.category : 'Drainage blockage',
-      priority: issue ? issue.priority?.level || 'High' : 'High',
-      description: issue
-        ? issue.description
-        : 'Inspect the drainage blockage, clear the obstruction, upload before/after photos, and update the resolution status.',
-      location: issue ? issue.location?.landmark || issue.location?.address : 'Chandoli Main Road',
-      deadline: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString().split('T')[0],
-      requiredAction:
-        'Inspect site, rectify civic breakdown, upload before/after resolution photos, and mark completed.',
-      beforeImage: issue?.images?.[0]?.url || '',
-    });
-    setShowAssignTaskModal(true);
-  };
-
-  // Submit Assign Task
-  const handleAssignTaskSubmit = async (e) => {
-    e.preventDefault();
-    if (!taskForm.workerId) {
-      alert('Please select a field worker.');
-      return;
-    }
-    try {
-      setSubmitting(true);
-      await api.post('/tasks', taskForm);
-      setShowAssignTaskModal(false);
-      await fetchAllData();
-      alert('Field task assigned successfully!');
-    } catch (err) {
-      alert(err.response?.data?.message || 'Failed to assign field task');
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   // Admin Task Verification
   const handleVerifyTask = async (taskId) => {
@@ -419,14 +366,6 @@ Login URL: ${window.location.origin}/worker/login`;
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
-          <button
-            type="button"
-            onClick={() => openAssignTask()}
-            className="px-4 py-2.5 rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-bold text-xs shadow-xs transition flex items-center space-x-2"
-          >
-            <Wrench className="w-3.5 h-3.5 text-emerald-700" />
-            <span>Assign Field Task</span>
-          </button>
 
           <button
             type="button"
@@ -669,15 +608,6 @@ Login URL: ${window.location.origin}/worker/login`;
                     </td>
                     <td className="py-3.5 px-4 text-right">
                       <div className="flex items-center justify-end space-x-1.5">
-                        <button
-                          type="button"
-                          onClick={() => openAssignTask(worker)}
-                          title="Assign Task"
-                          className="px-2.5 py-1 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-[11px] font-bold transition flex items-center space-x-1"
-                        >
-                          <Wrench className="w-3 h-3" />
-                          <span>Assign</span>
-                        </button>
 
                         <button
                           type="button"
@@ -893,7 +823,7 @@ Login URL: ${window.location.origin}/worker/login`;
               {allTasks.length === 0 ? (
                 <tr>
                   <td colSpan={9} className="py-8 text-center text-slate-400">
-                    No field tasks assigned yet. Click <b>Assign Field Task</b> to dispatch workers.
+                    No field tasks assigned yet. Tasks are dispatched when workers are assigned to reported civic issues.
                   </td>
                 </tr>
               ) : (
@@ -1306,203 +1236,6 @@ Login URL: ${window.location.origin}/worker/login`;
         </div>
       )}
 
-      {/* FEATURE 3 MODAL — ASSIGN FIELD TASK */}
-      {showAssignTaskModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 border border-slate-200 shadow-xl space-y-6 my-8 animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div className="flex items-center space-x-2">
-                <div className="w-9 h-9 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
-                  <Wrench className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="font-black text-lg text-slate-900">Assign Field Task</h3>
-                  <p className="text-xs text-slate-500">Dispatch repair task to Panchayat field worker</p>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setShowAssignTaskModal(false)}
-                className="p-1 rounded-full text-slate-400 hover:text-slate-600"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleAssignTaskSubmit} className="space-y-4 text-xs">
-              {/* Select Worker */}
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">1. Select Worker *</label>
-                <select
-                  value={taskForm.workerId}
-                  onChange={(e) => setTaskForm({ ...taskForm, workerId: e.target.value })}
-                  required
-                  className="w-full px-3.5 py-2.5 rounded-2xl border border-slate-200 font-bold text-slate-800 bg-slate-50"
-                >
-                  <option value="">-- Choose Field Specialist --</option>
-                  {workers.map((w) => (
-                    <option key={w._id} value={w._id}>
-                      {w.name} ({w.workerId}) — {w.workerRole} [{w.activeTasks} Active Tasks]
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Optional: Link to Open Citizen Complaint */}
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">
-                  2. Link to Reported Issue / Complaint (Optional)
-                </label>
-                <select
-                  value={taskForm.issueId}
-                  onChange={(e) => {
-                    const selected = openIssues.find((i) => i._id === e.target.value);
-                    if (selected) {
-                      setTaskForm({
-                        ...taskForm,
-                        issueId: selected._id,
-                        title: selected.title,
-                        category: selected.category,
-                        priority: selected.priority?.level || 'Medium',
-                        description: selected.description,
-                        location: selected.location?.landmark || selected.location?.address,
-                        beforeImage: selected.images?.[0]?.url || '',
-                      });
-                    } else {
-                      setTaskForm({ ...taskForm, issueId: '' });
-                    }
-                  }}
-                  className="w-full px-3.5 py-2 rounded-2xl border border-slate-200 bg-white"
-                >
-                  <option value="">-- Standalone Field Work Order / Custom --</option>
-                  {openIssues.map((issue) => (
-                    <option key={issue._id} value={issue._id}>
-                      #{issue._id.slice(-6)}: {issue.title} ({issue.category} - {issue.priority?.level})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Category & Priority */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">3. Issue Category</label>
-                  <select
-                    value={taskForm.category}
-                    onChange={(e) => setTaskForm({ ...taskForm, category: e.target.value })}
-                    className="w-full px-3.5 py-2 rounded-2xl border border-slate-200"
-                  >
-                    <option value="Waste accumulation">Waste accumulation</option>
-                    <option value="Drainage blockage">Drainage blockage</option>
-                    <option value="Water leakage">Water leakage</option>
-                    <option value="Damaged road">Damaged road</option>
-                    <option value="Streetlight failure">Streetlight failure</option>
-                    <option value="Water supply">Water supply</option>
-                    <option value="Sanitation">Sanitation</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">4. Priority</label>
-                  <select
-                    value={taskForm.priority}
-                    onChange={(e) => setTaskForm({ ...taskForm, priority: e.target.value })}
-                    className="w-full px-3.5 py-2 rounded-2xl border border-slate-200"
-                  >
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                    <option value="Critical">Critical</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Task Title */}
-              <div>
-                <label className="block font-bold text-slate-700 mb-1">Task Title *</label>
-                <input
-                  type="text"
-                  value={taskForm.title}
-                  onChange={(e) => setTaskForm({ ...taskForm, title: e.target.value })}
-                  placeholder="e.g. Drainage blockage reported near Chandoli Main Road"
-                  required
-                  className="w-full px-3.5 py-2 rounded-2xl border border-slate-200"
-                />
-              </div>
-
-              {/* Description & Required Action */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">5. Task Description *</label>
-                  <textarea
-                    rows={3}
-                    value={taskForm.description}
-                    onChange={(e) => setTaskForm({ ...taskForm, description: e.target.value })}
-                    required
-                    className="w-full px-3.5 py-2 rounded-2xl border border-slate-200"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">8. Required Action</label>
-                  <textarea
-                    rows={3}
-                    value={taskForm.requiredAction}
-                    onChange={(e) => setTaskForm({ ...taskForm, requiredAction: e.target.value })}
-                    placeholder="e.g. Inspect the drainage blockage, clear the obstruction, upload before/after photos..."
-                    className="w-full px-3.5 py-2 rounded-2xl border border-slate-200"
-                  />
-                </div>
-              </div>
-
-              {/* Location & Deadline */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">6. Location *</label>
-                  <input
-                    type="text"
-                    value={taskForm.location}
-                    onChange={(e) => setTaskForm({ ...taskForm, location: e.target.value })}
-                    placeholder="e.g. Chandoli Main Road near Bus Stop"
-                    required
-                    className="w-full px-3.5 py-2 rounded-2xl border border-slate-200"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-bold text-slate-700 mb-1">7. Deadline</label>
-                  <input
-                    type="date"
-                    value={taskForm.deadline}
-                    onChange={(e) => setTaskForm({ ...taskForm, deadline: e.target.value })}
-                    className="w-full px-3.5 py-2 rounded-2xl border border-slate-200"
-                  />
-                </div>
-              </div>
-
-
-              {/* Buttons */}
-              <div className="pt-4 flex items-center justify-end space-x-2 border-t border-slate-100">
-                <button
-                  type="button"
-                  onClick={() => setShowAssignTaskModal(false)}
-                  className="px-5 py-2.5 rounded-full border border-slate-200 text-slate-700 font-bold hover:bg-slate-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="px-6 py-2.5 rounded-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold shadow-md shadow-emerald-700/20 disabled:opacity-50"
-                >
-                  {submitting ? 'Assigning...' : 'Assign Task'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
 
       {/* FEATURE 4 MODAL — TASK TRACKING & INSPECTION */}
       {inspectTaskModal && (
@@ -1733,14 +1466,10 @@ Login URL: ${window.location.origin}/worker/login`;
             <div className="pt-2 flex justify-end space-x-2">
               <button
                 type="button"
-                onClick={() => {
-                  const target = viewWorkerModal;
-                  setViewWorkerModal(null);
-                  openAssignTask(target);
-                }}
-                className="px-4 py-2 rounded-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold"
+                onClick={() => setViewWorkerModal(null)}
+                className="px-5 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold"
               >
-                Assign Task
+                Close
               </button>
             </div>
           </div>

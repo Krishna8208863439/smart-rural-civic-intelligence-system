@@ -124,23 +124,6 @@ export default function Home() {
                 </div>
               </Link>
 
-              {/* Card 3: Village Memory */}
-              <Link
-                to={user ? "/memory" : "/login"}
-                className="group bg-white rounded-2xl p-3.5 xl:p-4 border border-slate-200/80 shadow-[0_3px_12px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_25px_rgba(217,119,6,0.12)] hover:border-amber-300 transition-all duration-200 flex items-center space-x-3.5"
-              >
-                <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-amber-100 transition-all">
-                  <Database className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-slate-900 text-sm group-hover:text-amber-700 transition-colors">
-                    {t('nav.memory')}
-                  </h3>
-                  <p className="text-xs text-slate-500 font-medium">
-                    {t('home.card3Sub')}
-                  </p>
-                </div>
-              </Link>
 
               {/* Card 4: Community Validation */}
               <Link
