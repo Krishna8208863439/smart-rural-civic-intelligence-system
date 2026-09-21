@@ -1459,9 +1459,13 @@ export default function IssueDetails() {
                   </div>
                   <div className="h-64 rounded-xl overflow-hidden bg-slate-200 border border-emerald-100">
                     <img
-                      src={issue.completionDetails?.images?.[0]?.url || 'https://images.unsplash.com/photo-1584467735815-f778f274e296?w=600'}
+                      src={issue.completionDetails?.images?.[0]?.url || issue.afterImage || 'https://images.unsplash.com/photo-1584467735815-f778f274e296?w=600'}
                       alt="After Repair"
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1584467735815-f778f274e296?w=600';
+                      }}
                     />
                   </div>
                   <div className="text-xs text-slate-700">
@@ -2179,12 +2183,16 @@ export default function IssueDetails() {
                   </p>
 
                   {/* Worker Resolution Proof Preview */}
-                  {issue.completionDetails?.images?.[0]?.url && (
+                  {(issue.completionDetails?.images?.[0]?.url || issue.afterImage) && (
                     <div className="rounded-xl overflow-hidden border border-amber-300 h-36 bg-slate-100">
                       <img
-                        src={issue.completionDetails.images[0].url}
+                        src={issue.completionDetails?.images?.[0]?.url || issue.afterImage}
                         alt="Worker Proof"
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = 'https://images.unsplash.com/photo-1584467735815-f778f274e296?w=600';
+                        }}
                       />
                     </div>
                   )}
