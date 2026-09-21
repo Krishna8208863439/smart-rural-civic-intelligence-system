@@ -139,6 +139,8 @@ def format_issue_as_task(iss):
         "afterImage": after_img,
         "status": task_st,
         "workerNotes": comp.get('notes', ''),
+        "confirms": iss.get('communityValidationStats', {}).get('confirms', 0) if isinstance(iss.get('communityValidationStats'), dict) else (iss.get('corroborationCount') or 0),
+        "communityValidationStats": iss.get('communityValidationStats') or {"confirms": 0, "stillExists": 0, "resolved": 0},
         "assignedAt": assigned_time,
         "assigned_at": assigned_time,
         "createdAt": created_time,
@@ -186,6 +188,8 @@ def sync_tasks_with_issues():
                 existing_task['title'] = iss.get('title', existing_task.get('title', 'Civic Field Work Order'))
                 existing_task['description'] = iss.get('description', existing_task.get('description', ''))
                 existing_task['category'] = iss.get('category', existing_task.get('category', 'General'))
+                existing_task['confirms'] = iss.get('communityValidationStats', {}).get('confirms', 0) if isinstance(iss.get('communityValidationStats'), dict) else (iss.get('corroborationCount') or 0)
+                existing_task['communityValidationStats'] = iss.get('communityValidationStats') or {"confirms": 0, "stillExists": 0, "resolved": 0}
                 if not existing_task.get('assigned_at'):
                     existing_task['assigned_at'] = iss.get('assignedAt') or iss.get('assigned_at') or utc_now_iso()
                 if not existing_task.get('due_date'):

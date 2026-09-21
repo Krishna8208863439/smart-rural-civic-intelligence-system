@@ -2036,7 +2036,67 @@ export default function IssueDetails() {
               );
             }
 
-            // CITIZEN VIEW: Interactive voting form
+            if (role === 'worker') {
+              // WORKER VIEW: Community validation is a citizen feature. Workers view validation report, but do NOT vote.
+              if (totalValidations === 0 && confirmsCount === 0) {
+                return (
+                  <div className="bg-white p-6 rounded-3xl border border-amber-200/80 bg-amber-50/20 shadow-soft space-y-3">
+                    <div className="border-b border-amber-100 pb-2 flex items-center justify-between">
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-amber-950 flex items-center space-x-1.5">
+                        <Users className="w-4 h-4 text-amber-700" />
+                        <span>Community Validation Status</span>
+                      </h3>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
+                        Awaiting Citizen Validation
+                      </span>
+                    </div>
+
+                    <div className="p-4 rounded-2xl bg-white/80 border border-amber-200/60 text-center space-y-1.5">
+                      <Clock className="w-6 h-6 text-amber-600 mx-auto" />
+                      <div className="text-xs font-bold text-slate-800">Awaiting Citizen Ground Corroboration</div>
+                      <p className="text-[11px] text-slate-600 max-w-xs mx-auto leading-relaxed">
+                        Local citizens have not submitted community validation votes yet. Once a citizen fills the community validation form to corroborate this problem, the field work order will unlock below.
+                      </p>
+                    </div>
+                  </div>
+                );
+              }
+
+              return (
+                <div className="bg-white p-6 rounded-3xl border border-emerald-500/30 shadow-soft space-y-3">
+                  <div className="border-b border-slate-100 pb-2 flex items-center justify-between">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-emerald-950 flex items-center space-x-1.5">
+                      <Users className="w-4 h-4 text-emerald-700" />
+                      <span>Community Validation Verified</span>
+                    </h3>
+                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                      ✓ {confirmsCount || totalValidations} Citizen Confirm{(confirmsCount || totalValidations) > 1 ? 's' : ''} Received
+                    </span>
+                  </div>
+
+                  <p className="text-xs text-slate-600">
+                    This civic problem has been corroborated by local residents. Work order is validated for field execution.
+                  </p>
+
+                  <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                    <div className="p-2.5 rounded-2xl bg-teal-50/80 border border-teal-200 shadow-xs">
+                      <div className="text-base font-extrabold text-teal-800">{confirmsCount}</div>
+                      <div className="text-[10px] font-bold text-teal-700">👍 Confirmed</div>
+                    </div>
+                    <div className="p-2.5 rounded-2xl bg-rose-50/80 border border-rose-200 shadow-xs">
+                      <div className="text-base font-extrabold text-rose-800">{stillExistsCount}</div>
+                      <div className="text-[10px] font-bold text-rose-700">❌ Still Exists</div>
+                    </div>
+                    <div className="p-2.5 rounded-2xl bg-emerald-50/80 border border-emerald-200 shadow-xs">
+                      <div className="text-base font-extrabold text-emerald-800">{resolvedCount}</div>
+                      <div className="text-[10px] font-bold text-emerald-700">🟢 Resolved</div>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
+            // CITIZEN VIEW: Interactive voting form (Only shown to Citizens/Public)
             return (
               <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-soft space-y-4">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-2 flex items-center justify-between">
@@ -2297,107 +2357,140 @@ export default function IssueDetails() {
             </div>
           )}
 
-          {/* Worker Workflow Panel (Only displayed for Worker login, not Admin login) */}
-          {role === 'worker' && (
-            <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-soft space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-900 flex items-center space-x-1.5">
-                  <Wrench className="w-3.5 h-3.5 text-indigo-600" />
-                  <span>👷 Worker Execution Panel</span>
-                </h3>
-              </div>
+          {/* Worker Workflow Panel (Only displayed for Worker login, not Admin login, and only AFTER citizen fills validation form) */}
+          {role === 'worker' && (() => {
+            const confirmsCount = issue.communityValidationStats?.confirms || 0;
+            const stillExistsCount = issue.communityValidationStats?.stillExists || 0;
+            const resolvedCount = issue.communityValidationStats?.resolved || 0;
+            const totalValidations = confirmsCount + stillExistsCount + resolvedCount;
+            const hasCitizenValidated = confirmsCount > 0 || totalValidations > 0 || (validations && validations.length > 0) || (issue.corroborationCount > 0) || ['UNDER ACTION', 'IN PROGRESS', 'ACTION COMPLETED', 'COMPLETED', 'VERIFIED RESOLVED'].includes(issue.status);
 
-              {issue.status === 'ASSIGNED' && (
-                <button
-                  onClick={() => handleAddProgress(true)}
-                  className="w-full py-3 rounded-full bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-sm transition"
-                >
-                  Start Work On-Site (Sets Status to UNDER ACTION)
-                </button>
-              )}
-
-              {/* Add Progress Note */}
-              <div className="space-y-2">
-                <label className="block text-xs font-bold text-slate-700">Add Progress Update</label>
-                <textarea
-                  rows={2}
-                  value={progressNote}
-                  onChange={(e) => setProgressNote(e.target.value)}
-                  placeholder="Material arrived, excavation started..."
-                  className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-1 focus:ring-emerald-500 focus:outline-none"
-                ></textarea>
-                <button
-                  type="button"
-                  onClick={() => handleAddProgress(false)}
-                  className="w-full py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition"
-                >
-                  Post Progress Update
-                </button>
-              </div>
-
-              {/* Upload Completion Proof */}
-              <form onSubmit={handleCompleteWork} className="space-y-3 pt-3 border-t border-slate-100">
-                <div className="flex items-center justify-between">
-                  <label className="block text-xs font-bold text-slate-800">
-                    📸 {i18n.language === 'mr' ? 'समस्या निवारण पुरावा फोटो अपलोड करा' : i18n.language === 'hi' ? 'समस्या समाधान फोटो प्रमाण अपलोड करें' : 'Upload Problem Solved Proof Image'}
-                  </label>
-                  <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">
-                    Proof of Resolution
-                  </span>
-                </div>
-
-                {/* Local file input */}
-                <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 mb-1">
-                    {i18n.language === 'mr' ? 'कॅमेरा / डिव्हाइसवरून फोटो अपलोड करा:' : i18n.language === 'hi' ? 'कैमरा / डिवाइस से फोटो अपलोड करें:' : 'Upload file from camera / device:'}
-                  </label>
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={(e) => {
-                      const files = Array.from(e.target.files || []);
-                      setCompletionFiles(files);
-                      if (files[0]) {
-                        setSamplePreviewUrl(URL.createObjectURL(files[0]));
-                      } else {
-                        setSamplePreviewUrl('');
-                      }
-                    }}
-                    className="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-800 hover:file:bg-emerald-100 cursor-pointer"
-                  />
-                </div>
-
-                {/* Live Preview of Attached File */}
-                {samplePreviewUrl && completionFiles.length > 0 && (
-                  <div className="relative rounded-2xl overflow-hidden border border-emerald-300 h-40 bg-slate-100 shadow-xs">
-                    <img src={samplePreviewUrl} alt="Preview" className="w-full h-full object-cover" />
-                    <div className="absolute bottom-0 inset-x-0 bg-black/60 backdrop-blur-xs p-1.5 text-[11px] text-white font-medium text-center">
-                      ✓ Selected Photo: {completionFiles[0]?.name}
-                    </div>
+            if (!hasCitizenValidated) {
+              return (
+                <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-soft space-y-3">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center space-x-1.5">
+                      <Wrench className="w-3.5 h-3.5 text-slate-400" />
+                      <span>👷 Worker Execution Panel</span>
+                    </h3>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
+                      Locked
+                    </span>
                   </div>
+                  <div className="p-5 rounded-2xl bg-slate-50 border border-dashed border-slate-200 text-center space-y-2">
+                    <div className="w-10 h-10 rounded-2xl bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center mx-auto">
+                      <Clock className="w-5 h-5" />
+                    </div>
+                    <div className="text-xs font-bold text-slate-800">Field Execution Locked: Awaiting Citizen Validation</div>
+                    <p className="text-[11px] text-slate-500 max-w-sm mx-auto leading-relaxed">
+                      This field work order is awaiting Citizen Community Validation. Once a citizen fills the validation form and corroborates the issue, this panel will unlock to allow on-site execution and proof submission.
+                    </p>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-soft space-y-4">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-indigo-900 flex items-center space-x-1.5">
+                    <Wrench className="w-3.5 h-3.5 text-indigo-600" />
+                    <span>👷 Worker Execution Panel</span>
+                  </h3>
+                </div>
+
+                {issue.status === 'ASSIGNED' && (
+                  <button
+                    onClick={() => handleAddProgress(true)}
+                    className="w-full py-3 rounded-full bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold shadow-sm transition"
+                  >
+                    Start Work On-Site (Sets Status to UNDER ACTION)
+                  </button>
                 )}
 
-                <textarea
-                  rows={2}
-                  value={completionNotes}
-                  onChange={(e) => setCompletionNotes(e.target.value)}
-                  placeholder={i18n.language === 'mr' ? 'दुरुस्तीचे काम पूर्ण झाले... (उदा. पाईप बदलला, गळती पूर्ण बंद केली)' : i18n.language === 'hi' ? 'मरम्मत कार्य पूरा हुआ... (उदा. पाइप बदला, रिसाव बंद किया)' : 'Work completed description (e.g. Pipe replaced and joint sealed)...'}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500/20 focus:outline-none"
-                ></textarea>
+                {/* Add Progress Note */}
+                <div className="space-y-2">
+                  <label className="block text-xs font-bold text-slate-700">Add Progress Update</label>
+                  <textarea
+                    rows={2}
+                    value={progressNote}
+                    onChange={(e) => setProgressNote(e.target.value)}
+                    placeholder="Material arrived, excavation started..."
+                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-1 focus:ring-emerald-500 focus:outline-none"
+                  ></textarea>
+                  <button
+                    type="button"
+                    onClick={() => handleAddProgress(false)}
+                    className="w-full py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition"
+                  >
+                    Post Progress Update
+                  </button>
+                </div>
 
-                <button
-                  type="submit"
-                  className="w-full py-3 rounded-full bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-extrabold shadow-md transition flex items-center justify-center space-x-2"
-                >
-                  <CheckCircle2 className="w-4 h-4 text-emerald-300" />
-                  <span>
-                    {i18n.language === 'mr' ? 'समस्या निवारण पुरावा सादर करा' : i18n.language === 'hi' ? 'समाधान प्रमाण प्रस्तुत करें' : 'Submit Problem Solved Proof Image'}
-                  </span>
-                </button>
-              </form>
-            </div>
-          )}
+                {/* Upload Completion Proof */}
+                <form onSubmit={handleCompleteWork} className="space-y-3 pt-3 border-t border-slate-100">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold text-slate-800">
+                      📸 {i18n.language === 'mr' ? 'समस्या निवारण पुरावा फोटो अपलोड करा' : i18n.language === 'hi' ? 'समस्या समाधान फोटो प्रमाण अपलोड करें' : 'Upload Problem Solved Proof Image'}
+                    </label>
+                    <span className="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-bold">
+                      Proof of Resolution
+                    </span>
+                  </div>
+
+                  {/* Local file input */}
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-600 mb-1">
+                      {i18n.language === 'mr' ? 'कॅमेरा / डिव्हाइसवरून फोटो अपलोड करा:' : i18n.language === 'hi' ? 'कैमरा / डिवाइस से फोटो अपलोड करें:' : 'Upload file from camera / device:'}
+                    </label>
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={(e) => {
+                        const files = Array.from(e.target.files || []);
+                        setCompletionFiles(files);
+                        if (files[0]) {
+                          setSamplePreviewUrl(URL.createObjectURL(files[0]));
+                        } else {
+                          setSamplePreviewUrl('');
+                        }
+                      }}
+                      className="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-800 hover:file:bg-emerald-100 cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Live Preview of Attached File */}
+                  {samplePreviewUrl && completionFiles.length > 0 && (
+                    <div className="relative rounded-2xl overflow-hidden border border-emerald-300 h-40 bg-slate-100 shadow-xs">
+                      <img src={samplePreviewUrl} alt="Preview" className="w-full h-full object-cover" />
+                      <div className="absolute bottom-0 inset-x-0 bg-black/60 backdrop-blur-xs p-1.5 text-[11px] text-white font-medium text-center">
+                        ✓ Selected Photo: {completionFiles[0]?.name}
+                      </div>
+                    </div>
+                  )}
+
+                  <textarea
+                    rows={2}
+                    value={completionNotes}
+                    onChange={(e) => setCompletionNotes(e.target.value)}
+                    placeholder={i18n.language === 'mr' ? 'दुरुस्तीचे काम पूर्ण झाले... (उदा. पाईप बदलला, गळती पूर्ण बंद केली)' : i18n.language === 'hi' ? 'मरम्मत कार्य पूरा हुआ... (उदा. पाइप बदला, रिसाव बंद किया)' : 'Work completed description (e.g. Pipe replaced and joint sealed)...'}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-emerald-500/20 focus:outline-none"
+                  ></textarea>
+
+                  <button
+                    type="submit"
+                    className="w-full py-3 rounded-full bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-extrabold shadow-md transition flex items-center justify-center space-x-2"
+                  >
+                    <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+                    <span>
+                      {i18n.language === 'mr' ? 'समस्या निवारण पुरावा सादर करा' : i18n.language === 'hi' ? 'समाधान प्रमाण प्रस्तुत करें' : 'Submit Problem Solved Proof Image'}
+                    </span>
+                  </button>
+                </form>
+              </div>
+            );
+          })()}
         </div>
       </div>
     </div>
