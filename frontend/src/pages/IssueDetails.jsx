@@ -143,6 +143,7 @@ export default function IssueDetails() {
   const [completionNotes, setCompletionNotes] = useState('');
   const [completionFiles, setCompletionFiles] = useState([]);
   const [samplePreviewUrl, setSamplePreviewUrl] = useState('');
+  const [completingWork, setCompletingWork] = useState(false);
 
   // Admin verification state
   const [adminVerifyNotes, setAdminVerifyNotes] = useState('');
@@ -641,6 +642,51 @@ export default function IssueDetails() {
     }
   };
 
+  // Helper to optimize large camera/mobile uploads
+  const compressImageIfNeeded = async (file) => {
+    if (!file || !file.type.startsWith('image/')) return file;
+    if (file.size <= 1.2 * 1024 * 1024) return file;
+
+    return new Promise((resolve) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        const maxDim = 1600;
+        let width = img.width;
+        let height = img.height;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob(
+          (blob) => {
+            if (blob && blob.size < file.size) {
+              const safeName = (file.name || 'proof.jpg').replace(/\.[^.]+$/, '') + '.jpg';
+              resolve(new File([blob], safeName, { type: 'image/jpeg' }));
+            } else {
+              resolve(file);
+            }
+          },
+          'image/jpeg',
+          0.85
+        );
+      };
+      img.onerror = () => resolve(file);
+      img.src = url;
+    });
+  };
+
   // Worker Mark Complete
   const handleCompleteWork = async (e) => {
     e?.preventDefault();
@@ -656,31 +702,29 @@ export default function IssueDetails() {
         return;
       }
 
-      const formData = new FormData();
-      formData.append('notes', completionNotes || 'Civic problem solved to standard.');
-      completionFiles.forEach((f) => {
-        formData.append('images', f);
-        formData.append('image', f);
-        formData.append('afterImage', f);
-      });
+      setCompletingWork(true);
 
-      // Also attach base64 representation of the user-selected image
+      const formData = new FormData();
+      formData.append('notes', completionNotes?.trim() || 'Field repairs completed successfully.');
+
+      // Attach file stream without base64 duplicate fields (prevents 413 Request Entity Too Large)
       if (completionFiles.length > 0) {
-        try {
-          const b64 = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(completionFiles[0]);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = reject;
-          });
-          if (b64) {
-            formData.append('sampleImageUrl', b64);
-            formData.append('proofImage', b64);
-          }
-        } catch (_) {}
+        const fileToUpload = await compressImageIfNeeded(completionFiles[0]);
+        formData.append('image', fileToUpload, fileToUpload.name);
+        formData.append('images', fileToUpload, fileToUpload.name);
       } else if (samplePreviewUrl) {
-        formData.append('sampleImageUrl', samplePreviewUrl);
-        formData.append('afterImage', samplePreviewUrl);
+        if (samplePreviewUrl.startsWith('data:')) {
+          try {
+            const blobRes = await fetch(samplePreviewUrl);
+            const blob = await blobRes.blob();
+            formData.append('image', blob, 'proof_resolution.jpg');
+            formData.append('images', blob, 'proof_resolution.jpg');
+          } catch (_) {
+            formData.append('imageUrl', samplePreviewUrl);
+          }
+        } else {
+          formData.append('imageUrl', samplePreviewUrl);
+        }
       }
 
       await api.post(`/workers/issues/${id}/completion-evidence`, formData, {
@@ -692,7 +736,9 @@ export default function IssueDetails() {
       await fetchIssueData();
       alert('✓ Resolution proof image submitted successfully for Admin verification!');
     } catch (err) {
-      alert(err.response?.data?.message || 'Completion report failed');
+      alert(err.response?.data?.message || err.message || 'Completion report failed');
+    } finally {
+      setCompletingWork(false);
     }
   };
 
@@ -2488,11 +2534,14 @@ export default function IssueDetails() {
 
                   <button
                     type="submit"
-                    className="w-full py-3 rounded-full bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-extrabold shadow-md transition flex items-center justify-center space-x-2"
+                    disabled={completingWork}
+                    className="w-full py-3 rounded-full bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-extrabold shadow-md transition flex items-center justify-center space-x-2 disabled:opacity-50"
                   >
                     <CheckCircle2 className="w-4 h-4 text-emerald-300" />
                     <span>
-                      {i18n.language === 'mr' ? 'समस्या निवारण पुरावा सादर करा' : i18n.language === 'hi' ? 'समाधान प्रमाण प्रस्तुत करें' : 'Submit Problem Solved Proof Image'}
+                      {completingWork
+                        ? (i18n.language === 'mr' ? 'सादर करत आहे...' : i18n.language === 'hi' ? 'जमा कर रहे हैं...' : 'Submitting to Admin...')
+                        : (i18n.language === 'mr' ? 'समस्या निवारण पुरावा सादर करा' : i18n.language === 'hi' ? 'समाधान प्रमाण प्रस्तुत करें' : 'Submit Problem Solved Proof Image')}
                     </span>
                   </button>
                 </form>

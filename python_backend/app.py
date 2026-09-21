@@ -20,10 +20,15 @@ def format_ist_display(dt=None):
     return dt.strftime('%d %b %Y, %I:%M %p (IST)')
 
 
+from werkzeug.wrappers import Request
+# Allow up to 64 MB for form uploads and text fields (prevents 413 RequestEntityTooLarge on PythonAnywhere)
+Request.max_form_memory_size = 64 * 1024 * 1024
+Request.max_content_length = 64 * 1024 * 1024
+
 # Initialize Flask
 app = Flask(__name__, static_folder=None)
-# Allow up to 16 MB file uploads (needed for PythonAnywhere multipart uploads)
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 64 * 1024 * 1024
+app.config['MAX_FORM_MEMORY_SIZE'] = 64 * 1024 * 1024
 
 @app.before_request
 def enforce_https_on_pythonanywhere():
@@ -2135,24 +2140,40 @@ def complete_field_task(task_id):
             return jsonify({"success": False, "message": "You are not authorized to complete this task."}), 403
 
 
-    data = request.get_json(silent=True) or request.form.to_dict() or {}
-    notes = data.get('notes') or data.get('workerNotes') or data.get('note') or 'Field repairs completed successfully.'
+    data = {}
+    if request.is_json:
+        try:
+            data = request.get_json(silent=True) or {}
+        except Exception:
+            data = {}
+    else:
+        try:
+            data = request.form.to_dict() if request.form else {}
+        except Exception as form_err:
+            print(f"[complete_field_task] Form parsing warning: {form_err}")
+            data = {}
+
+    notes = (data.get('notes') or data.get('workerNotes') or data.get('note') or '').strip()
+    if not notes:
+        notes = 'Field repairs completed successfully to civic standards.'
 
     # 1. Process files uploaded in multipart/form-data
     uploaded_images = []
     os.makedirs(UPLOADS_DIR, exist_ok=True)
     if request.files:
-        for f_key in ['images', 'image', 'file', 'files', 'photos', 'proof', 'afterImage']:
+        for f_key in ['image', 'images', 'afterImage', 'proof', 'file', 'files', 'photos']:
             if f_key in request.files:
                 file_list = request.files.getlist(f_key)
                 for f in file_list:
-                    if f and getattr(f, 'filename', None):
+                    if f and getattr(f, 'filename', None) and f.filename.strip():
                         try:
                             clean_name = re.sub(r'[^a-zA-Z0-9_.-]', '_', f.filename)
                             fname = f"{int(time.time())}_{clean_name}"
                             fpath = os.path.join(UPLOADS_DIR, fname)
                             f.save(fpath)
-                            uploaded_images.append(f"/uploads/{fname}")
+                            url_path = f"/uploads/{fname}"
+                            if url_path not in uploaded_images:
+                                uploaded_images.append(url_path)
                         except Exception as save_err:
                             print(f"[complete_field_task] File save error ({f_key}): {save_err}")
                             # Try reading file data as base64 fallback
@@ -2257,17 +2278,40 @@ def complete_field_task(task_id):
                 "reliabilityScore": 95,
                 "createdAt": now_iso
             })
-            db.setdefault('notifications', []).append({
-                "_id": hashlib.md5(f"notif_{iss['_id']}_{time.time()}".encode('utf-8')).hexdigest()[:24],
-                "id": hashlib.md5(f"notif_{iss['_id']}_{time.time()}".encode('utf-8')).hexdigest()[:24],
+            # Create notification for Admin
+            db.setdefault('notifications', []).insert(0, {
+                "_id": hashlib.md5(f"notif_admin_{iss['_id']}_{time.time()}".encode('utf-8')).hexdigest()[:24],
+                "id": hashlib.md5(f"notif_admin_{iss['_id']}_{time.time()}".encode('utf-8')).hexdigest()[:24],
                 "title": f"Work Completed: {iss.get('title', 'Civic Issue')}",
-                "message": f"Worker {worker_name} submitted completion proof for #{str(iss['_id'])[-4:]}. Ready for Gram Panchayat verification.",
+                "message": f"Worker {worker_name} submitted resolution proof for #{str(iss['_id'])[-4:]}. Ready for Gram Panchayat verification.",
                 "roleTarget": "admin",
+                "role": "admin",
+                "type": "ACTION_COMPLETED",
+                "issueId": str(iss['_id']),
                 "read": False,
                 "is_read": False,
+                "isRead": False,
                 "createdAt": now_iso,
                 "created_at": now_iso
             })
+            # Create notification for Citizen
+            if iss.get('createdBy'):
+                db.setdefault('notifications', []).insert(0, {
+                    "_id": hashlib.md5(f"notif_cit_{iss['_id']}_{time.time()}".encode('utf-8')).hexdigest()[:24],
+                    "id": hashlib.md5(f"notif_cit_{iss['_id']}_{time.time()}".encode('utf-8')).hexdigest()[:24],
+                    "title": f"Work Completed by Field Team: {iss.get('title', 'Civic Issue')}",
+                    "message": f"Worker {worker_name} completed repairs for #{str(iss['_id'])[-4:]}. Awaiting Gram Panchayat verification.",
+                    "roleTarget": "citizen",
+                    "role": "citizen",
+                    "userId": str(iss.get('createdBy')),
+                    "type": "STATUS_UPDATED",
+                    "issueId": str(iss['_id']),
+                    "read": False,
+                    "is_read": False,
+                    "isRead": False,
+                    "createdAt": now_iso,
+                    "created_at": now_iso
+                })
 
     save_data()
     return jsonify({"success": True, "message": "Task completion proof submitted! Pending Admin Verification.", "task": res_task}), 200

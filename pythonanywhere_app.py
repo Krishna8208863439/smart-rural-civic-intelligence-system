@@ -11,6 +11,13 @@ if CURRENT_DIR not in sys.path:
     sys.path.insert(0, CURRENT_DIR)
 
 # Import the production Flask application with full REST API and frontend SPA static serving
+try:
+    from werkzeug.wrappers import Request
+    Request.max_form_memory_size = 64 * 1024 * 1024
+    Request.max_content_length = 64 * 1024 * 1024
+except Exception:
+    pass
+
 from app import app as application
 app = application
 
