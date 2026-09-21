@@ -158,17 +158,6 @@ export default function Navbar() {
 
 
 
-                  <Link
-                    to="/memory"
-                    className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-200 flex items-center space-x-1.5 ${
-                      isActive('/memory')
-                        ? 'bg-white text-emerald-900 shadow-sm font-bold'
-                        : 'text-emerald-100 hover:text-white hover:bg-white/15'
-                    }`}
-                  >
-                    <Database className={`w-3.5 h-3.5 shrink-0 ${isActive('/memory') ? 'text-violet-600' : 'text-violet-300'}`} />
-                    <span>{t('nav.memory')}</span>
-                  </Link>
 
                   <Link
                     to="/community-validation"
@@ -482,16 +471,6 @@ export default function Navbar() {
                   <span>{t('nav.track')}</span>
                 </Link>
 
-                <Link
-                  to="/memory"
-                  onClick={handleNavClick}
-                  className={`flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition ${
-                    isActive('/memory') ? 'bg-white text-emerald-950 shadow-sm' : 'text-emerald-100 hover:bg-white/10'
-                  }`}
-                >
-                  <Database className="w-4 h-4 text-violet-300" />
-                  <span>{t('nav.memory')}</span>
-                </Link>
                 <Link
                   to="/community-validation"
                   onClick={handleNavClick}
