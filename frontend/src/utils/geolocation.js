@@ -338,67 +338,152 @@ export const getAccurateLivePosition = async (options = {}) => {
     return await finalizeResult(fallback[0], fallback[1], 25, 'Gram Panchayat Hub Coordinates');
   }
 
-  // Tier 1: Fast High Accuracy GPS (Mobile GPS / Wi-Fi pinpointing)
-  reportStatus('Acquiring high-precision live satellite GPS fix...');
-  try {
-    const highAccPos = await new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(
-        resolve,
-        reject,
-        { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 }
+  /**
+   * Attempt to get a refined GPS fix by watching position for a short window.
+   * Returns the best (most accurate) position seen within maxWaitMs.
+   */
+  const watchForBestPosition = (opts, maxWaitMs) =>
+    new Promise((resolve, reject) => {
+      let best = null;
+      let watchId = null;
+
+      const done = () => {
+        if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+        if (best) resolve(best);
+        else reject(new Error('No position acquired during watch'));
+      };
+
+      const timer = setTimeout(done, maxWaitMs);
+
+      watchId = navigator.geolocation.watchPosition(
+        (pos) => {
+          if (!best || pos.coords.accuracy < best.coords.accuracy) {
+            best = pos;
+            // Good enough — stop early
+            if (pos.coords.accuracy <= 50) {
+              clearTimeout(timer);
+              done();
+            }
+          }
+        },
+        (err) => {
+          clearTimeout(timer);
+          if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+          reject(err);
+        },
+        opts
       );
     });
 
-    const lat = highAccPos.coords.latitude;
-    const lng = highAccPos.coords.longitude;
-    const acc = highAccPos.coords.accuracy;
+  // Tier 1: High-Accuracy GPS with watchPosition refinement (best for mobile/tablet)
+  reportStatus('Acquiring high-precision live GPS fix...');
+  try {
+    // First quick attempt via getCurrentPosition
+    const quickPos = await new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        resolve,
+        reject,
+        { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+      );
+    });
+
+    let lat = quickPos.coords.latitude;
+    let lng = quickPos.coords.longitude;
+    let acc = quickPos.coords.accuracy;
+
+    // If accuracy is poor but GPS is available, watch for a better fix (up to 8 more seconds)
+    if (acc > 100 && acc <= 3000) {
+      reportStatus('Refining GPS fix — hold device steady...');
+      try {
+        const refinedPos = await watchForBestPosition(
+          { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 },
+          8000
+        );
+        if (refinedPos.coords.accuracy < acc) {
+          lat = refinedPos.coords.latitude;
+          lng = refinedPos.coords.longitude;
+          acc = refinedPos.coords.accuracy;
+        }
+      } catch (_) {
+        // Keep the quickPos result if watch fails
+      }
+    }
 
     // On Windows PCs without GPS hardware, accuracy can be 10,000m to 100,000m
     if (acc > 3000) {
-      reportStatus('Checking refined network positioning...');
-      const ipPos = await getIpGeolocationFallback();
-      if (ipPos && ipPos.accuracy < acc) {
-        return await finalizeResult(ipPos.lat, ipPos.lng, ipPos.accuracy, ipPos.source);
+      reportStatus('Low-precision device detected — checking network positioning...');
+      // Try Tier 2 first (Wi-Fi / cellular is often better than IP on laptops)
+      try {
+        const netPos = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(
+            resolve,
+            reject,
+            { enableHighAccuracy: false, timeout: 6000, maximumAge: 30000 }
+          );
+        });
+        const netAcc = netPos.coords.accuracy;
+        if (netAcc < acc) {
+          lat = netPos.coords.latitude;
+          lng = netPos.coords.longitude;
+          acc = netAcc;
+        }
+      } catch (_) { /* ignore */ }
+
+      // If still very coarse, compare with IP geolocation
+      if (acc > 3000) {
+        const ipPos = await getIpGeolocationFallback();
+        if (ipPos && ipPos.accuracy < acc) {
+          return await finalizeResult(ipPos.lat, ipPos.lng, ipPos.accuracy, ipPos.source);
+        }
+        return await finalizeResult(lat, lng, acc, `Coarse Network Estimate (±${Math.round(acc / 1000)}km) — drag pin to set exact location`);
       }
-      return await finalizeResult(lat, lng, acc, `Coarse Network Estimate (±${Math.round(acc / 1000)}km)`);
     }
 
-    const sourceLabel = acc <= 30
-      ? 'High-Precision Mobile GPS'
-      : acc <= 200
-        ? 'Wi-Fi Pinpoint Location'
-        : 'Network Triangulation';
+    const sourceLabel = acc <= 10
+      ? 'High-Precision Satellite GPS'
+      : acc <= 30
+        ? 'GPS Fix'
+        : acc <= 200
+          ? 'Wi-Fi Pinpoint Location'
+          : 'Network Triangulation';
 
     return await finalizeResult(lat, lng, acc, sourceLabel);
   } catch (tier1Err) {
-    console.warn('Tier 1 High Accuracy GPS timed out or failed:', tier1Err.message || tier1Err.code);
+    console.warn('Tier 1 GPS failed:', tier1Err.message || tier1Err.code);
 
     // If permission explicitly denied by user
     if (tier1Err.code === 1) {
-      reportStatus('Location permission denied in browser. Resolving network location...');
+      reportStatus('Location permission denied. Enable it in browser settings for accurate GPS.');
       const ipPos = await getIpGeolocationFallback();
       if (ipPos) {
-        return await finalizeResult(ipPos.lat, ipPos.lng, ipPos.accuracy, ipPos.source);
+        return await finalizeResult(
+          ipPos.lat, ipPos.lng, ipPos.accuracy,
+          `${ipPos.source} — Please enable GPS for accuracy`
+        );
       }
       const fallback = defaultCoords || [16.73180, 73.90790];
       return await finalizeResult(fallback[0], fallback[1], 15, 'Incident Area Coordinates');
     }
 
-    // Tier 2: Rapid Wi-Fi / Cellular Triangulation (Standard browser location, highly reliable on desktops/laptops)
-    reportStatus('Connecting via rapid Wi-Fi & cellular tower triangulation...');
+    // Tier 2: Wi-Fi / Cellular Triangulation
+    reportStatus('Connecting via Wi-Fi & cellular tower triangulation...');
     try {
       const netPos = await new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(
           resolve,
           reject,
-          { enableHighAccuracy: false, timeout: 5000, maximumAge: 30000 }
+          { enableHighAccuracy: false, timeout: 8000, maximumAge: 30000 }
         );
       });
 
       const lat = netPos.coords.latitude;
       const lng = netPos.coords.longitude;
       const acc = netPos.coords.accuracy;
-      return await finalizeResult(lat, lng, acc, 'Wi-Fi / Cellular Network Triangulation');
+
+      const sourceLabel = acc <= 200
+        ? 'Wi-Fi / Cellular Network Triangulation'
+        : `Network Estimate (±${Math.round(acc)}m) — drag pin for exact location`;
+      return await finalizeResult(lat, lng, acc, sourceLabel);
     } catch (tier2Err) {
       console.warn('Tier 2 Network Geolocation failed:', tier2Err);
 
@@ -406,7 +491,10 @@ export const getAccurateLivePosition = async (options = {}) => {
       reportStatus('Resolving location via IP Network service...');
       const ipPos = await getIpGeolocationFallback();
       if (ipPos) {
-        return await finalizeResult(ipPos.lat, ipPos.lng, ipPos.accuracy, ipPos.source);
+        return await finalizeResult(
+          ipPos.lat, ipPos.lng, ipPos.accuracy,
+          `${ipPos.source} — drag pin to your exact location`
+        );
       }
 
       // Tier 4: Fallback to existing issue coordinates or village center

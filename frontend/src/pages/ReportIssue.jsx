@@ -1010,14 +1010,22 @@ export default function ReportIssue() {
             )}
 
             {/* ISP / Desktop Location Advisory Notice */}
-            {gpsSource && (gpsSource.includes('IP') || gpsSource.includes('Restricted') || (gpsAccuracy && gpsAccuracy > 1000)) && (
+            {gpsSource && (
+              gpsSource.includes('IP') ||
+              gpsSource.includes('Restricted') ||
+              gpsSource.includes('Coarse') ||
+              gpsSource.includes('drag pin') ||
+              (gpsAccuracy && gpsAccuracy > 500)
+            ) && (
               <div className="mt-2.5 p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start space-x-2">
                 <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                 <div className="space-y-0.5">
-                  <span className="font-bold">Computer / Broadband Network Tower Detected:</span>
+                  <span className="font-bold">Approximate Location Detected (±{gpsAccuracy && gpsAccuracy >= 1000 ? `${Math.round(gpsAccuracy / 1000)}km` : `${gpsAccuracy || '?'}m`}):</span>
                   <p className="text-[11px] text-amber-800">
-                    PCs and laptops do not have satellite GPS and detect your internet provider's tower.
-                    To set your exact village: Type your village name above and click <strong>"🔍 Pin Address"</strong>, or <strong>drag the green pin</strong> on the map below.
+                    {gpsAccuracy > 500
+                      ? 'This device could not get a precise GPS fix. The pin shows an approximate area, not your exact spot.'
+                      : 'PCs and laptops do not have satellite GPS and detect your internet provider\'s tower.'}
+                    {' '}To set your exact location: type your village name or street above and click <strong>"🔍 Pin Address"</strong>, or <strong>drag the green pin</strong> on the map to your exact spot.
                   </p>
                 </div>
               </div>
